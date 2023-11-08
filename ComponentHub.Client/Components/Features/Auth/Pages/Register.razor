@@ -1,0 +1,45 @@
+@page "/Authentication/Register"
+@using ComponentHub.Shared.Auth
+@inject IdentityAuthenticationStateProvider stateProvider
+
+<PageTitle>Register</PageTitle>
+
+<MudCard>
+    <EditForm Model="formModel" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <MudCardHeader>
+            <MudText Typo="Typo.h1">Register your account</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText>
+                The username you choose will serve only as a display name.
+            </MudText>
+            <MudTextField HelperText="Public username" @bind-Value="@formModel.UserName"></MudTextField>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Submit">Register Account</MudButton>
+        </MudCardActions>
+    </EditForm>
+</MudCard>
+
+
+@code {
+    private readonly RegisterOptions formModel = new RegisterOptions() { };
+
+    [SupplyParameterFromQuery] private string? InitialUserName { get; set; }
+
+    private Task OnValidSubmit()
+    {
+        return stateProvider.Register(formModel);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (InitialUserName is null) return;
+
+
+        formModel.UserName = InitialUserName;
+    }
+
+}

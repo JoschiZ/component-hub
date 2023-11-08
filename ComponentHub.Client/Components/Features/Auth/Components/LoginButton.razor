@@ -1,0 +1,11 @@
+@using ComponentHub.Client.Features.Auth
+@inject IdentityAuthenticationStateProvider stateProvider
+
+<form formname="login-form" method="post" action="api/Auth/Login">
+    <input type="hidden" name="provider" value="BattleNet"/>
+    <MudButton Variant="Variant.Filled" Color="Color.Success" ButtonType="ButtonType.Submit">Login with BattleNet</MudButton>
+</form>
+
+@code {
+    
+}

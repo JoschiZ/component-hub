@@ -1,0 +1,5 @@
+@using ComponentHub.Client.Features.Auth
+@inject IdentityAuthenticationStateProvider stateProvider
+
+<MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="stateProvider.Logout">Logout</MudButton>
+
