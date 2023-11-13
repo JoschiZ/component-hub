@@ -1,4 +1,4 @@
-using ComponentHub.Server.Database;
+using ComponentHub.Shared.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using OpenIddict.Abstractions;

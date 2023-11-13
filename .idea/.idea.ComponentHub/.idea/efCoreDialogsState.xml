@@ -3,7 +3,8 @@
   <component name="EfCoreDialogsState">
     <option name="keyValueStorage">
       <map>
-        <entry key="Common:926ca54d-6141-4797-8ae9-bdf34481ee1d:dbContext" value="ComponentHub.Server.Database.ComponentHubContext" />
+        <entry key="Common:4ba6429c-c15a-42d4-a898-adc34ae0720d:dbContext" value="ComponentHub.Shared.Auth.ComponentHubContext" />
+        <entry key="Common:926ca54d-6141-4797-8ae9-bdf34481ee1d:dbContext" value="ComponentHub.Shared.Auth.ComponentHubContext" />
         <entry key="Common:buildConfiguration" value="Debug" />
         <entry key="Common:enableDiagnosticLogging" value="false" />
         <entry key="Common:noBuild" value="false" />

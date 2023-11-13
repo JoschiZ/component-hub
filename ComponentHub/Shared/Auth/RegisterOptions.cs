@@ -5,8 +5,6 @@ namespace ComponentHub.Shared.Auth;
 
 public sealed class RegisterOptions
 {
-    [Required]
-    [StringLength(16, MinimumLength = 4, ErrorMessage = "Your ")]
     public string UserName { get; set; } = "";
 }
 

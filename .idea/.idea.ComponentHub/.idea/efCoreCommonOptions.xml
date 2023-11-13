@@ -3,7 +3,7 @@
   <component name="EfCoreCommonOptions">
     <option name="solutionLevelOptions">
       <map>
-        <entry key="migrationsProject" value="926ca54d-6141-4797-8ae9-bdf34481ee1d" />
+        <entry key="migrationsProject" value="4ba6429c-c15a-42d4-a898-adc34ae0720d" />
         <entry key="startupProject" value="926ca54d-6141-4797-8ae9-bdf34481ee1d" />
       </map>
     </option>

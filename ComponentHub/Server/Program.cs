@@ -1,11 +1,10 @@
 using System.Reflection;
 using ComponentHub.Server.Auth;
-using ComponentHub.Server.Database;
 using ComponentHub.Server.Helper;
-using ComponentHub.Server.Helper.Validation;
-using ComponentHub.Shared.Helper.Validation;
+using ComponentHub.Shared.Auth;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // This loads configs that may be needed for later registrations so it needs to be first!
@@ -25,8 +24,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
     Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(ValidationFailureResponse))
+    Assembly.GetAssembly(typeof(RegisterOptions))
 });
+builder.Services.AddFluentValidationAutoValidation();
+
 
 var app = builder.Build();
 

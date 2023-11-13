@@ -1,8 +1,11 @@
+using System.Reflection;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
 using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Components.Features.RedirectHelper;
+using ComponentHub.Shared.Auth;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
@@ -20,6 +23,12 @@ builder.Services.AddScoped(sp =>
     {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
     };
+});
+
+builder.Services.AddValidatorsFromAssemblies(new[]
+{
+    Assembly.GetAssembly(typeof(Program)),
+    Assembly.GetAssembly(typeof(RegisterOptions))
 });
 
 builder.Services.AddScoped<AuthApiClient>();

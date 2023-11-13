@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using ComponentHub.Server.Database;
 using ComponentHub.Shared.Auth;
 using ComponentHub.Shared.Helper;
+using ComponentHub.Shared.Results;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Client.WebIntegration;
 
-namespace ComponentHub.Server.Auth;
+namespace ComponentHub.Server.Api.Auth;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
@@ -41,7 +41,7 @@ public sealed class AuthController(
     {
         return LoginUser(OpenIddictClientWebIntegrationConstants.Providers.BattleNet);
     }
-
+    
     private async Task<IResult> LoginUser(string provider)
     {
         // Retrieve the authorization data validated by OpenIddict as part of the callback handling.
@@ -57,25 +57,24 @@ public sealed class AuthController(
         {
             return Results.Problem("Could not parse your battlenet information");
         }
-        
-        identity
-            .SetClaim(ClaimTypes.Name, battleTag)
-            .SetClaim(ClaimTypes.NameIdentifier, battleNetId);
 
         // Preserve the registration details to be able to resolve them later.
         identity
             .SetClaim(OpenIddictConstants.Claims.Private.RegistrationId, result.Principal!.GetClaim(OpenIddictConstants.Claims.Private.RegistrationId))
             .SetClaim(OpenIddictConstants.Claims.Private.ProviderName, result.Principal!.GetClaim(OpenIddictConstants.Claims.Private.ProviderName));
 
-        // Build the authentication properties based on the properties that were added when the challenge was triggered.
-        var properties = new AuthenticationProperties(result.Properties.Items);
-        
+
         var tryExternalSignIn = await signInManager.ExternalLoginSignInAsync(
             provider,
             battleNetId,
             isPersistent: false,
             bypassTwoFactor: true
         );
+
+
+        var propertyItems = result.Properties is not null ? result.Properties.Items : new Dictionary<string, string?>();
+        // Build the authentication properties based on the properties that were added when the challenge was triggered.
+        var properties = new AuthenticationProperties(propertyItems);
 
         if (!tryExternalSignIn.Succeeded)
         {
@@ -85,9 +84,20 @@ public sealed class AuthController(
             properties.RedirectUri = redirectUrl;
         }
 
+        var user = await userManager.FindByLoginAsync(provider, battleNetId);
+        if (user is not null)
+        {
+            identity.SetClaim(ClaimTypes.Name, user.UserName).SetClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+        }
+        else
+        {
+            identity.SetClaim(ClaimTypes.Name, battleTag).SetClaim(ClaimTypes.NameIdentifier, battleNetId);
+        }
+        
+
         properties.RedirectUri ??= "/";
 
-        
+        //return Results.Ok();
         return Results.SignIn(new ClaimsPrincipal(identity), properties);
     }
     
@@ -123,30 +133,36 @@ public sealed class AuthController(
             var addLoginResult = await userManager.AddLoginAsync(user, externalLoginInfo);
             if (addLoginResult.Succeeded)
             {
+                User.SetClaim(ClaimTypes.Name, user.UserName).SetClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
                 await signInManager.SignInAsync(user, isPersistent: false, externalLoginInfo.LoginProvider);
             }
         }
 
-        return Results.Redirect("/");
+        return Results.SignIn(User, new AuthenticationProperties(){RedirectUri = "/"});
+        // return Results.Redirect("/");
     }
 
     [HttpGet]
-    public UserInfo GetUserInfo()
+    public Result<UserInfo> GetUserInfo()
     {
         if (User.Identity?.Name is null)
         {
-            return new UserInfo()
-            {
-                Name = "UserNotFound",
-            };
+            return UserInfo.Empty;
+        }
+
+        var userId = userManager.GetUserId(User);
+
+        if (userId is null)
+        {
+            return Error.UserNotFoundError;
         }
         
-        return new UserInfo
+        return new UserInfo(userId)
         {
             IsAuthenticated = User.Identity.IsAuthenticated,
             Name = User.Identity.Name,
             ExposedClaims = User.Claims
-                .ToDictionary(c => c.Type, c => c.Value)
+                .ToDictionary(c => c.Type, c => c.Value),
         };
     }
 

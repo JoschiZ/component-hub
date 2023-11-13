@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using ComponentHub.Client.Features.Auth;
 using ComponentHub.Shared.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -14,7 +13,7 @@ internal sealed class IdentityAuthenticationStateProvider(
     {
         var userInfo = await authClient.GetUserInfo();
         var identity = new ClaimsIdentity();
-        if (userInfo is null || !userInfo.IsAuthenticated)
+        if (userInfo == UserInfo.Empty || !userInfo.IsAuthenticated)
         {
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }

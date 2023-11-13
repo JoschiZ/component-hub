@@ -1,13 +1,13 @@
 @page "/Authentication/Register"
 @using ComponentHub.Shared.Auth
+@using FluentValidation
 @inject IdentityAuthenticationStateProvider stateProvider
+@inject IValidator<RegisterOptions> validator
 
 <PageTitle>Register</PageTitle>
 
 <MudCard>
-    <EditForm Model="formModel" OnValidSubmit="OnValidSubmit">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
+    <MudForm Model="formModel" Validation="validator">
         <MudCardHeader>
             <MudText Typo="Typo.h1">Register your account</MudText>
         </MudCardHeader>
@@ -15,17 +15,17 @@
             <MudText>
                 The username you choose will serve only as a display name.
             </MudText>
-            <MudTextField HelperText="Public username" @bind-Value="@formModel.UserName"></MudTextField>
+            <MudTextField HelperText="Public username" @bind-Value="@formModel.UserName" For="() => formModel.UserName" Immediate="true"></MudTextField>
         </MudCardContent>
         <MudCardActions>
-            <MudButton ButtonType="ButtonType.Submit">Register Account</MudButton>
+            <MudButton OnClick="OnValidSubmit">Register Account</MudButton>
         </MudCardActions>
-    </EditForm>
+    </MudForm>
 </MudCard>
 
 
 @code {
-    private readonly RegisterOptions formModel = new RegisterOptions() { };
+    private readonly RegisterOptions formModel = new();
 
     [SupplyParameterFromQuery] private string? InitialUserName { get; set; }
 
