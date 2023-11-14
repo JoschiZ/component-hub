@@ -103,8 +103,15 @@ public sealed class AuthController(
     
     
     [HttpPost]
+    [Authorize]
     public async Task<IResult> Register(RegisterOptions options)
     {
+        if (await userManager.GetUserAsync(User) is not null)
+        {
+            return Results.BadRequest("You are already registered");
+        }
+        
+        
         var externalLoginInfo = await signInManager.GetExternalLoginInfoAsync();
         if (externalLoginInfo is null)
         {
@@ -139,7 +146,6 @@ public sealed class AuthController(
         }
 
         return Results.SignIn(User, new AuthenticationProperties(){RedirectUri = "/"});
-        // return Results.Redirect("/");
     }
 
     [HttpGet]

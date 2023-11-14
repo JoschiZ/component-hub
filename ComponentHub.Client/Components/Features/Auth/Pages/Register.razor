@@ -1,13 +1,14 @@
 @page "/Authentication/Register"
 @using ComponentHub.Shared.Auth
-@using FluentValidation
+@using Microsoft.AspNetCore.Authorization
 @inject IdentityAuthenticationStateProvider stateProvider
-@inject IValidator<RegisterOptions> validator
+@inject RegisterOptionsValidator validator
+@attribute [Authorize]
 
 <PageTitle>Register</PageTitle>
 
 <MudCard>
-    <MudForm Model="formModel" Validation="validator">
+    <MudForm Model="formModel" Validation="validator.ValidateValue">
         <MudCardHeader>
             <MudText Typo="Typo.h1">Register your account</MudText>
         </MudCardHeader>
