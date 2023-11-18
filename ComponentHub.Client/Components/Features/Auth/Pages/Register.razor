@@ -1,8 +1,7 @@
 @page "/Authentication/Register"
-@using ComponentHub.Shared.Auth
 @using Microsoft.AspNetCore.Authorization
 @inject IdentityAuthenticationStateProvider stateProvider
-@inject RegisterOptionsValidator validator
+@inject RegisterRequestValidator validator;
 @attribute [Authorize]
 
 <PageTitle>Register</PageTitle>
@@ -26,7 +25,7 @@
 
 
 @code {
-    private readonly RegisterOptions formModel = new();
+    private readonly RegisterRequest formModel = new();
 
     [SupplyParameterFromQuery] private string? InitialUserName { get; set; }
 
@@ -42,5 +41,4 @@
 
         formModel.UserName = InitialUserName;
     }
-
 }

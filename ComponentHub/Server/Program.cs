@@ -2,6 +2,7 @@ using System.Reflection;
 using ComponentHub.Server.Auth;
 using ComponentHub.Server.Helper;
 using ComponentHub.Shared.Auth;
+using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -11,21 +12,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddEnvToConfig();
 
 builder.AddAuthentication();
+builder.Services.AddAntiforgery();
 
 builder.Services
     .AddDbContext<ComponentHubContext>(optionsBuilder =>
         optionsBuilder.UseSqlite("Filename=app.db").UseOpenIddict());
+builder.Services.AddFastEndpoints(options =>
+{
+    options.IncludeAbstractValidators = true;
+});
 
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+//builder.Services.AddControllersWithViews();
+//builder.Services.AddRazorPages();
 
 // Gets all AbstractValidator<T> implementations and registers them from this and the shared assembly
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
     Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(RegisterOptions))
-});
+    Assembly.GetAssembly(typeof(ComponentHubContext))
+}, ServiceLifetime.Singleton, includeInternalTypes: true);
 builder.Services.AddFluentValidationAutoValidation();
 
 
@@ -52,11 +57,11 @@ app.UseRouting();
 
 app.UseAntiforgery();
 
-app.MapRazorPages();
-app.MapControllers();
+//app.MapRazorPages();
+//app.MapControllers();
 app.MapFallbackToFile("index.html");
-
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseFastEndpoints();
 
 app.Run();

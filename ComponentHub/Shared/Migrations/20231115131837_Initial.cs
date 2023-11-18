@@ -202,20 +202,21 @@ namespace ComponentHub.Shared.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Components",
+                name: "Component",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 32, nullable: false),
-                    Source = table.Column<string>(type: "TEXT", maxLength: 2500, nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Name_Value = table.Column<string>(type: "TEXT", nullable: false),
+                    Source_Value = table.Column<string>(type: "TEXT", nullable: false),
+                    Source_Language = table.Column<int>(type: "INTEGER", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Components", x => x.Id);
+                    table.PrimaryKey("PK_Component", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Components_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Component_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -316,9 +317,9 @@ namespace ComponentHub.Shared.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Components_UserId",
-                table: "Components",
-                column: "UserId");
+                name: "IX_Component_OwnerId",
+                table: "Component",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
@@ -373,7 +374,7 @@ namespace ComponentHub.Shared.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Components");
+                name: "Component");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictScopes");

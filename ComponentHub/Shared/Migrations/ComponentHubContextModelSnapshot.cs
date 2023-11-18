@@ -82,30 +82,20 @@ namespace ComponentHub.Shared.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ComponentHub.Shared.DatabaseObjects.WclComponent", b =>
+            modelBuilder.Entity("ComponentHub.Shared.Components.Component", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasMaxLength(2500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("OwnerId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OwnerId");
 
-                    b.ToTable("Components");
+                    b.ToTable("Component");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -226,7 +216,7 @@ namespace ComponentHub.Shared.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("SourceCode")
                         .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
@@ -442,15 +432,58 @@ namespace ComponentHub.Shared.Migrations
                     b.ToTable("OpenIddictTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ComponentHub.Shared.DatabaseObjects.WclComponent", b =>
+            modelBuilder.Entity("ComponentHub.Shared.Components.Component", b =>
                 {
-                    b.HasOne("ComponentHub.Shared.Auth.ApplicationUser", "User")
+                    b.HasOne("ComponentHub.Shared.Auth.ApplicationUser", "Owner")
                         .WithMany("Components")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.OwnsOne("ComponentHub.Shared.Components.ComponentName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("ComponentId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("SourceCode")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ComponentId");
+
+                            b1.ToTable("Component");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComponentId");
+                        });
+
+                    b.OwnsOne("ComponentHub.Shared.Components.ComponentSource", "Source", b1 =>
+                        {
+                            b1.Property<Guid>("ComponentId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<int>("Language")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("SourceCode")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("ComponentId");
+
+                            b1.ToTable("Component");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ComponentId");
+                        });
+
+                    b.Navigation("Name")
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Source")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

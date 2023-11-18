@@ -26,7 +26,7 @@ internal sealed class IdentityAuthenticationStateProvider(
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    public async Task Register(RegisterOptions options)
+    public async Task Register(RegisterRequest options)
     {
         await authClient.Register(options);
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());

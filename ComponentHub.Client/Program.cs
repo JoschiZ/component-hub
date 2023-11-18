@@ -13,7 +13,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
-
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<RedirectHelper>();
@@ -28,7 +27,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
     Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(RegisterOptions))
+    Assembly.GetAssembly(typeof(ComponentHubContext))
 });
 
 builder.Services.AddScoped<AuthApiClient>();

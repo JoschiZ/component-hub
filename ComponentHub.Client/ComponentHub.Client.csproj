@@ -9,10 +9,10 @@
 
     <ItemGroup>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0-rc.2.23480.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0-rc.2.23480.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0-rc.2.23480.2" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-rc.2.23479.6" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
         <PackageReference Include="MudBlazor" Version="6.11.0" />
     </ItemGroup>
 
@@ -28,6 +28,7 @@
       <_ContentIncludedByDefault Remove="Features\Auth\Components\LoginButton.razor" />
       <_ContentIncludedByDefault Remove="Features\Auth\Components\LogoutButton.razor" />
       <_ContentIncludedByDefault Remove="Features\Auth\Pages\Register.razor" />
+      <_ContentIncludedByDefault Remove="Components\Features\WclComponents\UploadComponentTest.razor" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,6 +39,12 @@
       <AdditionalFiles Include="Components\Features\Auth\Components\LoginButton.razor" />
       <AdditionalFiles Include="Components\Features\Auth\Components\LogoutButton.razor" />
       <AdditionalFiles Include="Components\Features\Auth\Pages\Register.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.0-rc.2.23480.2\Microsoft.AspNetCore.Authentication.Abstractions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

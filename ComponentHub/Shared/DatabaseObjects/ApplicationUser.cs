@@ -1,9 +1,9 @@
-using ComponentHub.Shared.DatabaseObjects;
+using ComponentHub.Shared.Components;
 using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Shared.Auth;
 
 public sealed class ApplicationUser: IdentityUser<Guid>
 {
-    public ICollection<WclComponent> Components { get; } = new List<WclComponent>();
+ //   public ICollection<Component> Components { get; } = new List<Component>();
 }

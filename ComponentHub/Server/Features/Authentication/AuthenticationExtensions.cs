@@ -75,7 +75,7 @@ internal static class AuthenticationExtensions
                         options
                             .SetClientId(clientId)
                             .SetClientSecret(secret)
-                            .SetRedirectUri("api/Auth/LoginCallbackBattleNet")
+                            .SetRedirectUri("api/auth/login-battlenet")
                             .AddScopes(OpenIddictConstants.Scopes.OpenId);
                     });
             })
