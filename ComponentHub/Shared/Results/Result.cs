@@ -3,27 +3,32 @@ using System.Text.Json.Serialization;
 
 namespace ComponentHub.Shared.Results;
 
-public sealed class Result<TResult>
+/// <summary>
+/// Base result class with generic TResult and TError 
+/// </summary>
+/// <typeparam name="TResult"></typeparam>
+/// <typeparam name="TError"></typeparam>
+public class Result<TResult, TError>
 {
     [JsonConstructor]
-    private Result(bool isSuccess, TResult? resultObject, Error? error)
+    protected Result(bool isSuccess, TResult? resultObject, TError? error)
     {
         IsSuccess = isSuccess;
         ResultObject = resultObject;
         Error = error;
     }
 
-    public static Result<TResult> CreateError(Error error)
+    public static Result<TResult, TError> CreateError(TError error)
     {
-        return new Result<TResult>(
+        return new Result<TResult, TError>(
             false,
             default,
             error);
     }
 
-    public static Result<TResult> CreateSuccess(TResult result)
+    public static Result<TResult, TError> CreateSuccess(TResult result)
     {
-        return new Result<TResult>(true, result, null);
+        return new Result<TResult, TError>(true, result, default);
     }
 
     [MemberNotNullWhen(returnValue: true, nameof(ResultObject))]
@@ -37,10 +42,9 @@ public sealed class Result<TResult>
 
     public TResult? ResultObject { get; }
     
-    public Error? Error { get; }
+    public TError? Error { get; }
 
-    public static implicit operator Result<TResult>(Error error) => CreateError(error);
+    public static implicit operator Result<TResult, TError>(TError error) => CreateError(error);
 
-    public static implicit operator Result<TResult>(TResult result) => CreateSuccess(result);
+    public static implicit operator Result<TResult, TError>(TResult result) => CreateSuccess(result);
 }
-

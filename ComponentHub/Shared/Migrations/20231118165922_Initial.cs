@@ -206,10 +206,10 @@ namespace ComponentHub.Shared.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name_Value = table.Column<string>(type: "TEXT", nullable: false),
-                    Source_Value = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Source_Language = table.Column<int>(type: "INTEGER", nullable: false),
-                    OwnerId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    Source_SourceCode = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: false)
                 },
                 constraints: table =>
                 {

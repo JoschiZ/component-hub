@@ -12,4 +12,11 @@ public static class Endpoints
         public const string Logout = AuthBasePath + "logout";
         public const string Register = AuthBasePath + "register";
     }
+    
+    public static class Components
+    {
+        private const string ComponentsBasePath = BasePath + "components/";
+        public const string Create = ComponentsBasePath + "create/";
+
+    }
 }

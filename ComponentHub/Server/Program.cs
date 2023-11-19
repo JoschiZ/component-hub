@@ -16,7 +16,10 @@ builder.Services.AddAntiforgery();
 
 builder.Services
     .AddDbContext<ComponentHubContext>(optionsBuilder =>
-        optionsBuilder.UseSqlite("Filename=app.db").UseOpenIddict());
+    {
+        optionsBuilder.UseSqlite("Filename=app.db").UseOpenIddict();
+        
+    });
 builder.Services.AddFastEndpoints(options =>
 {
     options.IncludeAbstractValidators = true;

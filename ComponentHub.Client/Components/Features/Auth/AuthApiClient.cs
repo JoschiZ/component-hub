@@ -24,7 +24,7 @@ internal sealed class AuthApiClient(HttpClient httpClient, ISnackbar snackbar)
 
     public async Task<UserInfo> GetUserInfo()
     {
-        var result = await httpClient.GetFromJsonAsync<Result<UserInfo>>(Endpoints.Auth.GetUserInfo);
+        var result = await httpClient.GetFromJsonAsync<ResultError<UserInfo>>(Endpoints.Auth.GetUserInfo);
         if (result is null)
         {
             return UserInfo.Empty;

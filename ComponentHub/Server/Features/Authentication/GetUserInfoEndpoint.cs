@@ -1,12 +1,13 @@
 using ComponentHub.Shared.Api;
 using ComponentHub.Shared.Auth;
+using ComponentHub.Shared.DatabaseObjects;
 using ComponentHub.Shared.Results;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Authentication;
 
-internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Result<UserInfo>>
+internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<ResultError<UserInfo>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
@@ -21,7 +22,7 @@ internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Result<UserInf
         AllowAnonymous();
     }
 
-    public async override Task<Result<UserInfo>> ExecuteAsync(CancellationToken ct)
+    public async override Task<ResultError<UserInfo>> ExecuteAsync(CancellationToken ct)
     {
         if (User.Identity?.Name is null)
         {

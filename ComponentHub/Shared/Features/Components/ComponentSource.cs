@@ -1,5 +1,7 @@
 using ComponentHub.Shared.Helper.Validation;
+using ComponentHub.Shared.Results;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace ComponentHub.Shared.Components;
 
@@ -15,12 +17,17 @@ public sealed record ComponentSource
         SourceCode = sourceCode;
     }
 
-    private static Validator _validator = new Validator();
-    public static ComponentSource? TryCreate(string value, Language language)
+    private static Validator _validator = new();
+    public static ResultValidation<ComponentSource> TryCreate(string source, Language language)
     {
-        var source = new ComponentSource(value, language);
-        var validation = _validator.Validate(source);
-        return validation.IsValid ? source : null;
+        var compSource = new ComponentSource(source, language);
+        var validation = _validator.Validate(compSource);
+        if (!validation.IsValid)
+        {
+            return validation.Errors;
+        }
+
+        return compSource;
     }
 
     private sealed class Validator: MudCompatibleAbstractValidator<ComponentSource>
