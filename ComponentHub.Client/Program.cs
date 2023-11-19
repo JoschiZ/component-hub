@@ -6,6 +6,7 @@ using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Components.Features.RedirectHelper;
 using ComponentHub.Shared;
 using ComponentHub.Shared.Auth;
+using ComponentHub.Shared.Helper.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
@@ -29,7 +30,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
     Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(ComponentHubContext))
+    Assembly.GetAssembly(typeof(IUnitOfWork))
 });
 
 Log.Logger = new LoggerConfiguration()

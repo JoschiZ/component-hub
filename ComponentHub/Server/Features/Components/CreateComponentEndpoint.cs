@@ -4,6 +4,7 @@ using ComponentHub.Shared.Auth;
 using ComponentHub.Shared.Components;
 using ComponentHub.Shared.DatabaseObjects;
 using ComponentHub.Shared.Features.Components;
+using ComponentHub.Shared.Helper.Repositories;
 using ComponentHub.Shared.Helper.Validation;
 using FastEndpoints;
 using FluentValidation;
@@ -15,13 +16,13 @@ namespace ComponentHub.Server.Features.Components;
 internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest>
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly ComponentHubContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
 
-    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, ComponentHubContext context)
+    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
     {
         _userManager = userManager;
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     public override void Configure()
@@ -53,8 +54,8 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest>
             ThrowIfAnyErrors();
             return;
         }
-        
-        await _context.Set<Component>().AddAsync(component.ResultObject, ct);
+
+        await _unitOfWork.Components.AddAsync(component.ResultObject, ct);
     }
 }
 

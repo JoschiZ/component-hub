@@ -1,6 +1,7 @@
 using ComponentHub.Shared;
 using ComponentHub.Shared.Auth;
 using ComponentHub.Shared.DatabaseObjects;
+using ComponentHub.Shared.Helper.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using OpenIddict.Abstractions;
@@ -29,7 +30,7 @@ internal static class AuthenticationExtensions
         
         services
             .AddIdentityCore<ApplicationUser>()
-            .AddEntityFrameworkStores<ComponentHubContext>()
+            .AddEntityFrameworkStores()
             .AddDefaultTokenProviders()
             .AddSignInManager();
         
@@ -84,7 +85,7 @@ internal static class AuthenticationExtensions
             .AddCore(coreBuilder =>
             {
                 coreBuilder.UseEntityFrameworkCore()
-                    .UseDbContext<ComponentHubContext>();
+                    .UseComponentHubContext();
             });
 
 

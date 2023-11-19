@@ -32,8 +32,6 @@ public sealed class Component: Entity<ComponentId>
             Name = name
         };
     }
-    
-
 }
 
 [StronglyTypedId]

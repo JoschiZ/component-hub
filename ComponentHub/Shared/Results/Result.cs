@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace ComponentHub.Shared.Results;
 

@@ -2,6 +2,7 @@ using System.Reflection;
 using ComponentHub.Server.Auth;
 using ComponentHub.Server.Helper;
 using ComponentHub.Shared;
+using ComponentHub.Shared.Helper.Repositories;
 using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -14,13 +15,8 @@ builder.AddEnvToConfig();
 
 builder.AddAuthentication();
 builder.Services.AddAntiforgery();
+builder.Services.UseRepositories();
 
-builder.Services
-    .AddDbContext<ComponentHubContext>(optionsBuilder =>
-    {
-        optionsBuilder.UseSqlite("Filename=app.db").UseOpenIddict();
-        
-    });
 builder.Services.AddFastEndpoints(options =>
 {
     options.IncludeAbstractValidators = true;
@@ -36,7 +32,7 @@ builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose:
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
     Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(ComponentHubContext))
+    Assembly.GetAssembly(typeof(IUnitOfWork))
 }, ServiceLifetime.Singleton, includeInternalTypes: true);
 builder.Services.AddFluentValidationAutoValidation();
 

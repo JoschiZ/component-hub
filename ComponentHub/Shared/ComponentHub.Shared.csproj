@@ -20,6 +20,8 @@
     <ItemGroup>
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.0" />
+      <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.0.0-preview2.23564.72" />
       <PackageReference Include="StronglyTypedId" Version="1.0.0-beta06" />
     </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ComponentHub.Shared;
 
 
-public sealed class ComponentHubContext(DbContextOptions<ComponentHubContext> options): IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
+internal sealed class ComponentHubContext(DbContextOptions<ComponentHubContext> options): IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
