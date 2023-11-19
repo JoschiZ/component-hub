@@ -1,3 +1,4 @@
+using ComponentHub.Shared;
 using ComponentHub.Shared.Api;
 using ComponentHub.Shared.Auth;
 using ComponentHub.Shared.Components;
@@ -59,8 +60,8 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest>
 
 public class CreateComponentRequest
 {
-    public string Name { get; set; }
-    public string SourceCode { get; set; }
+    public string Name { get; set; } = "";
+    public string SourceCode { get; set; } = "";
     public Language Language { get; set; }
 }
 

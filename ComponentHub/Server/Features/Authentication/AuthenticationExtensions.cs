@@ -1,3 +1,4 @@
+using ComponentHub.Shared;
 using ComponentHub.Shared.Auth;
 using ComponentHub.Shared.DatabaseObjects;
 using Microsoft.AspNetCore.Identity;

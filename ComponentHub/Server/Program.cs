@@ -1,10 +1,11 @@
 using System.Reflection;
 using ComponentHub.Server.Auth;
 using ComponentHub.Server.Helper;
-using ComponentHub.Shared.Auth;
+using ComponentHub.Shared;
 using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,8 +26,11 @@ builder.Services.AddFastEndpoints(options =>
     options.IncludeAbstractValidators = true;
 });
 
-//builder.Services.AddControllersWithViews();
-//builder.Services.AddRazorPages();
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
 // Gets all AbstractValidator<T> implementations and registers them from this and the shared assembly
 builder.Services.AddValidatorsFromAssemblies(new[]
@@ -55,16 +59,17 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAntiforgery();
-
-//app.MapRazorPages();
-//app.MapControllers();
 app.MapFallbackToFile("index.html");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseFastEndpoints();
+app.UseFastEndpoints(config =>
+{
+    config.Endpoints.Configurator = definition =>
+    {
+
+    };
+});
 
 app.Run();

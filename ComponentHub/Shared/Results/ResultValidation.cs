@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using FluentValidation.Results;
 
 namespace ComponentHub.Shared.Results;
@@ -8,6 +9,7 @@ namespace ComponentHub.Shared.Results;
 /// <typeparam name="TResult"></typeparam>
 public sealed class ResultValidation<TResult>: Result<TResult, List<ValidationFailure>>
 {
+    [JsonConstructor]
     private ResultValidation(bool isSuccess, TResult? resultObject, List<ValidationFailure>? error) : base(isSuccess, resultObject, error)
     {
     }

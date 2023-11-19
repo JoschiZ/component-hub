@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace ComponentHub.Shared.Results;
 
 public class ResultError<TResult>: Result<TResult, Error>
 {
+    [JsonConstructor]
     protected ResultError(bool isSuccess, TResult? resultObject, Error? error) : base(isSuccess, resultObject, error)
     {
     }
