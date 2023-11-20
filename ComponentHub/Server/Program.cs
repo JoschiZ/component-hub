@@ -69,3 +69,6 @@ app.UseFastEndpoints(config =>
 });
 
 app.Run();
+
+
+public partial class Program { }

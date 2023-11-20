@@ -25,19 +25,19 @@ internal abstract class Repository<TEntity, TId>(DbContext context) : IRepositor
         return _dbSet.FindAsync(new object?[] {id}, cancellationToken: ct);
     } 
 
-    public EntityEntry<TEntity> Add(TEntity entity)
+    public void Add(TEntity entity)
     {
-        return _dbSet.Add(entity);
+        _dbSet.Add(entity);
     }
 
-    public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity)
+    public ValueTask AddAsync(TEntity entity)
     {
         return AddAsync(entity, CancellationToken.None);
     }
 
-    public ValueTask<EntityEntry<TEntity>> AddAsync(TEntity entity, CancellationToken ct)
+    public async ValueTask AddAsync(TEntity entity, CancellationToken ct)
     {
-        return _dbSet.AddAsync(entity, ct);
+        await _dbSet.AddAsync(entity, ct);
     }
 
     public void AddRange(IEnumerable<TEntity> entities)

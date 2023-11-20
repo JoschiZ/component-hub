@@ -15,7 +15,7 @@ public sealed class ComponentConfiguration : IEntityTypeConfiguration<Component>
 
         builder.ComplexProperty(component => component.Source, propertyBuilder =>
         {
-            propertyBuilder.Property(source => source.SourceCode).HasMaxLength(ComponentSource.MaxSourceLength);
+            propertyBuilder.Property(source => source.SourceCode).HasMaxLength(ComponentSource.Validator.MaxSourceLength);
             propertyBuilder.IsRequired();
         });
         builder.HasOne<ApplicationUser>(e => e.Owner).WithMany(e => e.Components);

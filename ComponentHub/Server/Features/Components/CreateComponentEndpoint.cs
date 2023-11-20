@@ -1,14 +1,8 @@
-using ComponentHub.Shared;
 using ComponentHub.Shared.Api;
-using ComponentHub.Shared.Auth;
-using ComponentHub.Shared.Components;
 using ComponentHub.Shared.DatabaseObjects;
 using ComponentHub.Shared.Features.Components;
 using ComponentHub.Shared.Helper.Repositories;
-using ComponentHub.Shared.Helper.Validation;
 using FastEndpoints;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Components;
@@ -17,12 +11,13 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<CreateComponentEndpoint> _logger;
 
-
-    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
+    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, ILogger<CreateComponentEndpoint> logger)
     {
         _userManager = userManager;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public override void Configure()
@@ -56,20 +51,5 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest>
         }
 
         await _unitOfWork.Components.AddAsync(component.ResultObject, ct);
-    }
-}
-
-public class CreateComponentRequest
-{
-    public string Name { get; set; } = "";
-    public string SourceCode { get; set; } = "";
-    public Language Language { get; set; }
-}
-
-public class CreateComponentRequestValidator : MudCompatibleAbstractValidator<CreateComponentRequest>
-{
-    public CreateComponentRequestValidator()
-    {
-        RuleFor(request => request.Name).MaximumLength(ComponentSource.MaxSourceLength);
     }
 }

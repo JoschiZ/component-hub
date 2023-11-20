@@ -1,7 +1,7 @@
 using ComponentHub.Shared.Components;
 using ComponentHub.Shared.DatabaseObjects;
 using ComponentHub.Shared.Results;
-
+using FluentValidation;
 using StronglyTypedIds;
 
 namespace ComponentHub.Shared.Features.Components;
@@ -31,6 +31,17 @@ public sealed class Component: Entity<ComponentId>
             Owner = owner,
             Name = name
         };
+    }
+    
+    public class Validator: AbstractValidator<Component>
+    {
+        public const int MaxNameLength = 24;
+        public const int MinNameLength = 4;
+        public Validator()
+        {
+            RuleFor(component => component.Name).MaximumLength(MaxNameLength).MinimumLength(MinNameLength);
+            RuleFor(component => component.Source).SetValidator(new ComponentSource.Validator());
+        }
     }
 }
 
