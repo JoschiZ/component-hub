@@ -1,9 +1,8 @@
-using ComponentHub.Shared.Components;
 using ComponentHub.Shared.Helper.Validation;
 using ComponentHub.Shared.Results;
 using FluentValidation;
 
-namespace ComponentHub.Shared.Features.Components;
+namespace ComponentHub.DB.Features.Components;
 
 public sealed record ComponentSource
 {

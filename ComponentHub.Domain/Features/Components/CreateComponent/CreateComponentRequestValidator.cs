@@ -1,4 +1,4 @@
-using ComponentHub.Shared.Features.Components;
+using ComponentHub.DB.Features.Components;
 using ComponentHub.Shared.Helper.Validation;
 using FluentValidation;
 

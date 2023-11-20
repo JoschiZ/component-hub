@@ -36,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ComponentHub\Shared\ComponentHub.Shared.csproj" />
+      <ProjectReference Include="..\ComponentHub.Domain\ComponentHub.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -45,10 +45,6 @@
       <AdditionalFiles Include="Components\Features\Auth\Pages\Register.razor" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Microsoft.AspNetCore.Authentication.Abstractions">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.0-rc.2.23480.2\Microsoft.AspNetCore.Authentication.Abstractions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+
 
 </Project>

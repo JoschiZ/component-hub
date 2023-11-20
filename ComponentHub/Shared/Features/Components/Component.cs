@@ -1,10 +1,10 @@
-using ComponentHub.Shared.Components;
-using ComponentHub.Shared.DatabaseObjects;
+using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB.Features.User;
 using ComponentHub.Shared.Results;
 using FluentValidation;
 using StronglyTypedIds;
 
-namespace ComponentHub.Shared.Features.Components;
+namespace ComponentHub.DB.Features.Components;
 
 public sealed class Component: Entity<ComponentId>
 {

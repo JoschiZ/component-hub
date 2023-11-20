@@ -1,6 +1,4 @@
-using StronglyTypedIds;
-
-namespace ComponentHub.Shared.DatabaseObjects;
+namespace ComponentHub.DB.BaseClasses;
 
 public abstract class Entity<TId> where TId: struct
 {

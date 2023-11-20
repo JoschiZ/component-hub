@@ -1,7 +1,7 @@
+using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB.Features.User;
 using ComponentHub.Shared;
 using ComponentHub.Shared.Auth;
-using ComponentHub.Shared.DatabaseObjects;
-using ComponentHub.Shared.Helper.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using OpenIddict.Abstractions;

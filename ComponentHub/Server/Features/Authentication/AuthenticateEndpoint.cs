@@ -1,7 +1,7 @@
 using System.Security.Claims;
+using ComponentHub.DB.Features.User;
 using ComponentHub.Shared.Api;
 using ComponentHub.Shared.Auth;
-using ComponentHub.Shared.DatabaseObjects;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;

@@ -1,4 +1,4 @@
-using ComponentHub.Shared.Components;
+using ComponentHub.DB.Features.Components;
 
 namespace ComponentHub.Server.Features.Components;
 

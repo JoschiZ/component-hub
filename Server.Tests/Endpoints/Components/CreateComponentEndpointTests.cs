@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Security.Claims;
+using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB.Features.Components;
+using ComponentHub.DB.Features.User;
 using ComponentHub.Server.Features.Components;
-using ComponentHub.Shared.Components;
-using ComponentHub.Shared.DatabaseObjects;
-using ComponentHub.Shared.Helper.Repositories;
 using FastEndpoints;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;

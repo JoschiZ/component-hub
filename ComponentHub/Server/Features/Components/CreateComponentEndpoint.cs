@@ -1,7 +1,7 @@
+using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB.Features.Components;
+using ComponentHub.DB.Features.User;
 using ComponentHub.Shared.Api;
-using ComponentHub.Shared.DatabaseObjects;
-using ComponentHub.Shared.Features.Components;
-using ComponentHub.Shared.Helper.Repositories;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 

@@ -31,7 +31,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ComponentHub\Server\ComponentHub.Server.csproj" />
-      <ProjectReference Include="..\ComponentHub\Shared\ComponentHub.Shared.csproj" />
     </ItemGroup>
 
 </Project>

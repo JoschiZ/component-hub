@@ -1,8 +1,8 @@
 using System.Reflection;
+using ComponentHub.DB.BaseClasses;
 using ComponentHub.Server.Auth;
 using ComponentHub.Server.Helper;
 using ComponentHub.Shared;
-using ComponentHub.Shared.Helper.Repositories;
 using FastEndpoints;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;

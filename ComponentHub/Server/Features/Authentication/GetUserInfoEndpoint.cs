@@ -1,6 +1,6 @@
+using ComponentHub.DB.Features.User;
 using ComponentHub.Shared.Api;
 using ComponentHub.Shared.Auth;
-using ComponentHub.Shared.DatabaseObjects;
 using ComponentHub.Shared.Results;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
