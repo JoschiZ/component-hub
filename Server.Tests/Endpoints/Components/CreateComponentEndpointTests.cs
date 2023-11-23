@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Security.Claims;
 using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB.Core;
 using ComponentHub.DB.Features.Components;
 using ComponentHub.DB.Features.User;
+using ComponentHub.Domain.Features.Components.CreateComponent;
 using ComponentHub.Server.Features.Components;
 using FastEndpoints;
 using FluentAssertions;
@@ -57,6 +59,20 @@ public sealed class CreateComponentEndpointTests
         // Assert
         Assert.False(validation.IsValid);
     }
+    
+    [Theory, Priority(2)]
+    [ClassData(typeof(ValidCreateComponentRequestData))]
+    public async Task Valid_Request(CreateComponentRequest request)
+    {
+        // Arrange
+        var validator = new CreateComponentRequestValidator();
+
+        // Act
+        var validation = await validator.ValidateAsync(request);
+        
+        // Assert
+        Assert.True(validation.IsValid);
+    }
 
     private sealed class InvalidCreateComponentRequestData: IEnumerable<object[]>
     {
@@ -88,6 +104,24 @@ public sealed class CreateComponentEndpointTests
                     Language = Language.JS,
                     SourceCode = " ",
                     Name = " "
+                }
+            };
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+    
+    private sealed class ValidCreateComponentRequestData : IEnumerable<object[]>
+    {
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            yield return new[]
+            {
+                new CreateComponentRequest()
+                {
+                    Language = Language.JS,
+                    SourceCode = "Some source code;",
+                    Name = "ComponentName"
                 }
             };
         }

@@ -1,13 +1,12 @@
 using System.Reflection;
-using ComponentHub.DB.BaseClasses;
+using ComponentHub.DB;
+using ComponentHub.DB.Core;
 using ComponentHub.Server.Auth;
 using ComponentHub.Server.Helper;
-using ComponentHub.Shared;
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // This loads configs that may be needed for later registrations so it needs to be first!
@@ -20,7 +19,8 @@ builder.Services.UseRepositories();
 builder.Services.AddFastEndpoints(options =>
 {
     options.IncludeAbstractValidators = true;
-});
+})
+    .SwaggerDocument();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Debug()
@@ -34,7 +34,7 @@ builder.Services.AddValidatorsFromAssemblies(new[]
     Assembly.GetAssembly(typeof(Program)),
     Assembly.GetAssembly(typeof(IUnitOfWork))
 }, ServiceLifetime.Singleton, includeInternalTypes: true);
-builder.Services.AddFluentValidationAutoValidation();
+
 
 
 var app = builder.Build();
@@ -62,11 +62,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints(config =>
 {
+    config.Errors.UseProblemDetails();
     config.Endpoints.Configurator = definition =>
     {
-
     };
-});
+})
+    .UseSwaggerGen();
 
 app.Run();
 

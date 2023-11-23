@@ -16,7 +16,7 @@ public sealed class Component: Entity<ComponentId>
 
     public required ApplicationUser Owner { get; init; }
 
-    public static ResultValidation<Component> TryCreate(ComponentId id, string source, Language language, ApplicationUser owner, string name)
+    public static ResultValidation<Component> TryCreate(string source, Language language, ApplicationUser owner, string name)
     {
         var compSource = ComponentSource.TryCreate(source, language);
 
@@ -25,7 +25,7 @@ public sealed class Component: Entity<ComponentId>
             return compSource.Error;    
         }
         
-        return new Component(id)
+        return new Component(ComponentId.New())
         {
             Source = compSource.ResultObject,
             Owner = owner,
