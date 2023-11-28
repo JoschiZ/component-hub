@@ -1,10 +1,13 @@
 using System.Reflection;
+using ComponentHub.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
 using ComponentHub.Client.Components.Features.Auth;
+using ComponentHub.Client.Components.Features.Components;
 using ComponentHub.Client.Components.Features.RedirectHelper;
-using ComponentHub.Shared.Api;
+using ComponentHub.Client.Core;
+using ComponentHub.Domain.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
@@ -17,13 +20,11 @@ builder.Services.AddMudServices();
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<RedirectHelper>();
-builder.Services.AddScoped(sp =>
-{
-    return new HttpClient()
-    {
-        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
-    };
-});
+
+
+builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>();
+builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
+builder.Services.AddScoped<ValidationDelegatingHandler>();
 
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
@@ -36,9 +37,9 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.BrowserConsole()
     .CreateLogger();
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+builder.Services.AddScoped<Test>();
 
-
-
+builder.Services.AddScoped<ComponentService>();
 
 builder.Services.AddScoped<AuthApiClient>();
 builder.Services.AddScoped<IdentityAuthenticationStateProvider>();

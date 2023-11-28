@@ -1,5 +1,7 @@
-using ComponentHub.Shared.Helper.Validation;
+using ComponentHub.Domain.Core.Validation;
 using FluentValidation;
+
+namespace ComponentHub.Domain.Features.Authentication;
 
 /// <summary>
 /// The request DTO to register a user.

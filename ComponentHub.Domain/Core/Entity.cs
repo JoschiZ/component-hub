@@ -1,4 +1,4 @@
-namespace ComponentHub.DB.BaseClasses;
+namespace ComponentHub.Domain.Core;
 
 public abstract class Entity<TId> where TId: struct
 {

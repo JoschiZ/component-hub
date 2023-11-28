@@ -1,4 +1,4 @@
-namespace ComponentHub.Shared.Helper;
+namespace ComponentHub.Domain.Core.Primitives;
 
 public sealed class LocalRedirect
 {

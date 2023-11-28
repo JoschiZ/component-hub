@@ -1,36 +1,53 @@
-using ComponentHub.DB.BaseClasses;
-using ComponentHub.DB.Features.User;
-using ComponentHub.Shared.Results;
+using System.Text.Json;
+using ComponentHub.Domain.Core;
+using ComponentHub.Domain.Core.Extensions;
+using ComponentHub.Domain.Core.Primitives.Results;
+using ComponentHub.Domain.Features.Users;
 using FluentValidation;
+using LZStringCSharp;
 using StronglyTypedIds;
 
-namespace ComponentHub.DB.Features.Components;
+namespace ComponentHub.Domain.Features.Components;
 
+/// <summary>
+/// The Database Entity representing a Warcraftlogs Component.
+/// </summary>
 public sealed class Component: Entity<ComponentId>
 {
+        
+    // TODO: Versioing
     private Component() { }
     private Component(ComponentId id): base(id) { }
 
-    public required string Name { get; init; }
-    public required ComponentSource Source { get; init; }
+    public string Name { get; private set; }
+    public ComponentSource Source { get; private set; }
 
     public required ApplicationUser Owner { get; init; }
+    
+    //TODO Validate Component before final creation!
+    public static ResultValidation<Component> TryCreate(string source, ApplicationUser owner, string name) => 
+        ComponentSource.TryCreate(source)
+            .Bind(componentSource => 
+                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name });
+    
 
-    public static ResultValidation<Component> TryCreate(string source, Language language, ApplicationUser owner, string name)
+    public static string EncodeExportString(ComponentSource source)
     {
-        var compSource = ComponentSource.TryCreate(source, language);
+        var jsonObject = JsonSerializer.Serialize(source);
+        return LZString.CompressToBase64(jsonObject);
+    }
 
-        if (compSource.IsError)
+    public static ResultError<ComponentSource> DecodeExportString(string encodedString)
+    {
+        var decodedJsonObject = LZString.DecompressFromBase64(encodedString);
+        if (decodedJsonObject is null)
         {
-            return compSource.Error;    
+            return Error.InvalidExportString;
         }
-        
-        return new Component(ComponentId.New())
-        {
-            Source = compSource.ResultObject,
-            Owner = owner,
-            Name = name
-        };
+
+        var sourceObject = JsonSerializer.Deserialize<ComponentSource>(decodedJsonObject);
+
+        return sourceObject is not null ? sourceObject : Error.InvalidExportString;
     }
     
     public class Validator: AbstractValidator<Component>
@@ -42,6 +59,38 @@ public sealed class Component: Entity<ComponentId>
             RuleFor(component => component.Name).MaximumLength(MaxNameLength).MinimumLength(MinNameLength);
             RuleFor(component => component.Source).SetValidator(new ComponentSource.Validator());
         }
+    }
+
+    public ResultValidation<Component> UpdateComponent(UpdateComponentRequest request)
+    {
+        var newSource = ComponentSource.TryCreate(request.SourceCode, request.Height, request.Width, request.WclComponentId);
+        if (newSource.IsError)
+        {
+            return newSource.Error;
+        }
+
+        var oldSource = Source;
+        if (newSource.ResultObject != Source)
+        {
+            Source = newSource.ResultObject;
+        }
+
+        var oldName = Name;
+        if (Name != request.Name)
+        {
+            Name = request.Name;
+        }
+        var validator = new Validator();
+        var validation = validator.Validate(this);
+        
+        if (!validation.IsValid)
+        {
+            Source = oldSource;
+            Name = oldName;
+            return validation.Errors;
+        }
+
+        return this;
     }
 }
 

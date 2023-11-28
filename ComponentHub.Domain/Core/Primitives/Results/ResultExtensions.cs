@@ -1,4 +1,4 @@
-namespace ComponentHub.Shared.Results;
+namespace ComponentHub.Domain.Core.Primitives.Results;
 
 public static class ResultExtensions
 {

@@ -1,3 +1,32 @@
 ﻿@page "/"
+@using ComponentHub.Client.Components.Features.Components
+@using ComponentHub.Domain.Api
+@using ComponentHub.Domain.Features.Components
+@inject HttpClient httpClient
+@inject ISnackbar _Snackbar
+@inject Test Test;
+@inject ComponentService componentService
+
 
 <MudText>SomeText</MudText>
+
+
+<MudButton OnClick="SendBadRequest">Submit Bad Request</MudButton>
+<MudButton OnClick="Test.ShowSnackbar">Open Snackbar</MudButton>
+<MudButton OnClick="SendValidRequest">Send Valid Request</MudButton>
+
+@code
+{
+    private async Task SendBadRequest()
+    {
+        await httpClient.PutAsJsonAsync(Endpoints.Components.Create, new CreateComponentRequest());
+    }
+
+    private async Task OpenBar() => _Snackbar.Add("Test", Severity.Error);
+
+    private async Task SendValidRequest()
+    {
+        componentService.CreateComponent(new CreateComponentRequest(){Name = "MyName", Language = Language.JS, SourceCode = "My Source SourceCode"});
+    }
+}
+

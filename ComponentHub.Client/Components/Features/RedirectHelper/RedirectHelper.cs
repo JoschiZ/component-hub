@@ -1,4 +1,4 @@
-using ComponentHub.Shared.Helper;
+using ComponentHub.Domain.Core.Primitives;
 using Microsoft.AspNetCore.Components;
 
 namespace ComponentHub.Client.Components.Features.RedirectHelper;

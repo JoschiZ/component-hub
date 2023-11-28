@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ComponentHub.Shared.Results;
+namespace ComponentHub.Domain.Core.Primitives.Results;
 
 public class ResultError<TResult>: Result<TResult, Error>
 {

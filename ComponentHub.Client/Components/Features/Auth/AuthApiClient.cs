@@ -1,9 +1,9 @@
 using System.Net.Http.Json;
 using ComponentHub.Client.Extensions;
-using ComponentHub.Shared.Api;
-using ComponentHub.Shared.Auth;
-using ComponentHub.Shared.Helper;
-using ComponentHub.Shared.Results;
+using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Core.Primitives;
+using ComponentHub.Domain.Core.Primitives.Results;
+using ComponentHub.Domain.Features.Authentication;
 using MudBlazor;
 
 namespace ComponentHub.Client.Components.Features.Auth;

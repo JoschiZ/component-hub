@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
-using ComponentHub.Domain.Features.Components.CreateComponent;
-using ComponentHub.Shared.Api;
+using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Features.Components;
 
 namespace ComponentHub.Client.Components.Features.Components;
 

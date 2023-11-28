@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
+using FluentValidation;
 
-namespace ComponentHub.Shared.Results;
+namespace ComponentHub.Domain.Core.Primitives.Results;
 
 /// <summary>
 /// Base result class with generic TResult and TError 
@@ -30,6 +30,30 @@ public class Result<TResult, TError>
     public static Result<TResult, TError> CreateSuccess(TResult result)
     {
         return new Result<TResult, TError>(true, result, default);
+    }
+
+    /// <summary>
+    /// Applies a action to the contained object
+    /// </summary>
+    /// <param name="action"></param>
+    /// <typeparam name="TReturn"></typeparam>
+    /// <returns></returns>
+    public Result<TReturn, TError> Bind<TReturn>(Func<TResult, TReturn> action)
+    {
+        return IsSuccess ? action(ResultObject) : Error;
+    }
+    
+    /// <summary>
+    /// Explicitly handles both the error and success state
+    /// </summary>
+    /// <param name="successPath"></param>
+    /// <param name="errorPath"></param>
+    /// <returns></returns>
+    public TResult Match(
+        Func<TResult, TResult> successPath,
+        Func<TError, TResult> errorPath)
+    {
+        return IsSuccess ? successPath(ResultObject) : errorPath(Error);
     }
 
     [MemberNotNullWhen(returnValue: true, nameof(ResultObject))]

@@ -1,4 +1,4 @@
-namespace ComponentHub.Shared.Auth;
+namespace ComponentHub.Domain.Features.Authentication;
 
 public sealed class UserInfo(string id)
 {

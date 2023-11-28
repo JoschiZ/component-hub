@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace ComponentHub.Shared.Helper.Validation;
+namespace ComponentHub.Domain.Core.Validation;
 
 public abstract class MudCompatibleAbstractValidator<T>: AbstractValidator<T>
 {

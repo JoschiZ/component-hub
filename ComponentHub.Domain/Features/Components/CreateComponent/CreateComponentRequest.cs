@@ -1,6 +1,4 @@
-using ComponentHub.DB.Features.Components;
-
-namespace ComponentHub.Domain.Features.Components.CreateComponent;
+namespace ComponentHub.Domain.Features.Components;
 
 public class CreateComponentRequest
 {

@@ -1,9 +1,16 @@
-using ComponentHub.DB.Features.Components;
+using ComponentHub.Domain.Features.Components;
 using Microsoft.AspNetCore.Identity;
+using StronglyTypedIds;
 
-namespace ComponentHub.DB.Features.User;
+namespace ComponentHub.Domain.Features.Users;
 
-public sealed class ApplicationUser: IdentityUser<Guid>
+public sealed class ApplicationUser: IdentityUser<UserId>
 { 
-    public ICollection<Component> Components { get; } = new List<Component>();
+    public IEnumerable<Component> Components { get; } = new List<Component>();
+}
+
+[StronglyTypedId]
+public partial struct UserId
+{
+    
 }

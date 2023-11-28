@@ -1,5 +1,6 @@
 @page "/Authentication/Register"
 @using Microsoft.AspNetCore.Authorization
+@using ComponentHub.Domain.Features.Authentication
 @inject IdentityAuthenticationStateProvider stateProvider
 @inject RegisterRequestValidator validator;
 @attribute [Authorize]

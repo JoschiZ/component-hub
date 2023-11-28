@@ -1,4 +1,4 @@
-namespace ComponentHub.DB.Features.Components;
+namespace ComponentHub.Domain.Features.Components;
 
 public enum Language
 {

@@ -1,15 +1,11 @@
 using System.Collections;
 using System.Security.Claims;
-using ComponentHub.DB.BaseClasses;
 using ComponentHub.DB.Core;
 using ComponentHub.DB.Features.Components;
-using ComponentHub.DB.Features.User;
-using ComponentHub.Domain.Features.Components.CreateComponent;
+using ComponentHub.Domain.Features.Components;
+using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Features.Components;
-using FastEndpoints;
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Server.Tests.MockingHelpers;
@@ -24,7 +20,7 @@ public sealed class CreateComponentEndpointTests
     private readonly IUnitOfWork _unitOfWorkMock;
     private readonly UserManager<ApplicationUser> _userManagerMock;
     private readonly ILogger<CreateComponentEndpoint> _logger;
-    private readonly Guid UserId = Guid.NewGuid();
+    private readonly UserId UserId = ComponentHub.Domain.Features.Users.UserId.New();
     private readonly ClaimsPrincipal _fakeIdentity;
     
     

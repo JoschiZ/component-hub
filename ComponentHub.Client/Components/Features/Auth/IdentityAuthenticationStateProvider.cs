@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using ComponentHub.Shared.Auth;
+using ComponentHub.Domain.Features.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ComponentHub.Client.Components.Features.Auth;

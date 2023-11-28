@@ -1,4 +1,4 @@
-namespace ComponentHub.Shared.Api;
+namespace ComponentHub.Domain.Api;
 
 public static class Endpoints
 {
@@ -17,6 +17,6 @@ public static class Endpoints
     {
         private const string ComponentsBasePath = BasePath + "components/";
         public const string Create = ComponentsBasePath + "create/";
-
+        public const string Update = ComponentsBasePath + "update/";
     }
 }

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using FluentValidation.Results;
 
-namespace ComponentHub.Shared.Results;
+namespace ComponentHub.Domain.Core.Primitives.Results;
 
 /// <summary>
 /// Convenience Shortcut for <see cref="Result{TResult, TError}"/> with a List{ValidationFailure} as error type
@@ -13,6 +13,12 @@ public sealed class ResultValidation<TResult>: Result<TResult, List<ValidationFa
     private ResultValidation(bool isSuccess, TResult? resultObject, List<ValidationFailure>? error) : base(isSuccess, resultObject, error)
     {
     }
+    
+    public new ResultValidation<TReturn> Bind<TReturn>(Func<TResult, TReturn> action)
+    {
+        return IsSuccess ? action(ResultObject) : Error;
+    }
+
 
     public new static ResultValidation<TResult> CreateError(List<ValidationFailure> validationResults)
     {
