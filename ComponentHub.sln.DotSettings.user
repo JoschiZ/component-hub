@@ -15,5 +15,6 @@
     &lt;TestId&gt;xUnit::7F5C8970-CEF8-4D49-9BD0-A999228C956D::net8.0::Server.Tests.Core.EquatableExtensionsTests.Should_Mutate_Unequal_Structs&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::7F5C8970-CEF8-4D49-9BD0-A999228C956D::net8.0::Server.Tests.Core.EquatableExtensionsTests.Should_Mutate_Unequal_IEquatable&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::7F5C8970-CEF8-4D49-9BD0-A999228C956D::net8.0::Server.Tests.Core.EquatableExtensionsTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::7F5C8970-CEF8-4D49-9BD0-A999228C956D::net8.0::Server.Tests.Features.Components.UpdateComponentTest.Should_Update_Component&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

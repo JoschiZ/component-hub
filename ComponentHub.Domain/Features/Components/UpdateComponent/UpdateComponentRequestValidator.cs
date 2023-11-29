@@ -9,7 +9,6 @@ public sealed class UpdateComponentRequestValidator: MudCompatibleAbstractValida
     {
         RuleFor(request => request.Name).MaximumLength(Component.Validator.MaxNameLength).MinimumLength(Component.Validator.MinNameLength).NotEmpty();
         RuleFor(request => request.SourceCode).MaximumLength(ComponentSource.Validator.MaxSourceLength).NotEmpty();
-        RuleFor(request => request.Language).NotNull();
         RuleFor(request => request.Width).InclusiveBetween(ComponentSource.Validator.MinSize, ComponentSource.Validator.MaxSize);
         RuleFor(request => request.Height).InclusiveBetween(ComponentSource.Validator.MinSize, ComponentSource.Validator.MaxSize);
     }   

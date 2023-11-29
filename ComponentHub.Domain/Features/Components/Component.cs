@@ -27,7 +27,8 @@ public sealed class Component: Entity<ComponentId>
     public required ApplicationUser Owner { get; init; }
     
     public static ResultValidation<Component> TryCreate(string source, ApplicationUser owner, string name) => 
-        ComponentSource.TryCreate(source)
+        ComponentSource
+            .TryCreate(source)
             .Bind(componentSource => 
                 new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name })
             .Validate(new Validator());
