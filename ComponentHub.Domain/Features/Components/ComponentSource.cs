@@ -53,6 +53,7 @@ public sealed record ComponentSource
         return newSourceObject;
     }
     
+    
     public sealed class Validator: MudCompatibleAbstractValidator<ComponentSource>
     {
         public const int MaxSourceLength = 2000;
@@ -90,7 +91,7 @@ public class SourceObject: IEquatable<SourceObject>
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((SourceObject)obj);
     }
 

@@ -2,7 +2,6 @@ using ComponentHub.DB.Core;
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 

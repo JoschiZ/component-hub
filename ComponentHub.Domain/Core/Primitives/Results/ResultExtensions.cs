@@ -1,9 +1,12 @@
+using FluentValidation;
+using FluentValidation.Results;
+
 namespace ComponentHub.Domain.Core.Primitives.Results;
 
 public static class ResultExtensions
 {
-    public static TResult MapResult<TResult, TError>(this Result<TResult, TError> result, Func<TError, TResult> failure)
+    public static ResultValidation<TResult> Validate<TResult>(this ResultValidation<TResult> result, IValidator<TResult> validator)
     {
-        return result.IsSuccess ? result.ResultObject : failure(result.Error);
+        return result.IsSuccess ? validator.Validate(result.ResultObject).Errors : [];
     }
 }

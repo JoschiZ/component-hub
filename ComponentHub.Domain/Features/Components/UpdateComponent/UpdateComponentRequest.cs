@@ -2,6 +2,12 @@ namespace ComponentHub.Domain.Features.Components;
 
 public sealed class UpdateComponentRequest
 {
+    public UpdateComponentRequest(ComponentId componentId)
+    {
+        ComponentId = componentId;
+    }
+
+    public ComponentId ComponentId { get; }
     public string Name { get; set; } = "";
     public string SourceCode { get; set; } = "";
     public Language Language { get; set; }

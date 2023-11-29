@@ -4,7 +4,9 @@ using ComponentHub.Domain.Core.Extensions;
 using ComponentHub.Domain.Core.Primitives.Results;
 using ComponentHub.Domain.Features.Users;
 using FluentValidation;
+using FluentValidation.Results;
 using LZStringCSharp;
+using OneOf;
 using StronglyTypedIds;
 
 namespace ComponentHub.Domain.Features.Components;
@@ -24,11 +26,11 @@ public sealed class Component: Entity<ComponentId>
 
     public required ApplicationUser Owner { get; init; }
     
-    //TODO Validate Component before final creation!
     public static ResultValidation<Component> TryCreate(string source, ApplicationUser owner, string name) => 
         ComponentSource.TryCreate(source)
             .Bind(componentSource => 
-                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name });
+                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name })
+            .Validate(new Validator());
     
 
     public static string EncodeExportString(ComponentSource source)
@@ -61,7 +63,7 @@ public sealed class Component: Entity<ComponentId>
         }
     }
 
-    public ResultValidation<Component> UpdateComponent(UpdateComponentRequest request)
+    public OneOf<Component, Error, List<ValidationFailure>> UpdateComponent(UpdateComponentRequest request)
     {
         var newSource = ComponentSource.TryCreate(request.SourceCode, request.Height, request.Width, request.WclComponentId);
         if (newSource.IsError)

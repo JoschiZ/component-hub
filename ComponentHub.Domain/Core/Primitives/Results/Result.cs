@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using FluentValidation;
 
 namespace ComponentHub.Domain.Core.Primitives.Results;
 
@@ -18,6 +17,8 @@ public class Result<TResult, TError>
         ResultObject = resultObject;
         Error = error;
     }
+    
+
 
     public static Result<TResult, TError> CreateError(TError error)
     {
@@ -49,12 +50,14 @@ public class Result<TResult, TError>
     /// <param name="successPath"></param>
     /// <param name="errorPath"></param>
     /// <returns></returns>
-    public TResult Match(
-        Func<TResult, TResult> successPath,
-        Func<TError, TResult> errorPath)
+    public TReturn Match<TReturn>(
+        Func<TResult, TReturn> successPath,
+        Func<TError, TReturn> errorPath)
     {
         return IsSuccess ? successPath(ResultObject) : errorPath(Error);
     }
+
+    public TReturn Match<TReturn>(TReturn success, TReturn error) => IsSuccess ? success : error;
 
     [MemberNotNullWhen(returnValue: true, nameof(ResultObject))]
     [MemberNotNullWhen(returnValue: false, nameof(Error))]
