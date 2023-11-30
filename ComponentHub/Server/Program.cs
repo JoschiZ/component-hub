@@ -58,8 +58,10 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAntiforgery();
 app.MapFallbackToFile("index.html");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseFastEndpoints(config =>
 {
     config.Errors.UseProblemDetails();

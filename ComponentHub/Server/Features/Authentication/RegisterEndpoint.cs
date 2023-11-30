@@ -26,6 +26,7 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
     public override void Configure()
     {
         Post(Endpoints.Auth.Register);
+        AllowAnonymous();
     }
 
     public override async Task<IResult> ExecuteAsync(RegisterRequest req, CancellationToken ct)
@@ -45,21 +46,23 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
 
 
         var user = Activator.CreateInstance<ApplicationUser>();
+        user.Id = UserId.New();
         await _userStore.SetUserNameAsync(user, req.UserName, CancellationToken.None);
 
         var createUserResult = await _userManager.CreateAsync(user);
         
         if (createUserResult.Succeeded)
         {
+            // TODO Handle Login Errors, especially "Login Already Associated"
             var addLoginResult = await _userManager.AddLoginAsync(user, externalLoginInfo);
             if (addLoginResult.Succeeded)
             {
-                User.SetClaim(ClaimTypes.Name, user.UserName).SetClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
+                //User.SetClaim(ClaimTypes.Name, user.UserName).SetClaim(ClaimTypes.NameIdentifier, user.Id.ToString());
                 await _signInManager.SignInAsync(user, isPersistent: false, externalLoginInfo.LoginProvider);
             }
         }
 
-        return Results.SignIn(User, new AuthenticationProperties(){RedirectUri = "/"});
+        return TypedResults.Redirect("/");
     }
 }
 

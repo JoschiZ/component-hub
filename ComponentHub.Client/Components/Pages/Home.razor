@@ -1,12 +1,14 @@
 ﻿@page "/"
 @using ComponentHub.Client.Components.Features.Components
 @using ComponentHub.Domain.Api
+@using ComponentHub.Domain.Core
+@using ComponentHub.Domain.Core.Primitives
 @using ComponentHub.Domain.Features.Components
-@inject HttpClient httpClient
-@inject ISnackbar _Snackbar
+@using System.Text.Json
+@inject ISnackbar Snackbar
 @inject Test Test;
-@inject ComponentService componentService
-
+@inject ComponentService ComponentService
+@inject HttpClient HttpClient
 
 <MudText>SomeText</MudText>
 
@@ -14,19 +16,26 @@
 <MudButton OnClick="SendBadRequest">Submit Bad Request</MudButton>
 <MudButton OnClick="Test.ShowSnackbar">Open Snackbar</MudButton>
 <MudButton OnClick="SendValidRequest">Send Valid Request</MudButton>
+<MudButton OnClick="RedirectMe">Send Redirect Request</MudButton>
+
 
 @code
 {
     private async Task SendBadRequest()
     {
-        await httpClient.PutAsJsonAsync(Endpoints.Components.Create, new CreateComponentRequest());
+        await HttpClient.PutAsJsonAsync(Endpoints.Components.Create, new CreateComponentRequest());
     }
 
-    private async Task OpenBar() => _Snackbar.Add("Test", Severity.Error);
+    private async Task OpenBar() => Snackbar.Add("Test", Severity.Error);
 
     private async Task SendValidRequest()
     {
-        componentService.CreateComponent(new CreateComponentRequest(){Name = "MyName", Language = Language.JS, SourceCode = "My Source SourceCode"});
+        ComponentService.CreateComponent(new CreateComponentRequest(){Name = "MyName", Language = Language.JS, SourceCode = "My Source SourceCode"});
+    }
+
+    private async Task RedirectMe()
+    {
+        await HttpClient.PostAsJsonAsync<RedirectMeRequest>(Endpoints.Testing.RedirectMe, new RedirectMeRequest("SomePath"));
     }
 }
 

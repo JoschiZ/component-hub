@@ -1,6 +1,5 @@
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Features.Users;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,16 +16,18 @@ internal sealed class ChallengeEndpoint: Endpoint<ChallengeRequest, ChallengeHtt
 
     public override void Configure()
     {
-        Post(Endpoints.Auth.Challenge);
+        Post(Endpoints.Auth.ExternalLogin);
         AllowAnonymous();
         AllowFormData(urlEncoded: true);
+        
     }
 
     public override Task<ChallengeHttpResult> ExecuteAsync(ChallengeRequest req, CancellationToken ct)
     {
+        // TODO add redirect URL handling how is that exactly passed to the callbacks?
         var providerProperties = _signInManager.ConfigureExternalAuthenticationProperties(
             req.Provider,
-            null);
+            "external-login-callback");
         return Task.FromResult(TypedResults.Challenge(properties: providerProperties, authenticationSchemes: new[] {req.Provider}));
     }
 }

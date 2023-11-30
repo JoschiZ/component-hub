@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Authentication;
 
-internal sealed class LogoutEndpoint: EndpointWithoutRequest<LocalRedirect>
+internal sealed class LogoutEndpoint: EndpointWithoutRequest<BlazorFriendlyRedirectResult>
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
 
@@ -20,10 +20,10 @@ internal sealed class LogoutEndpoint: EndpointWithoutRequest<LocalRedirect>
         Post(Endpoints.Auth.Logout);
     }
 
-    public override async Task<LocalRedirect> ExecuteAsync(CancellationToken ct)
+    public override async Task<BlazorFriendlyRedirectResult> ExecuteAsync(CancellationToken ct)
     {
         await _signInManager.SignOutAsync();
-        return new LocalRedirect()
+        return new BlazorFriendlyRedirectResult()
         {
             Route = "/"
         };

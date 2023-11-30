@@ -5,9 +5,9 @@ namespace ComponentHub.Client.Components.Features.RedirectHelper;
 
 internal sealed class RedirectHelper(NavigationManager navigationManager)
 {
-    public void Redirect(LocalRedirect redirect)
+    public void Redirect(BlazorFriendlyRedirectResult redirectResult)
     {
-        navigationManager.NavigateTo(redirect.Route);
+        navigationManager.NavigateTo(redirectResult.Route);
     }
 
 

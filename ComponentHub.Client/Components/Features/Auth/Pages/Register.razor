@@ -1,14 +1,13 @@
 @page "/Authentication/Register"
-@using Microsoft.AspNetCore.Authorization
 @using ComponentHub.Domain.Features.Authentication
-@inject IdentityAuthenticationStateProvider stateProvider
-@inject RegisterRequestValidator validator;
-@attribute [Authorize]
+@inject IdentityAuthenticationStateProvider StateProvider
+@inject RegisterRequestValidator Validator;
+
 
 <PageTitle>Register</PageTitle>
 
 <MudCard>
-    <MudForm Model="formModel" Validation="validator.ValidateValue">
+    <MudForm Model="formModel" Validation="Validator.ValidateValue">
         <MudCardHeader>
             <MudText Typo="Typo.h1">Register your account</MudText>
         </MudCardHeader>
@@ -32,7 +31,7 @@
 
     private Task OnValidSubmit()
     {
-        return stateProvider.Register(formModel);
+        return StateProvider.Register(formModel);
     }
 
     protected override void OnParametersSet()

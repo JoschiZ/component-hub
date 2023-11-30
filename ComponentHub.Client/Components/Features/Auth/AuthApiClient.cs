@@ -16,9 +16,9 @@ internal sealed class AuthApiClient(HttpClient httpClient, ISnackbar snackbar)
         result.EnsureSuccessStatusCode();
     }
 
-    public async Task<LocalRedirect> Logout()
+    public async Task<BlazorFriendlyRedirectResult> Logout()
     {
-        var result = await httpClient.PostWithJsonReturn<LocalRedirect>(Endpoints.Auth.Logout, null);
+        var result = await httpClient.PostWithJsonReturn<BlazorFriendlyRedirectResult>(Endpoints.Auth.Logout, null);
         return result;
     }
 

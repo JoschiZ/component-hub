@@ -17,8 +17,8 @@ internal sealed class ValidationDelegatingHandler: DelegatingHandler
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var response = await base.SendAsync(request, cancellationToken);
+
         if (response.StatusCode != HttpStatusCode.BadRequest) return response;
-        
         try
         {
             var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken: cancellationToken) ?? new ProblemDetails();

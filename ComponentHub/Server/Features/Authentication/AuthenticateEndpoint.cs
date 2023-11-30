@@ -4,8 +4,10 @@ using ComponentHub.Domain.Features.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
+using OpenIddict.Client.AspNetCore;
 
 namespace ComponentHub.Server.Features.Authentication;
 
@@ -28,7 +30,40 @@ internal sealed class AuthenticateEndpoint: EndpointWithoutRequest<IResult>
 
     public override Task<IResult> ExecuteAsync(CancellationToken ct)
     {
-        return LoginUser("BattleNet");
+        return BattleNetCallback();
+    }
+
+    public async Task<IResult> BattleNetCallback()
+    {
+        var result = await HttpContext.AuthenticateAsync(OpenIddictClientAspNetCoreDefaults.AuthenticationScheme);
+        
+        if (result.Principal is not ClaimsPrincipal { Identity.IsAuthenticated: true })
+        {
+            throw new InvalidOperationException("The external authorization data cannot be used for authentication.");
+        }
+        
+        // Build an identity based on the external claims and that will be used to create the authentication cookie.
+        var identity = new ClaimsIdentity(authenticationType: "ExternalLogin");
+        
+        
+        identity
+            .SetClaim(ClaimTypes.Name, result.Principal.GetClaim("battle_tag"))
+            .SetClaim(ClaimTypes.NameIdentifier, result.Principal.GetClaim(ClaimTypes.NameIdentifier));
+        
+        
+        // Preserve the registration details to be able to resolve them later.
+        identity
+            .SetClaim(OpenIddictConstants.Claims.Private.RegistrationId, result.Principal!.GetClaim(OpenIddictConstants.Claims.Private.RegistrationId))
+            .SetClaim(OpenIddictConstants.Claims.Private.ProviderName, result.Principal!.GetClaim(OpenIddictConstants.Claims.Private.ProviderName));
+        
+        
+        // Build the authentication properties based on the properties that were added when the challenge was triggered.
+        var properties = new AuthenticationProperties(result.Properties?.Items ?? new Dictionary<string, string?>())
+        {
+            RedirectUri = result.Properties?.RedirectUri ?? "/"
+        };
+        
+        return TypedResults.SignIn(new ClaimsPrincipal(identity), properties);
     }
 
     private async Task<IResult> LoginUser(string provider)

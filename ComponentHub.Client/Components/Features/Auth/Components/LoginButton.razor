@@ -2,7 +2,7 @@
 @using ComponentHub.Domain.Api
 @inject IdentityAuthenticationStateProvider stateProvider
 
-<form formname="login-form" method="post" action="@Endpoints.Auth.Challenge">
+<form formname="login-form" method="post" action="@Endpoints.Auth.ExternalLogin">
     <input type="hidden" name="Provider" value="BattleNet"/>
     <MudButton Variant="Variant.Filled" Color="Color.Success" ButtonType="ButtonType.Submit">Login with BattleNet</MudButton>
 </form>
