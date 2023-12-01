@@ -1,4 +1,5 @@
 using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,8 +25,9 @@ internal sealed class ExternalLoginCallbackEndpoint: Endpoint<ExternalLoginCallb
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info is null)
         {
-            // TODO Replace with a graceful redirect?
-            return TypedResults.Redirect("/Authentication/Login");
+            // Graceful redirect with the BlazorFriendlyRedirect is not possible, because this endpoint is navigated
+            // to from the Authentication Authority not out own HttpHandler and this it is catched in the delegating handler
+            return TypedResults.Redirect(("/Authentication/Login"));
         }
 
         var result =

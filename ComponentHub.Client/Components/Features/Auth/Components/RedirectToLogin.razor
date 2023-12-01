@@ -1,0 +1,14 @@
+@using ComponentHub.Client.Core
+@inject RedirectHelper RedirectHelper
+@inject NavigationManager NavigationManager
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        RedirectHelper.Redirect("/Authentication/Login", new Dictionary<string, string?>
+        {
+            {"returnUrl", NavigationManager.ToBaseRelativePath(NavigationManager.Uri)}
+        });
+    }
+}

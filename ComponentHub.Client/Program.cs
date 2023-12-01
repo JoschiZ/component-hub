@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
 using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Components.Features.Components;
-using ComponentHub.Client.Components.Features.RedirectHelper;
 using ComponentHub.Client.Core;
 using ComponentHub.Domain.Api;
 using FluentValidation;

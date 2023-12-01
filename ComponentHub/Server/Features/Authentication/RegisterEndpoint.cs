@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Authentication;
 using ComponentHub.Domain.Features.Users;
 using FastEndpoints;
@@ -62,7 +63,7 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
             }
         }
 
-        return TypedResults.Redirect("/");
+        return new BlazorFriendlyRedirectResult("/");
     }
 }
 

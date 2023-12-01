@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ComponentHub.Client.Core;
 using ComponentHub.Domain.Features.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -6,7 +7,7 @@ namespace ComponentHub.Client.Components.Features.Auth;
 
 internal sealed class IdentityAuthenticationStateProvider(
     AuthApiClient authClient,
-    RedirectHelper.RedirectHelper redirectHelper
+    RedirectHelper redirectHelper
     ): AuthenticationStateProvider
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -35,9 +36,8 @@ internal sealed class IdentityAuthenticationStateProvider(
     
     public async Task Logout()
     {
-        var result = await authClient.Logout();
+        await authClient.Logout();
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-        redirectHelper.Redirect(result);
     }
 
     public void NotifyAuthenticationStateChanged()

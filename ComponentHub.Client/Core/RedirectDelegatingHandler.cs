@@ -1,5 +1,4 @@
 using System.Net.Http.Json;
-using ComponentHub.Client.Components.Features.RedirectHelper;
 using ComponentHub.Domain.Core.Primitives;
 
 namespace ComponentHub.Client.Core;

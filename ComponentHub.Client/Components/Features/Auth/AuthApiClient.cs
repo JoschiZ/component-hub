@@ -16,26 +16,23 @@ internal sealed class AuthApiClient(HttpClient httpClient, ISnackbar snackbar)
         result.EnsureSuccessStatusCode();
     }
 
-    public async Task<BlazorFriendlyRedirectResult> Logout()
+    public Task Logout()
     {
-        var result = await httpClient.PostWithJsonReturn<BlazorFriendlyRedirectResult>(Endpoints.Auth.Logout, null);
-        return result;
+        return httpClient.PostAsync(Endpoints.Auth.Logout, null);
+        
     }
 
     public async Task<UserInfo> GetUserInfo()
     {
-        var result = await httpClient.GetFromJsonAsync<ResultError<UserInfo>>(Endpoints.Auth.GetUserInfo);
-        if (result is null)
+        var result = await httpClient.GetAsync(Endpoints.Auth.GetUserInfo);
+
+        if (!result.IsSuccessStatusCode)
         {
             return UserInfo.Empty;
         }
-        
-        if (result.IsSuccess)
-        {
-            return result.ResultObject;
-        }
 
-        snackbar.Add("Failed to authenticate: " + result.Error.ErrorCode, Severity.Error);
-        return UserInfo.Empty;
+        var userInfo = await result.Content.ReadFromJsonAsync<UserInfo>();
+        
+        return userInfo ?? UserInfo.Empty;
     }
 }

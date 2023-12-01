@@ -24,13 +24,18 @@ internal sealed class ChallengeEndpoint: Endpoint<ChallengeRequest, ChallengeHtt
 
     public override Task<ChallengeHttpResult> ExecuteAsync(ChallengeRequest req, CancellationToken ct)
     {
-        // TODO add redirect URL handling how is that exactly passed to the callbacks?
+        var returnUrl = req.ReturnUrl;
+        if (string.IsNullOrEmpty(req.ReturnUrl))
+        {
+            returnUrl = "/";
+        }
+
         var providerProperties = _signInManager.ConfigureExternalAuthenticationProperties(
             req.Provider,
-            "external-login-callback");
+            "external-login-callback"+ $"?ReturnUrl={returnUrl}");
         return Task.FromResult(TypedResults.Challenge(properties: providerProperties, authenticationSchemes: new[] {req.Provider}));
     }
 }
 
-internal record ChallengeRequest(string Provider);
+internal record ChallengeRequest(string Provider, string ReturnUrl);
 
