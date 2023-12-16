@@ -10,14 +10,14 @@ namespace ComponentHub.Server.Features.Components;
 internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Ok, ProblemDetails, UnauthorizedHttpResult>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreateComponentEndpoint> _logger;
+    private readonly IUnitOfWorkFactory _workFactory;
 
-    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork, ILogger<CreateComponentEndpoint> logger)
+    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, ILogger<CreateComponentEndpoint> logger, IUnitOfWorkFactory workFactory)
     {
         _userManager = userManager;
-        _unitOfWork = unitOfWork;
         _logger = logger;
+        _workFactory = workFactory;
     }
 
     public override void Configure()
@@ -32,6 +32,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
         {
             return TypedResults.Unauthorized();
         }
+
         var user = await _userManager.FindByIdAsync(userId);
 
         if (user is null)
@@ -47,8 +48,9 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return new ProblemDetails(ValidationFailures);
         }
 
-        await _unitOfWork.Components.AddAsync(component.ResultObject, ct);
-        await _unitOfWork.CompletedAsync(ct);
+        var unitOfWork = _workFactory.GetUnitOfWork();
+        await unitOfWork.Components.AddAsync(component.ResultObject, ct);
+        await unitOfWork.CompletedAsync(ct);
         return TypedResults.Ok();
     }
 }

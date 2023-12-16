@@ -1,0 +1,11 @@
+@page "/{userName}/components/{componentName}"
+<h3>ComponentPage</h3>
+
+
+@code {
+    [Parameter]
+    public string? ComponentName { get; set; }
+    
+    [Parameter]
+    public string? UserName { get; set; }
+}

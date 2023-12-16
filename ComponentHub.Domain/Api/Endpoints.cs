@@ -19,6 +19,7 @@ public static class Endpoints
         private const string ComponentsBasePath = BasePath + "components/";
         public const string Create = ComponentsBasePath + "create/";
         public const string Update = ComponentsBasePath + "update/";
+        public const string Delete = ComponentsBasePath + "delete/";
     }
     
     

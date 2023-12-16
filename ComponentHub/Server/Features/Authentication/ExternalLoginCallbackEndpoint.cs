@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Authentication;
 
+[HideFromDocs]
 internal sealed class ExternalLoginCallbackEndpoint: Endpoint<ExternalLoginCallbackRequest, IResult>
 {
     private readonly SignInManager<ApplicationUser> _signInManager;

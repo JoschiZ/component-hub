@@ -12,9 +12,9 @@ internal sealed class RedirectMeEndpoint : Endpoint<RedirectMeRequest, BlazorFri
         AllowAnonymous();
     }
 
-    public async override Task<BlazorFriendlyRedirectResult> ExecuteAsync(RedirectMeRequest req, CancellationToken ct)
+    public override Task<BlazorFriendlyRedirectResult> ExecuteAsync(RedirectMeRequest req, CancellationToken ct)
     {
-        return new BlazorFriendlyRedirectResult(){Route = req.Path};
+        return Task.FromResult(new BlazorFriendlyRedirectResult{Route = req.Path});
     }
 }
 

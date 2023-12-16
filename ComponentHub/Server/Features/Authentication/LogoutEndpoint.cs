@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Authentication;
 
+
 internal sealed class LogoutEndpoint: EndpointWithoutRequest<BlazorFriendlyRedirectResult>
 {
     private readonly SignInManager<ApplicationUser> _signInManager;

@@ -16,9 +16,6 @@ namespace ComponentHub.Domain.Features.Components;
 /// </summary>
 public sealed class Component: Entity<ComponentId>
 {
-        
-    // TODO: Versioing
-    private Component() { }
     private Component(ComponentId id): base(id) { }
 
     public string Name { get; private set; }
@@ -30,7 +27,7 @@ public sealed class Component: Entity<ComponentId>
         ComponentSource
             .TryCreate(source)
             .Bind(componentSource => 
-                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name })
+                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name})
             .Validate(new Validator());
     
 

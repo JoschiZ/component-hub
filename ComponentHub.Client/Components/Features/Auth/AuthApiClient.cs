@@ -13,7 +13,11 @@ internal sealed class AuthApiClient(HttpClient httpClient, ISnackbar snackbar)
     public async Task Register(RegisterRequest options)
     {
         var result = await httpClient.PostAsJsonAsync(Endpoints.Auth.Register, options);
-        result.EnsureSuccessStatusCode();
+        if ((int)result.StatusCode != 310)
+        {
+            result.EnsureSuccessStatusCode();    
+        }
+        
     }
 
     public Task Logout()

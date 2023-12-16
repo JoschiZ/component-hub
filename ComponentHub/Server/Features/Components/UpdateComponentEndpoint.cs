@@ -11,12 +11,13 @@ internal sealed class
     UpdateComponentEndpoint : Endpoint<UpdateComponentRequest, Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>
 {
 
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
     private readonly UserManager<ApplicationUser> _userManager;
     
-    public UpdateComponentEndpoint(IUnitOfWork unitOfWork)
+    public UpdateComponentEndpoint(IUnitOfWorkFactory unitOfWorkFactory, UserManager<ApplicationUser> userManager)
     {
-        _unitOfWork = unitOfWork;
+        _unitOfWorkFactory = unitOfWorkFactory;
+        _userManager = userManager;
     }
 
     public override void Configure()
@@ -33,8 +34,8 @@ internal sealed class
             return TypedResults.Unauthorized();
         }
 
-
-        return (await _unitOfWork.Components.UpdateComponent(new UserId(new Guid(userId)), req, ct))
+        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
+        return (await unitOfWork.Components.UpdateComponent(new UserId(new Guid(userId)), req, ct))
             .Match<Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>(
                 component => TypedResults.Ok(),
                 error => TypedResults.BadRequest(error.ErrorCode),
