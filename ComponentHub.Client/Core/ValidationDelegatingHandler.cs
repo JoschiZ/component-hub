@@ -1,17 +1,17 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
-using MudBlazor;
+using ComponentHub.Client.Components.Helper;
 
 namespace ComponentHub.Client.Core;
 
 internal sealed class ValidationDelegatingHandler: DelegatingHandler
 {
-    private readonly ISnackbar _snackbar;
+    private readonly SnackbarHelperService _helperServiceHelper;
     
-    public ValidationDelegatingHandler(ISnackbar snackbar)
+    public ValidationDelegatingHandler(SnackbarHelperService helperService)
     {
-        _snackbar = snackbar;
+        _helperServiceHelper = helperService;
     }
     
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ internal sealed class ValidationDelegatingHandler: DelegatingHandler
                 sb.Append('\n');
             }
 
-            _snackbar.Add("sb.ToString()", Severity.Error);
+            _helperServiceHelper.AddMessage(new SnackbarMessage(sb.ToString()));
         }
         catch (Exception e)
         {

@@ -23,7 +23,7 @@ builder.Services.AddScoped<RedirectHelper>();
 
 builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>().AddHttpMessageHandler<RedirectDelegatingHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
-builder.Services.AddScoped<ValidationDelegatingHandler>();
+builder.Services.AddSingleton<ValidationDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
 
 

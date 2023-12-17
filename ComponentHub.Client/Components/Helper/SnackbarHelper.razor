@@ -1,0 +1,26 @@
+@using System.ComponentModel
+@inject SnackbarHelperService Helper
+@inject ISnackbar Snackbar
+@implements IDisposable
+
+@code {
+    // This is a dummy component to display SnackBar messages from places other then blazor components / pages.
+    
+    protected override void OnInitialized()
+    {
+        Helper.OnChange += ShowMessages;
+    }
+    
+    private void ShowMessages()
+    {
+        while (Helper.GetMessage(out var message))
+        {
+            Snackbar.Add(message.Message, message.Severity, message.Configure, message.Key);
+        }
+    }
+    
+    public void Dispose()
+    {
+        Helper.OnChange -= ShowMessages;
+    }
+}
