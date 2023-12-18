@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
 using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Components.Features.Components;
+using ComponentHub.Client.Components.Helper;
 using ComponentHub.Client.Core;
 using ComponentHub.Domain.Api;
 using FluentValidation;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<RedirectHelper>();
 
 builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>().AddHttpMessageHandler<RedirectDelegatingHandler>();
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
+builder.Services.AddSingleton<SnackbarHelperService>();
 builder.Services.AddSingleton<ValidationDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
 

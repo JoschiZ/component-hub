@@ -22,12 +22,13 @@ public sealed class Component: Entity<ComponentId>
     public ComponentSource Source { get; private set; }
 
     public required ApplicationUser Owner { get; init; }
+    public required string OwnerName { get; init; }
     
     public static ResultValidation<Component> TryCreate(string source, ApplicationUser owner, string name) => 
         ComponentSource
             .TryCreate(source)
             .Bind(componentSource => 
-                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name})
+                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name, OwnerName = owner.UserName!})
             .Validate(new Validator());
     
 

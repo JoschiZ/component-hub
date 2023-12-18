@@ -1,6 +1,13 @@
 @page "/{userName}/components/{componentName}"
+@using ComponentHub.Domain.Features.Components
+@inject ComponentService ComponentService
 <h3>ComponentPage</h3>
 
+
+@UserName
+@ComponentName
+
+@_componentDto.ToString()   
 
 @code {
     [Parameter]
@@ -8,4 +15,17 @@
     
     [Parameter]
     public string? UserName { get; set; }
+
+    private ComponentDto _componentDto;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (UserName is null || ComponentName is null)
+        {
+            throw new ArgumentNullException();
+        }
+        
+        _componentDto = await ComponentService.GetComponent(new GetComponentRequest(UserName, ComponentName));
+    }
+
 }

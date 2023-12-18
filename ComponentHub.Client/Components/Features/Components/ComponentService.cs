@@ -16,6 +16,10 @@ internal sealed class ComponentService
     public async void CreateComponent(CreateComponentRequest request)
     {
         var response = await _httpClient.PutAsJsonAsync(Endpoints.Components.Create, request);
-        
+    }
+
+    public Task<ComponentDto> GetComponent(GetComponentRequest request)
+    {
+        return _httpClient.GetFromJsonAsync<ComponentDto>(Endpoints.Components.Get + request.UserName + "/" + request.ComponentName);
     }
 }

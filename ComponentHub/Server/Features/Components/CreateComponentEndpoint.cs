@@ -33,8 +33,11 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return TypedResults.Unauthorized();
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var unitOfWork = _workFactory.GetUnitOfWork();
+        //var user = await _userManager.FindByIdAsync(userId);
 
+        var user = await unitOfWork.UserSet.FindAsync(new object?[] { new UserId(new Guid(userId)) }, cancellationToken: ct);
+        
         if (user is null)
         {
             return TypedResults.Unauthorized();
@@ -48,7 +51,6 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return new ProblemDetails(ValidationFailures);
         }
 
-        var unitOfWork = _workFactory.GetUnitOfWork();
         await unitOfWork.Components.AddAsync(component.ResultObject, ct);
         await unitOfWork.CompletedAsync(ct);
         return TypedResults.Ok();

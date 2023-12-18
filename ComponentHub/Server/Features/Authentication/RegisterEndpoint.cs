@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ComponentHub.DB.Core;
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Authentication;
@@ -6,6 +7,7 @@ using ComponentHub.Domain.Features.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
 
 
@@ -16,12 +18,14 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IUserStore<ApplicationUser> _userStore;
+    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
-    public RegisterEndpoint(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserStore<ApplicationUser> userStore)
+    public RegisterEndpoint(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserStore<ApplicationUser> userStore, IUnitOfWorkFactory unitOfWorkFactory)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _userStore = userStore;
+        _unitOfWorkFactory = unitOfWorkFactory;
     }
 
     public override void Configure()
@@ -32,19 +36,22 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
 
     public override async Task<IResult> ExecuteAsync(RegisterRequest req, CancellationToken ct)
     {
-        if (Guid.TryParse(_userManager.GetUserId(User), out var _) && await _userManager.GetUserAsync(User) is not null)
+        if (Guid.TryParse(_userManager.GetUserId(User), out var userId))
         {
-            return Results.Conflict("You are already registered");
+            return Results.Conflict("You seem to be already registered");
         }
         
-        
+        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
+        if (await unitOfWork.UserSet.AnyAsync(applicationUser => req.UserName == applicationUser.UserName, cancellationToken: ct))
+        {
+            return Results.Conflict("This username is already taken");
+        }
+
         var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
         if (externalLoginInfo is null)
         {
             return Results.Problem("Could not load the external login info");
         }
-        
-
 
         var user = Activator.CreateInstance<ApplicationUser>();
         user.Id = UserId.New();
