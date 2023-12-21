@@ -14,6 +14,11 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.3.2" />
+        <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.1.1" />
+        <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.1.2" />
+        <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.1.1" />
+        <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.1.1" />
         <PackageReference Include="MudBlazor" Version="6.11.1" />
         <PackageReference Include="Serilog" Version="3.1.2-dev-02097" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.1-dev-10370" />
@@ -25,6 +30,7 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+      <Content Remove="Client\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -44,6 +50,18 @@
       <AdditionalFiles Include="Components\Features\Auth\Components\LoginButton.razor" />
       <AdditionalFiles Include="Components\Features\Auth\Components\LogoutButton.razor" />
       <AdditionalFiles Include="Components\Features\Auth\Pages\Register.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Client\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Client\**" />
     </ItemGroup>
 
 

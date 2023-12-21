@@ -1,42 +1,31 @@
-using System.Net.Http.Json;
-using ComponentHub.Client.Extensions;
-using ComponentHub.Domain.Api;
-using ComponentHub.Domain.Core.Primitives;
-using ComponentHub.Domain.Core.Primitives.Results;
-using ComponentHub.Domain.Features.Authentication;
+
+using ComponentHub.ApiClients.Models;
+using ComponentHub.Client.ApiClients;
 using MudBlazor;
 
 namespace ComponentHub.Client.Components.Features.Auth;
 
-internal sealed class AuthApiClient(HttpClient httpClient, ISnackbar snackbar)
+internal sealed class AuthApiClient(ComponentHubClient client, ISnackbar snackbar)
 {
-    public async Task Register(RegisterRequest options)
+    public static UserInfo Empty => new UserInfo(){Id = Guid.Empty.ToString()};
+    
+    public async Task Register(RegisterRequest options, CancellationToken ctx)
     {
-        var result = await httpClient.PostAsJsonAsync(Endpoints.Auth.Register, options);
-        if ((int)result.StatusCode != 310)
+        var result = await client.Auth.Register.PostAsync(options, cancellationToken: ctx);
+        if (result is null)
         {
-            result.EnsureSuccessStatusCode();    
+            throw new HttpRequestException("Register Request failed");
         }
-        
     }
 
     public Task Logout()
     {
-        return httpClient.PostAsync(Endpoints.Auth.Logout, null);
-        
+        return client.Auth.Logout.PostAsync();
     }
 
     public async Task<UserInfo> GetUserInfo()
     {
-        var result = await httpClient.GetAsync(Endpoints.Auth.GetUserInfo);
-
-        if (!result.IsSuccessStatusCode)
-        {
-            return UserInfo.Empty;
-        }
-
-        var userInfo = await result.Content.ReadFromJsonAsync<UserInfo>();
-        
-        return userInfo ?? UserInfo.Empty;
+        var result = await client.Auth.Getuserinfo.GetAsync();
+        return result ?? Empty;
     }
 }

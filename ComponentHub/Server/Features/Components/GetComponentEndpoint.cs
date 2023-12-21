@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComponentHub.Server.Features.Components;
 
-public class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<ComponentDto>, NotFound, ProblemHttpResult>>
+internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<GetComponentResponse>, NotFound, ProblemHttpResult>>
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
@@ -20,24 +20,28 @@ public class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Comp
         Get(Endpoints.Components.Get + "{UserName}" + "/" + "{ComponentName}");
     }
 
-    public override async Task<Results<Ok<ComponentDto>, NotFound, ProblemHttpResult>> ExecuteAsync(GetComponentRequest req, CancellationToken ct)
+    public override async Task<Results<Ok<GetComponentResponse>, NotFound, ProblemHttpResult>> ExecuteAsync(GetComponentRequest req, CancellationToken ct)
     {
         var unit = _unitOfWorkFactory.GetUnitOfWork();
-        var component = await unit.Components.QueryComponents()
+        var entry = await unit.Components
+            .QueryComponents()
+            .Include(entry => entry.ComponentHistory)
+            .Include(entry => entry.Owner)
             .FirstOrDefaultAsync(
                 component => 
-                    component.Name == req.ComponentName 
-                    && component.OwnerName == req.UserName, ct);
+                    component.Name == req.ComponentName &&
+                    component.Owner.UserName == req.UserName, ct);
 
 
-        if (component is not null)
+        if (entry is not null)
         {
-            return ComponentDto.TryComponentToDto(component).Match<Results<Ok<ComponentDto>, NotFound, ProblemHttpResult>>(
-                dto => TypedResults.Ok(dto), 
-                error => error.ToProblem()
-            );
+            return TypedResults.Ok(new GetComponentResponse(
+                entry.ToDto(),
+                entry.GetCurrentComponent().ToDto()));
         }
 
         return TypedResults.NotFound();
     }
 }
+
+internal readonly record struct GetComponentResponse(ComponentEntryDto ComponentEntry, ComponentDto CurrentComponent);

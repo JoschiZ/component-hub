@@ -6,6 +6,7 @@ using ComponentHub.Domain.Features.Authentication;
 using ComponentHub.Domain.Features.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Abstractions;
@@ -13,7 +14,7 @@ using OpenIddict.Abstractions;
 
 namespace ComponentHub.Server.Features.Authentication;
 
-internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
+internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, Results<Conflict<string>, BlazorFriendlyRedirectResult>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -34,23 +35,23 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, IResult>
         AllowAnonymous();
     }
 
-    public override async Task<IResult> ExecuteAsync(RegisterRequest req, CancellationToken ct)
+    public override async Task<Results<Conflict<string>, BlazorFriendlyRedirectResult>> ExecuteAsync(RegisterRequest req, CancellationToken ct)
     {
         if (Guid.TryParse(_userManager.GetUserId(User), out var userId))
         {
-            return Results.Conflict("You seem to be already registered");
+            return TypedResults.Conflict("You seem to be already registered");
         }
         
         await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
         if (await unitOfWork.UserSet.AnyAsync(applicationUser => req.UserName == applicationUser.UserName, cancellationToken: ct))
         {
-            return Results.Conflict("This username is already taken");
+            return TypedResults.Conflict("This username is already taken");
         }
 
         var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
         if (externalLoginInfo is null)
         {
-            return Results.Problem("Could not load the external login info");
+            return TypedResults.Conflict("Could not load the external login info");
         }
 
         var user = Activator.CreateInstance<ApplicationUser>();

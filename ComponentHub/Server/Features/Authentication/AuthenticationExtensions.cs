@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using OpenIddict.Abstractions;
 
-namespace ComponentHub.Server.Auth;
+namespace ComponentHub.Server.Features.Authentication;
 
 internal static class AuthenticationExtensions
 {

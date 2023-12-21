@@ -2,6 +2,7 @@ using ComponentHub.DB.Core;
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
+using ComponentHub.Server.Features.Components.UpdateComponent;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 
@@ -35,11 +36,27 @@ internal sealed class
         }
 
         await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
-        return (await unitOfWork.Components.UpdateComponent(new UserId(new Guid(userId)), req, ct))
-            .Match<Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>(
+        var updateResult = await unitOfWork
+            .Components
+            .UpdateComponent(
+                new UserId(Guid.Parse(userId)),
+                req.EntryId, 
+                req.ComponentId,
+                req.Name, 
+                req.SourceCode, 
+                req.Height, 
+                req.Width, 
+                req.WclComponentId,
+                ct: ct);
+
+        if (updateResult.IsT0)
+        {
+            await unitOfWork.CompletedAsync(ct);
+        }
+        return updateResult.Match<Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>(
                 component => TypedResults.Ok(),
                 error => TypedResults.BadRequest(error.ErrorCode),
                 list => new ProblemDetails(list));
-
+        
     }
 }

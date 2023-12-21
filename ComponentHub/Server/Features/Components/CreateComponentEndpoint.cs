@@ -2,12 +2,14 @@ using ComponentHub.DB.Core;
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
+using ComponentHub.Server.Features.Components.CreateComponent;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ComponentHub.Server.Features.Components;
 
-internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Ok, ProblemDetails, UnauthorizedHttpResult>>
+internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Created, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<CreateComponentEndpoint> _logger;
@@ -25,34 +27,55 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
         Put(Endpoints.Components.Create);
     }
 
-    public override async Task<Results<Ok, ProblemDetails, UnauthorizedHttpResult>> ExecuteAsync(CreateComponentRequest req, CancellationToken ct)
+    public override async Task<Results<Created, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>> ExecuteAsync(CreateComponentRequest req, CancellationToken ct)
     {
         var userId = _userManager.GetUserId(User);
-        if (userId is null)
+        var userName = _userManager.GetUserName(User);
+        if (userId is null || userName is null)
         {
             return TypedResults.Unauthorized();
         }
 
         var unitOfWork = _workFactory.GetUnitOfWork();
-        //var user = await _userManager.FindByIdAsync(userId);
 
-        var user = await unitOfWork.UserSet.FindAsync(new object?[] { new UserId(new Guid(userId)) }, cancellationToken: ct);
-        
-        if (user is null)
+        // Create a Stub user to attach the component to
+        var user = new ApplicationUser() {Id = new UserId(new Guid(userId)), UserName = userName};
+
+        var componentSource = ComponentSource.TryCreate(req.SourceCode, req.Height, req.Width, req.WclComponentId);
+        if (componentSource.IsError)
         {
-            return TypedResults.Unauthorized();
+            return new ProblemDetails(componentSource.Error);
         }
 
-        var component = Component.TryCreate(req.SourceCode, user, req.Name);
+        var entryId = ComponentEntryId.New();
+        var component = Component.TryCreate(componentSource.ResultObject, req.Name, entryId);
 
         if (component.IsError)
         {
-            ValidationFailures.AddRange(component.Error);
+            return new ProblemDetails(component.Error);
+        }
+        
+        var componentEntry = ComponentEntry.TryCreate(entryId, req.Name, req.Description, component.ResultObject, user);
+
+
+        if (componentEntry.IsError)
+        {
+            ValidationFailures.AddRange(componentEntry.Error);
             return new ProblemDetails(ValidationFailures);
         }
 
-        await unitOfWork.Components.AddAsync(component.ResultObject, ct);
-        await unitOfWork.CompletedAsync(ct);
-        return TypedResults.Ok();
+
+        try
+        {
+            unitOfWork.Attach(user);
+            await unitOfWork.Components.AddAsync(componentEntry.ResultObject, ct);
+            await unitOfWork.CompletedAsync(ct);
+        }
+        catch (DbUpdateException e)
+        {
+            return TypedResults.Conflict("A component with this name already exists");
+        }
+
+        return TypedResults.Created();
     }
 }

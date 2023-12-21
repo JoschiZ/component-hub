@@ -5,6 +5,7 @@ using ComponentHub.DB.Features.Components;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Features.Components;
+using ComponentHub.Server.Features.Components.CreateComponent;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

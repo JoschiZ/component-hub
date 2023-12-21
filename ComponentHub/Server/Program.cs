@@ -1,11 +1,14 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using ComponentHub.DB;
 using ComponentHub.DB.Core;
-using ComponentHub.Server.Auth;
+using ComponentHub.Server.Features.Authentication;
 using ComponentHub.Server.Helper;
-using FastEndpoints;
+using FastEndpoints.ClientGen.Kiota;
 using FastEndpoints.Swagger;
 using FluentValidation;
+using Kiota.Builder;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +17,30 @@ builder.AddEnvToConfig();
 
 builder.AddAuthentication();
 builder.Services.AddAntiforgery();
-builder.Services.UseRepositories();
+builder.Services.UseRepositories(options: optionsBuilder =>
+{
+#if DEBUG
+    optionsBuilder.EnableSensitiveDataLogging();
+#endif
+});
 
 builder.Services.AddFastEndpoints(options =>
-{
-    options.IncludeAbstractValidators = true;
-})
-    .SwaggerDocument();
+    {
+        options.IncludeAbstractValidators = true;
+    })
+    .SwaggerDocument(options =>
+    {
+        options.DocumentSettings = settings =>
+        {
+            settings.DocumentName = "v1";
+        };
+        options.ShortSchemaNames = true;
+        options.SerializerSettings = serializerOptions =>
+        {
+            serializerOptions.Converters.Add(new JsonStringEnumConverter());
+        };
+    })
+    .AddOutputCache();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Debug()
@@ -62,14 +82,38 @@ app.MapFallbackToFile("index.html");
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.UseFastEndpoints(config =>
 {
     config.Errors.UseProblemDetails();
-    config.Endpoints.Configurator = definition =>
-    {
-    };
+    config.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
 })
-    .UseSwaggerGen();
+    .UseSwaggerGen()
+    .UseOutputCache();
+
+if (app.Environment.IsDevelopment())
+{
+    var clientPath = app.Configuration.GetValue<string>("ClientPath");
+    if (clientPath is null)
+    {
+        throw new InvalidConfigurationException("clientPath was null");
+    }
+
+    var workingDirectory = Environment.CurrentDirectory;
+    var outputPath = Directory.GetParent(workingDirectory).Parent + @"\" + Path.Combine("ComponentHub.Client", "ApiClients", "CSharp");
+    Console.WriteLine("Outputting Kiota Client To: " + outputPath);
+    //spits out generated client files to disk if app is run with '--generateclients true' commandline argument
+    await app.GenerateApiClientsAndExitAsync(
+        c =>
+        {
+            c.SwaggerDocumentName = "v1";
+            c.Language = GenerationLanguage.CSharp;
+            c.OutputPath = outputPath;
+            c.ClientNamespaceName = "ComponentHub.ApiClients";
+            c.ClientClassName = "ComponentHubBaseClient";
+        });
+}
+
 
 app.Run();
 

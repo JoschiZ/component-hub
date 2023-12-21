@@ -1,4 +1,5 @@
 using ComponentHub.Domain.Core.Validation;
+using ComponentHub.Server.Features.Components.CreateComponent;
 using FluentValidation;
 
 namespace ComponentHub.Domain.Features.Components;

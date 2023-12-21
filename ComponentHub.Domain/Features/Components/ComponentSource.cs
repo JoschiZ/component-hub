@@ -39,7 +39,6 @@ public sealed record ComponentSource
 
     [JsonIgnore]
     private static readonly Validator ValidatorInstance = new();
-
     public static ResultValidation<ComponentSource> TryCreate(string source, short height = 2, short width = 1, Guid? wclComponentId = null)
     {
         wclComponentId ??= Guid.NewGuid();
@@ -52,7 +51,20 @@ public sealed record ComponentSource
 
         return newSourceObject;
     }
-    
+
+    public ResultValidation<ComponentSource> TryGetUpdatedSource(
+        string? source = null, 
+        short? height = null,
+        short? width = null, 
+        Guid? wclComponentId = null)
+    {
+        var newSource = source ?? Source.Script;
+        var newHeight = height ?? Height;
+        var newWidth = width ?? Width;
+        var newId = wclComponentId ?? WclComponentId;
+
+        return TryCreate(newSource, newHeight, newWidth, newId);
+    }
     
     public sealed class Validator: MudCompatibleAbstractValidator<ComponentSource>
     {
@@ -67,6 +79,7 @@ public sealed record ComponentSource
             RuleFor(source => source.WclComponentId).NotEmpty();
         }
     }
+    
 }
 
 

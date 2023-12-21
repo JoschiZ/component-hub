@@ -1,13 +1,12 @@
 @page "/Authentication/Register"
-@using ComponentHub.Domain.Features.Authentication
+@using ComponentHub.ApiClients.Models
 @inject IdentityAuthenticationStateProvider StateProvider
-@inject RegisterRequestValidator Validator;
 
 
 <PageTitle>Register</PageTitle>
 
 <MudCard>
-    <MudForm Model="formModel" Validation="Validator.ValidateValue">
+    <MudForm Model="_formModel">
         <MudCardHeader>
             <MudText Typo="Typo.h1">Register your account</MudText>
         </MudCardHeader>
@@ -15,7 +14,7 @@
             <MudText>
                 The username you choose will serve only as a display name.
             </MudText>
-            <MudTextField HelperText="Public username" @bind-Value="@formModel.UserName" For="() => formModel.UserName" Immediate="true"></MudTextField>
+            <MudTextField HelperText="Public username" @bind-Value="@_formModel.UserName" For="() => _formModel.UserName" Immediate="true"></MudTextField>
         </MudCardContent>
         <MudCardActions>
             <MudButton OnClick="OnValidSubmit">Register Account</MudButton>
@@ -25,13 +24,13 @@
 
 
 @code {
-    private readonly RegisterRequest formModel = new();
+    private readonly RegisterRequest _formModel = new();
 
     [SupplyParameterFromQuery] private string? InitialUserName { get; set; }
 
     private Task OnValidSubmit()
     {
-        return StateProvider.Register(formModel);
+        return StateProvider.Register(_formModel, CancellationToken.None);
     }
 
     protected override void OnParametersSet()
@@ -39,6 +38,6 @@
         if (InitialUserName is null) return;
 
 
-        formModel.UserName = InitialUserName;
+        _formModel.UserName = InitialUserName;
     }
 }

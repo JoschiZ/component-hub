@@ -1,12 +1,13 @@
+using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Features.Components;
 using Microsoft.AspNetCore.Identity;
 using StronglyTypedIds;
 
 namespace ComponentHub.Domain.Features.Users;
 
-public sealed class ApplicationUser: IdentityUser<UserId>
+public sealed class ApplicationUser: IdentityUser<UserId>, IAggregateRoot<UserId>
 { 
-    public IEnumerable<Component> Components { get; } = new List<Component>();
+    public IEnumerable<ComponentEntry> Components { get; } = new List<ComponentEntry>();
 }
 
 [StronglyTypedId]

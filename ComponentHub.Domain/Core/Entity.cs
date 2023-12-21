@@ -1,6 +1,6 @@
 namespace ComponentHub.Domain.Core;
 
-public abstract class Entity<TId> where TId: struct
+public abstract class Entity<TId> where TId: struct, IEquatable<TId>
 {
     protected Entity(){}
 

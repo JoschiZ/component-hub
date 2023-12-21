@@ -1,4 +1,6 @@
-namespace ComponentHub.Domain.Features.Components;
+using ComponentHub.Domain.Features.Components;
+
+namespace ComponentHub.Server.Features.Components.UpdateComponent;
 
 public sealed class UpdateComponentRequest
 {
@@ -19,4 +21,6 @@ public sealed class UpdateComponentRequest
     /// On Wcl each component has an arbitrary id, which seems to be irrelevant
     /// </summary>
     public Guid WclComponentId { get; set; } = Guid.NewGuid();
+
+    public ComponentEntryId EntryId { get; set; }
 }

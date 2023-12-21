@@ -1,25 +1,29 @@
-using System.Net.Http.Json;
-using ComponentHub.Domain.Api;
-using ComponentHub.Domain.Features.Components;
+using ComponentHub.ApiClients.Models;
+using ComponentHub.Client.ApiClients;
+
+
+
+
 
 namespace ComponentHub.Client.Components.Features.Components;
 
 internal sealed class ComponentService
 {
-    private readonly HttpClient _httpClient;
+    private readonly ComponentHubClient _client;
 
-    public ComponentService(HttpClient httpClient)
+    public ComponentService(ComponentHubClient componentHubClient)
     {
-        _httpClient = httpClient;
+        _client = componentHubClient;
     }
 
-    public async void CreateComponent(CreateComponentRequest request)
+    public Task CreateComponent(CreateComponentRequest request)
     {
-        var response = await _httpClient.PutAsJsonAsync(Endpoints.Components.Create, request);
+        return _client.Components.Create.PutAsync(request);
     }
 
-    public Task<ComponentDto> GetComponent(GetComponentRequest request)
+    public Task<ComponentDto?> GetComponent(string componentName, string userName)
     {
-        return _httpClient.GetFromJsonAsync<ComponentDto>(Endpoints.Components.Get + request.UserName + "/" + request.ComponentName);
+        return _client.Components.GetPath[userName][componentName].GetAsync();
+
     }
 }

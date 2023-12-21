@@ -1,0 +1,604 @@
+{
+  "x-generator": "NSwag v14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))",
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ComponentHub.Server",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/testing/redirect": {
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesTestingRedirectMeEndpoint",
+        "requestBody": {
+          "x-name": "RedirectMeRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedirectMeRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/components/create/": {
+      "put": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsCreateComponentEndpoint",
+        "requestBody": {
+          "x-name": "CreateComponentRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateComponentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/components/delete/": {
+      "delete": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsDeleteComponentEndpoint",
+        "requestBody": {
+          "x-name": "DeleteComponentRequest",
+          "description": "",
+          "content": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteComponentRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteComponentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/components/get/{UserName}/{ComponentName}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsGetComponentEndpoint",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "componentName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComponentDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/components/update/": {
+      "patch": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsUpdateComponentEndpoint",
+        "requestBody": {
+          "x-name": "UpdateComponentRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateComponentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/login-battlenet": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationAuthenticateEndpoint",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/external-login": {
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationChallengeEndpoint",
+        "requestBody": {
+          "x-name": "ChallengeRequest",
+          "description": "",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/ChallengeRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/external-login-callback": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationExternalLoginCallbackEndpoint",
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/getuserinfo": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationGetUserInfoEndpoint",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationLogoutEndpoint",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesAuthenticationRegisterEndpoint",
+        "requestBody": {
+          "x-name": "RegisterRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RedirectMeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "https://www.rfc-editor.org/rfc/rfc7231#section-6.5.1"
+          },
+          "title": {
+            "type": "string",
+            "default": "One or more validation errors occurred."
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "default": 400
+          },
+          "instance": {
+            "type": "string",
+            "default": "/api/route"
+          },
+          "traceId": {
+            "type": "string",
+            "default": "0HMPNHL0JHL76:00000001"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProblemDetails_Error"
+            }
+          }
+        }
+      },
+      "ProblemDetails_Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": "Error or field name"
+          },
+          "reason": {
+            "type": "string",
+            "default": "Error reason"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CreateComponentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sourceCode",
+          "language"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "nullable": false
+          },
+          "sourceCode": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "nullable": false
+          },
+          "language": {
+            "nullable": false,
+            "$ref": "#/components/schemas/Language"
+          }
+        }
+      },
+      "Language": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "JS",
+          "TS"
+        ],
+        "enum": [
+          "JS",
+          "TS"
+        ]
+      },
+      "DeleteComponentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "componentId": {
+            "type": "string"
+          }
+        }
+      },
+      "ComponentDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ComponentSource"
+          },
+          "ownerName": {
+            "type": "string"
+          }
+        }
+      },
+      "ComponentSource": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "component": {
+            "$ref": "#/components/schemas/SourceObject"
+          },
+          "h": {
+            "type": "integer"
+          },
+          "w": {
+            "type": "integer"
+          },
+          "i": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "SourceObject": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "script": {
+            "type": "string"
+          }
+        }
+      },
+      "GetComponentRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateComponentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sourceCode"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "nullable": false
+          },
+          "sourceCode": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "nullable": false
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "wclComponentId": {
+            "type": "string",
+            "format": "guid"
+          }
+        }
+      },
+      "ChallengeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "returnUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "ExternalLoginCallbackRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UserInfo": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "isAuthenticated": {
+            "type": "boolean"
+          },
+          "exposedClaims": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "userName"
+        ],
+        "properties": {
+          "userName": {
+            "type": "string",
+            "maxLength": 16,
+            "minLength": 1,
+            "nullable": false
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "JWTBearerAuth": {
+        "type": "http",
+        "description": "Enter a JWT token to authorize the requests...",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

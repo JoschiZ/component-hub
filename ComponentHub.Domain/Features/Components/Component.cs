@@ -14,22 +14,38 @@ namespace ComponentHub.Domain.Features.Components;
 /// <summary>
 /// The Database Entity representing a Warcraftlogs Component.
 /// </summary>
-public sealed class Component: Entity<ComponentId>
+public sealed class Component: Entity<ComponentId>, IComparable<Component>
 {
     private Component(ComponentId id): base(id) { }
+    public string Name { get; private init; }
+    public ComponentSource Source { get; private init; }
+    public Version Version { get; private init; }
 
-    public string Name { get; private set; }
-    public ComponentSource Source { get; private set; }
+    public required ComponentEntryId ComponentEntryId { get; init; }
+    public ComponentEntry? ComponentEntry { get; private set; }
 
-    public required ApplicationUser Owner { get; init; }
-    public required string OwnerName { get; init; }
-    
-    public static ResultValidation<Component> TryCreate(string source, ApplicationUser owner, string name) => 
-        ComponentSource
-            .TryCreate(source)
-            .Bind(componentSource => 
-                new Component(ComponentId.New()) { Source = componentSource, Owner = owner, Name = name, OwnerName = owner.UserName!})
-            .Validate(new Validator());
+    public static ResultValidation<Component> TryCreate(
+        ComponentSource source,
+        string name,
+        ComponentEntryId componentEntryId,
+        ComponentEntry? componentEntry = null,
+        Version? version = null)
+    {
+        var newComponent = new Component(ComponentId.New())
+        {
+            Source = source,
+            Name = name,
+            Version = version ?? new Version(1, 0),
+            ComponentEntryId = componentEntryId,
+            ComponentEntry = componentEntry
+        };
+
+        var validator = new Validator();
+        var validation = validator.Validate(newComponent);
+
+        return validation.IsValid ? newComponent : validation.Errors;
+    }
+
     
 
     public static string EncodeExportString(ComponentSource source)
@@ -62,36 +78,11 @@ public sealed class Component: Entity<ComponentId>
         }
     }
 
-    public OneOf<Component, Error, List<ValidationFailure>> UpdateComponent(UpdateComponentRequest request)
+    public int CompareTo(Component? other)
     {
-        var newSource = ComponentSource.TryCreate(request.SourceCode, request.Height, request.Width, request.WclComponentId);
-        if (newSource.IsError)
-        {
-            return newSource.Error;
-        }
-
-        var oldSource = Source;
-        if (newSource.ResultObject != Source)
-        {
-            Source = newSource.ResultObject;
-        }
-
-        var oldName = Name;
-        if (Name != request.Name)
-        {
-            Name = request.Name;
-        }
-        var validator = new Validator();
-        var validation = validator.Validate(this);
-        
-        if (!validation.IsValid)
-        {
-            Source = oldSource;
-            Name = oldName;
-            return validation.Errors;
-        }
-
-        return this;
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        return Version.CompareTo(other.Version);
     }
 }
 

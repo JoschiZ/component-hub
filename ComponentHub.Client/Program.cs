@@ -1,5 +1,6 @@
 using System.Reflection;
 using ComponentHub.Client;
+using ComponentHub.Client.ApiClients;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
@@ -22,10 +23,19 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<RedirectHelper>();
 
 
-builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>().AddHttpMessageHandler<RedirectDelegatingHandler>();
+//builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>().AddHttpMessageHandler<RedirectDelegatingHandler>();
+
+builder.Services.AddHttpClient("ApiClient")
+    .AddTypedClient<ComponentHubClient>(client => new ComponentHubClient(client))
+    .ConfigureHttpClient(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpMessageHandler<ErrorDelegatingHandler>()
+    .AddHttpMessageHandler<ValidationDelegatingHandler>()
+    .AddHttpMessageHandler<RedirectDelegatingHandler>();
+
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
 builder.Services.AddSingleton<SnackbarHelperService>();
 builder.Services.AddSingleton<ValidationDelegatingHandler>();
+builder.Services.AddSingleton<ErrorDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
 
 
