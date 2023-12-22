@@ -54,6 +54,9 @@
 
     <ItemGroup>
       <Compile Remove="Client\**" />
+      <Compile Update="Components\Helper\SnackbarHelperService.cs">
+        <DependentUpon>SnackbarHelper.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

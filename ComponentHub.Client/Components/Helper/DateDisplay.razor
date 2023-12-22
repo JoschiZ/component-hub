@@ -1,0 +1,13 @@
+@using System.Globalization
+
+@if (DateTime.HasValue)
+{
+    @DateTime.Value.ToString()
+}
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public DateTimeOffset? DateTime { get; set; }
+}

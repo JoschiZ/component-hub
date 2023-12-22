@@ -24,8 +24,8 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
         ComponentHistory = [initialComponent];
     }
 
-    public string Name { get; }
-    public string Description { get; }
+    public string Name { get; private init; }
+    public string Description { get; private init; }
     public DateTime CreatedAt { get; private set; } = DateTime.Now;
     public DateTime UpdatedAt { get; private set; } = DateTime.Now;
 
@@ -45,7 +45,7 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
     /// <summary>
     /// The Component Backlog
     /// </summary>
-    public List<Component> ComponentHistory { get; }
+    public List<Component> ComponentHistory { get; private init; }
 
     public IEnumerable<Comment> Comments { get; } = [];
 
@@ -95,20 +95,3 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
 [StronglyTypedId]
 public readonly partial struct ComponentEntryId { }
 
-
-public class Comment : Entity<CommentId>
-{
-    public DateTime TimeStamp { get; }
-    public string Content { get; }
-    
-    
-    // Relations
-    public ApplicationUser Owner { get; }
-    public ComponentEntry ComponentEntry { get; } 
-}
-
-[StronglyTypedId]
-public readonly partial struct CommentId
-{
-    
-}

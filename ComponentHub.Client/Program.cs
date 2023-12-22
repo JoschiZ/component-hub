@@ -11,6 +11,7 @@ using ComponentHub.Client.Core;
 using ComponentHub.Domain.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MudBlazor.Services;
 using Serilog;
 
@@ -38,6 +39,7 @@ builder.Services.AddSingleton<ValidationDelegatingHandler>();
 builder.Services.AddSingleton<ErrorDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
 
+builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(SharingService<>)));
 
 builder.Services.AddValidatorsFromAssemblies(new[]
 {

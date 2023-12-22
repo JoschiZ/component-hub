@@ -20,7 +20,12 @@ public static class Endpoints
         public const string Create = ComponentsBasePath + "create/";
         public const string Update = ComponentsBasePath + "update/";
         public const string Delete = ComponentsBasePath + "delete/";
-        public const string Get = ComponentsBasePath + "get/";
+        public const string Get = ComponentsBasePath + "get/{UserName}/{ComponentName}";
+
+        public static string FormatGet(string userName, string componentName)
+        {
+            return Get.Replace("{UserName}", userName).Replace("{ComponentName}", componentName);
+        }
     }
     
     

@@ -10,5 +10,5 @@ public class CreateComponentRequest
     public Guid? WclComponentId { get; set; }
     public short Width { get; set; } = 2;
     public short Height { get; set; } = 2;
-    public string Description { get; set; }
+    public string Description { get; set; } = "";
 }

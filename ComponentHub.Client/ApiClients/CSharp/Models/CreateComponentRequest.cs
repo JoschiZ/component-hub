@@ -6,6 +6,16 @@ using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
     public class CreateComponentRequest : IParsable {
+        /// <summary>The description property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? Description { get; set; }
+#nullable restore
+#else
+        public string Description { get; set; }
+#endif
+        /// <summary>The height property</summary>
+        public int? Height { get; set; }
         /// <summary>The language property</summary>
         public ComponentHub.ApiClients.Models.Language? Language { get; set; }
         /// <summary>The name property</summary>
@@ -24,6 +34,16 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public string SourceCode { get; set; }
 #endif
+        /// <summary>The wclComponentId property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? WclComponentId { get; set; }
+#nullable restore
+#else
+        public string WclComponentId { get; set; }
+#endif
+        /// <summary>The width property</summary>
+        public int? Width { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -37,9 +57,13 @@ namespace ComponentHub.ApiClients.Models {
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
+                {"description", n => { Description = n.GetStringValue(); } },
+                {"height", n => { Height = n.GetIntValue(); } },
                 {"language", n => { Language = n.GetEnumValue<Language>(); } },
                 {"name", n => { Name = n.GetStringValue(); } },
                 {"sourceCode", n => { SourceCode = n.GetStringValue(); } },
+                {"wclComponentId", n => { WclComponentId = n.GetStringValue(); } },
+                {"width", n => { Width = n.GetIntValue(); } },
             };
         }
         /// <summary>
@@ -48,9 +72,13 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("description", Description);
+            writer.WriteIntValue("height", Height);
             writer.WriteEnumValue<Language>("language", Language);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("sourceCode", SourceCode);
+            writer.WriteStringValue("wclComponentId", WclComponentId);
+            writer.WriteIntValue("width", Width);
         }
     }
 }

@@ -6,6 +6,14 @@ using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
     public class UpdateComponentRequest : IParsable {
+        /// <summary>The entryId property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public string? EntryId { get; set; }
+#nullable restore
+#else
+        public string EntryId { get; set; }
+#endif
         /// <summary>The height property</summary>
         public int? Height { get; set; }
         /// <summary>The name property</summary>
@@ -47,6 +55,7 @@ namespace ComponentHub.ApiClients.Models {
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
+                {"entryId", n => { EntryId = n.GetStringValue(); } },
                 {"height", n => { Height = n.GetIntValue(); } },
                 {"name", n => { Name = n.GetStringValue(); } },
                 {"sourceCode", n => { SourceCode = n.GetStringValue(); } },
@@ -60,6 +69,7 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteStringValue("entryId", EntryId);
             writer.WriteIntValue("height", Height);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("sourceCode", SourceCode);

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComponentHub.Server.Features.Components;
 
-internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Created, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>>
+internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Created<CreateComponentResponse>, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<CreateComponentEndpoint> _logger;
@@ -27,7 +27,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
         Put(Endpoints.Components.Create);
     }
 
-    public override async Task<Results<Created, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>> ExecuteAsync(CreateComponentRequest req, CancellationToken ct)
+    public override async Task<Results<Created<CreateComponentResponse>, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>> ExecuteAsync(CreateComponentRequest req, CancellationToken ct)
     {
         var userId = _userManager.GetUserId(User);
         var userName = _userManager.GetUserName(User);
@@ -48,14 +48,16 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
         }
 
         var entryId = ComponentEntryId.New();
-        var component = Component.TryCreate(componentSource.ResultObject, req.Name, entryId);
+        var componentResult = Component.TryCreate(componentSource.ResultObject, req.Name, entryId);
 
-        if (component.IsError)
+        if (componentResult.IsError)
         {
-            return new ProblemDetails(component.Error);
+            return new ProblemDetails(componentResult.Error);
         }
+
+        var component = componentResult.ResultObject;
         
-        var componentEntry = ComponentEntry.TryCreate(entryId, req.Name, req.Description, component.ResultObject, user);
+        var componentEntry = ComponentEntry.TryCreate(entryId, req.Name, req.Description, componentResult.ResultObject, user);
 
 
         if (componentEntry.IsError)
@@ -76,6 +78,10 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return TypedResults.Conflict("A component with this name already exists");
         }
 
-        return TypedResults.Created();
+        return TypedResults.Created(
+            new Uri(Endpoints.Components.FormatGet(userName, component.Name)), 
+            new CreateComponentResponse(componentEntry.ResultObject.ToDto(), componentResult.ResultObject.ToDto()));
     }
 }
+
+internal readonly record struct CreateComponentResponse(ComponentEntryDto Entry, ComponentDto Component);

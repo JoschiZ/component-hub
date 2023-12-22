@@ -17,7 +17,7 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
 
     public override void Configure()
     {
-        Get(Endpoints.Components.Get + "{UserName}" + "/" + "{ComponentName}");
+        Get(Endpoints.Components.Get);
     }
 
     public override async Task<Results<Ok<GetComponentResponse>, NotFound, ProblemHttpResult>> ExecuteAsync(GetComponentRequest req, CancellationToken ct)

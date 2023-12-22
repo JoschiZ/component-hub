@@ -1,14 +1,33 @@
 @page "/{userName}/components/{componentName}"
 @using ComponentHub.ApiClients.Models
+@using ComponentHub.Client.Core
 @inject ComponentService ComponentService
+@inject SharingService<GetComponentResponse> Share
 <h3>ComponentPage</h3>
 
+@if (_getResponse?.ComponentEntry is not null && _getResponse.CurrentComponent is not null)
+{
+    <MudPaper Outlined>
+        <MudText Typo="Typo.h4">@(_getResponse.ComponentEntry?.Name ?? "Name Not Found")</MudText>
+    </MudPaper>
+    
+    <MudPaper>
+        <MudStack>
+            <MudText>Creator: <UserDisplay UserName="@UserName"/></MudText>   
+            <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreationDate"/></MudText> 
+            <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudText> 
+        </MudStack>
+    </MudPaper>
+    
+    <MudPaper>
+        <MudText>@_getResponse.ComponentEntry.Description</MudText>
+    </MudPaper>
+}
+else
+{
+    <MudText>Either the User <UserDisplay UserName="@UserName"/> or the component <s>@ComponentName</s> could not be found</MudText>
+}
 
-@UserName
-@ComponentName
-
-@_componentDto?.ToString()
-@_componentDto?.Name
 
 @code {
     [Parameter]
@@ -16,17 +35,25 @@
     
     [Parameter]
     public string? UserName { get; set; }
+    
+    [SupplyParameterFromQuery]
+    public string? ShareId { get; set; }
 
-    private ComponentDto? _componentDto;
+    private GetComponentResponse? _getResponse;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (UserName is null || ComponentName is null)
+        if (ShareId is not null)
         {
-            throw new ArgumentNullException();
+            _getResponse = Share.GetItem(ShareId);
         }
         
-        _componentDto = await ComponentService.GetComponent(UserName, ComponentName);
+        if (_getResponse is not null | UserName is null || ComponentName is null)
+        {
+            return;
+        }
+        
+        _getResponse = await ComponentService.GetComponent(UserName, ComponentName);
     }
 
 }

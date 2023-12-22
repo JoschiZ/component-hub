@@ -52,8 +52,15 @@
           "x-position": 1
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateComponentResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -154,7 +161,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ComponentDto"
+                  "$ref": "#/components/schemas/GetComponentResponse"
                 }
               }
             }
@@ -357,6 +364,62 @@
           }
         }
       },
+      "CreateComponentResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/ComponentEntryDto"
+          },
+          "component": {
+            "$ref": "#/components/schemas/ComponentDto"
+          }
+        }
+      },
+      "ComponentEntryDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ComponentDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "componentSource": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
       "ProblemDetails": {
         "type": "object",
         "additionalProperties": false,
@@ -436,6 +499,20 @@
           "language": {
             "nullable": false,
             "$ref": "#/components/schemas/Language"
+          },
+          "wclComponentId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
           }
         }
       },
@@ -460,46 +537,15 @@
           }
         }
       },
-      "ComponentDto": {
+      "GetComponentResponse": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "name": {
-            "type": "string"
+          "componentEntry": {
+            "$ref": "#/components/schemas/ComponentEntryDto"
           },
-          "source": {
-            "$ref": "#/components/schemas/ComponentSource"
-          },
-          "ownerName": {
-            "type": "string"
-          }
-        }
-      },
-      "ComponentSource": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "component": {
-            "$ref": "#/components/schemas/SourceObject"
-          },
-          "h": {
-            "type": "integer"
-          },
-          "w": {
-            "type": "integer"
-          },
-          "i": {
-            "type": "string",
-            "format": "guid"
-          }
-        }
-      },
-      "SourceObject": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "script": {
-            "type": "string"
+          "currentComponent": {
+            "$ref": "#/components/schemas/ComponentDto"
           }
         }
       },
@@ -536,6 +582,9 @@
           "wclComponentId": {
             "type": "string",
             "format": "guid"
+          },
+          "entryId": {
+            "type": "string"
           }
         }
       },

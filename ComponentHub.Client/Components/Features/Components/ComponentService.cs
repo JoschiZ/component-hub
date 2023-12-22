@@ -16,12 +16,12 @@ internal sealed class ComponentService
         _client = componentHubClient;
     }
 
-    public Task CreateComponent(CreateComponentRequest request)
+    public Task<CreateComponentResponse?> CreateComponent(CreateComponentRequest request)
     {
         return _client.Components.Create.PutAsync(request);
     }
 
-    public Task<ComponentDto?> GetComponent(string componentName, string userName)
+    public Task<GetComponentResponse?> GetComponent(string componentName, string userName)
     {
         return _client.Components.GetPath[userName][componentName].GetAsync();
 

@@ -1,0 +1,59 @@
+@page "/CreateNewComponent"
+@using ComponentHub.ApiClients.Models
+@using ComponentHub.Client.Core
+@inject ComponentService Service
+@inject ISnackbar Snackbar
+@inject RedirectHelper RedirectHelper
+@inject SharingService<CreateComponentResponse> Share
+
+<MudCard>
+    <MudCardHeader>
+        <MudText>Create a new Component</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudForm @ref="@_form" Model="_requestModel">
+            <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
+            <MudTextField AutoGrow Lines="5" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
+            <MudTextField AutoGrow Lines="5" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode"/>
+            <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
+            <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
+        </MudForm>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton OnClick="@Submit">Create</MudButton>
+    </MudCardActions>
+</MudCard>
+
+
+
+@code {
+    private readonly CreateComponentRequest _requestModel = new()
+    {
+        Height = 2,
+        Width = 1,
+        Description = ""
+    };
+
+    private MudForm? _form;
+
+    private async Task Submit()
+    {
+        if (_form is null || !_form.IsValid)
+        {
+            // Show validation Errors here later on or some kind of feedback
+            return;
+        }
+
+        var response = await Service.CreateComponent(_requestModel);
+
+        if (response is not null)
+        {
+            Snackbar.Add("Component Submitted", Severity.Success);
+            var shareId = Share.AddItemToStorage(response);
+            RedirectHelper.Redirect($"somewhere", new Dictionary<string, string?>(){{"shareId", shareId}});
+            return;
+        }
+
+        Snackbar.Add("Unknown Error", Severity.Error);
+    }
+}
