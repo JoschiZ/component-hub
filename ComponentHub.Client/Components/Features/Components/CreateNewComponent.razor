@@ -1,16 +1,23 @@
 @page "/CreateNewComponent"
 @using ComponentHub.ApiClients.Models
 @using ComponentHub.Client.Core
+@using ComponentHub.Domain.Features.Components
+@using Microsoft.AspNetCore.Authorization
 @inject ComponentService Service
 @inject ISnackbar Snackbar
 @inject RedirectHelper RedirectHelper
 @inject SharingService<CreateComponentResponse> Share
+@attribute [Authorize]
 
 <MudCard>
     <MudCardHeader>
         <MudText>Create a new Component</MudText>
     </MudCardHeader>
     <MudCardContent>
+        <MudPaper>
+                <MudButton OnClick="@FillFromImportString">Fill from Export</MudButton>
+                <MudTextField @bind-Value="@_importString"/>    
+        </MudPaper>
         <MudForm @ref="@_form" Model="_requestModel">
             <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
             <MudTextField AutoGrow Lines="5" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
@@ -35,6 +42,7 @@
     };
 
     private MudForm? _form;
+    private string _importString = "";
 
     private async Task Submit()
     {
@@ -55,5 +63,25 @@
         }
 
         Snackbar.Add("Unknown Error", Severity.Error);
+    }
+    
+    private Task FillFromImportString()
+    {
+        var componentResult = Component.DecodeExportString(_importString);
+
+        if (componentResult.IsError)
+        {
+            Snackbar.Add(componentResult.Error.Description, Severity.Warning);
+            _importString = "";
+            return Task.CompletedTask;
+        }
+
+        var component = componentResult.ResultObject;
+        _requestModel.SourceCode = component.Source.Script;
+        _requestModel.Width = component.Width;
+        _requestModel.Height = component.Height;
+        _requestModel.WclComponentId = component.WclComponentId.ToString();
+        
+        return Task.CompletedTask;
     }
 }

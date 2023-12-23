@@ -1,6 +1,7 @@
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Core.Primitives;
+using ComponentHub.Server.Core;
 
 namespace ComponentHub.Server.Features.Testing;
 
@@ -14,7 +15,7 @@ internal sealed class RedirectMeEndpoint : Endpoint<RedirectMeRequest, BlazorFri
 
     public override Task<BlazorFriendlyRedirectResult> ExecuteAsync(RedirectMeRequest req, CancellationToken ct)
     {
-        return Task.FromResult(new BlazorFriendlyRedirectResult{Route = req.Path});
+        return Task.FromResult(new BlazorFriendlyRedirectResult(req.Path));
     }
 }
 

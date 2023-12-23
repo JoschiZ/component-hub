@@ -1,3 +1,4 @@
+using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Core.Primitives;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
@@ -6,7 +7,7 @@ namespace ComponentHub.Client.Core;
 
 internal sealed class RedirectHelper(NavigationManager navigationManager)
 {
-    public void Redirect(BlazorFriendlyRedirectResult redirectResult)
+    public void Redirect(RedirectInfo redirectResult)
     {
         switch (redirectResult.RedirectType)
         {

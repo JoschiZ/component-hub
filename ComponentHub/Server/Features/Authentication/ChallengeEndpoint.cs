@@ -19,7 +19,6 @@ internal sealed class ChallengeEndpoint: Endpoint<ChallengeRequest, ChallengeHtt
         Post(Endpoints.Auth.ExternalLogin);
         AllowAnonymous();
         AllowFormData(urlEncoded: true);
-        
     }
 
     public override Task<ChallengeHttpResult> ExecuteAsync(ChallengeRequest req, CancellationToken ct)

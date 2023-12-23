@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Core.Primitives;
 
 namespace ComponentHub.Client.Core;
@@ -20,7 +21,7 @@ internal class RedirectDelegatingHandler: DelegatingHandler
             return response;
         }
 
-        var redirect = await response.Content.ReadFromJsonAsync<BlazorFriendlyRedirectResult>(cancellationToken: cancellationToken);
+        var redirect = await response.Content.ReadFromJsonAsync<RedirectInfo>(cancellationToken: cancellationToken);
 
         if (redirect is null)
         {

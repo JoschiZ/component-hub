@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Security.Claims;
 using ComponentHub.DB.Core;
-using ComponentHub.DB.Features.Components;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Features.Components;

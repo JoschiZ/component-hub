@@ -1,6 +1,7 @@
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Users;
+using ComponentHub.Server.Core;
 using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,9 +25,6 @@ internal sealed class LogoutEndpoint: EndpointWithoutRequest<BlazorFriendlyRedir
     public override async Task<BlazorFriendlyRedirectResult> ExecuteAsync(CancellationToken ct)
     {
         await _signInManager.SignOutAsync();
-        return new BlazorFriendlyRedirectResult()
-        {
-            Route = "/"
-        };
+        return new BlazorFriendlyRedirectResult("/");
     }
 }

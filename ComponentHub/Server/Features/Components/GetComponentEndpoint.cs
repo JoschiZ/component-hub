@@ -24,7 +24,7 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
     {
         var unit = _unitOfWorkFactory.GetUnitOfWork();
         var entry = await unit.Components
-            .QueryComponents()
+            .Query()
             .Include(entry => entry.ComponentHistory)
             .Include(entry => entry.Owner)
             .FirstOrDefaultAsync(

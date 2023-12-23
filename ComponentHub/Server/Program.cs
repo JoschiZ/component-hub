@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using ComponentHub.DB;
-using ComponentHub.DB.Core;
 using ComponentHub.Server.Features.Authentication;
 using ComponentHub.Server.Helper;
 using FastEndpoints.ClientGen.Kiota;
@@ -17,7 +16,7 @@ builder.AddEnvToConfig();
 
 builder.AddAuthentication();
 builder.Services.AddAntiforgery();
-builder.Services.UseRepositories(options: optionsBuilder =>
+builder.Services.AddEfCore(optionsBuilder =>
 {
 #if DEBUG
     optionsBuilder.EnableSensitiveDataLogging();
@@ -51,8 +50,7 @@ builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose:
 // Gets all AbstractValidator<T> implementations and registers them from this and the shared assembly
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
-    Assembly.GetAssembly(typeof(Program)),
-    Assembly.GetAssembly(typeof(IUnitOfWork))
+    Assembly.GetAssembly(typeof(Program))
 }, ServiceLifetime.Singleton, includeInternalTypes: true);
 
 
@@ -100,7 +98,7 @@ if (app.Environment.IsDevelopment())
     }
 
     var workingDirectory = Environment.CurrentDirectory;
-    var outputPath = Directory.GetParent(workingDirectory).Parent + @"\" + Path.Combine("ComponentHub.Client", "ApiClients", "CSharp");
+    var outputPath = Directory.GetParent(workingDirectory).Parent + "/" + Path.Combine("ComponentHub.Client", "ApiClients", "CSharp");
     Console.WriteLine("Outputting Kiota Client To: " + outputPath);
     //spits out generated client files to disk if app is run with '--generateclients true' commandline argument
     await app.GenerateApiClientsAndExitAsync(

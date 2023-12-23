@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ComponentHub.Server.Features.Authentication;
 
-internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Results<Ok<UserInfo>, UnauthorizedHttpResult>>
+internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Ok<UserInfo>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
@@ -23,18 +23,18 @@ internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Results<Ok<Use
         AllowAnonymous();
     }
 
-    public async override Task<Results<Ok<UserInfo>, UnauthorizedHttpResult>> ExecuteAsync(CancellationToken ct)
+    public async override Task<Ok<UserInfo>> ExecuteAsync(CancellationToken ct)
     {
         if (User.Identity?.Name is null)
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Ok(UserInfo.Empty);
         }
 
         var userId = _userManager.GetUserId(User);
 
         if (userId is null)
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Ok(UserInfo.Empty);
         }
         var userInfo = new UserInfo()
         {
