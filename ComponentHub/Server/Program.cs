@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using ComponentHub.DB;
+using ComponentHub.Server.Core;
 using ComponentHub.Server.Features.Authentication;
 using ComponentHub.Server.Helper;
 using FastEndpoints.ClientGen.Kiota;
@@ -34,6 +35,8 @@ builder.Services.AddFastEndpoints(options =>
             settings.DocumentName = "v1";
         };
         options.ShortSchemaNames = true;
+        
+        
         options.SerializerSettings = serializerOptions =>
         {
             serializerOptions.Converters.Add(new JsonStringEnumConverter());

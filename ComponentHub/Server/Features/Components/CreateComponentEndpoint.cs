@@ -84,4 +84,4 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
     }
 }
 
-internal readonly record struct CreateComponentResponse(ComponentEntryDto Entry, ComponentDto Component);
+internal record CreateComponentResponse(ComponentEntryDto Entry, ComponentDto Component);

@@ -35,6 +35,16 @@
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
+      },
+      "GenerateClients": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+        "applicationUrl": "https://localhost:7105;http://localhost:5240",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "commandLineArgs": "--generateclients true"
       }
     }
   }

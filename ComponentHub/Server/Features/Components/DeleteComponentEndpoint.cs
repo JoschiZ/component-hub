@@ -33,4 +33,4 @@ internal sealed class DeleteComponentEndpoint : Endpoint<DeleteComponentRequest,
     }
 }
 
-public record struct DeleteComponentRequest(ComponentEntryId ComponentId);
+public record DeleteComponentRequest(ComponentEntryId ComponentId);

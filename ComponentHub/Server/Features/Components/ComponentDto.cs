@@ -3,7 +3,7 @@ using Riok.Mapperly.Abstractions;
 
 namespace ComponentHub.Server.Features.Components;
 
-internal readonly record struct ComponentDto(
+internal record ComponentDto(
     ComponentId Id,
     string Name,
     string ComponentSource,

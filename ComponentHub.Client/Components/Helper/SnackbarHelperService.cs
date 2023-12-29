@@ -26,4 +26,4 @@ public class SnackbarHelperService
     
 }
 
-public record struct SnackbarMessage(string Message, Severity Severity = Severity.Normal, Action<SnackbarOptions>? Configure = null, string Key = "");
+public record SnackbarMessage(string Message, Severity Severity = Severity.Normal, Action<SnackbarOptions>? Configure = null, string Key = "");
