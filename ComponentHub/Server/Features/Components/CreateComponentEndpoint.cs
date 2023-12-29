@@ -72,15 +72,15 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             unitOfWork.Attach(user);
             await unitOfWork.Components.AddAsync(componentEntry.ResultObject, ct);
             await unitOfWork.CompletedAsync(ct);
+            
+            return TypedResults.Created(
+                new Uri(BaseURL + Endpoints.Components.FormatGet(userName, component.Name)), 
+                new CreateComponentResponse(componentEntry.ResultObject.ToDto(), componentResult.ResultObject.ToDto()));
         }
         catch (DbUpdateException e)
         {
             return TypedResults.Conflict("A component with this name already exists");
         }
-
-        return TypedResults.Created(
-            new Uri(Endpoints.Components.FormatGet(userName, component.Name)), 
-            new CreateComponentResponse(componentEntry.ResultObject.ToDto(), componentResult.ResultObject.ToDto()));
     }
 }
 

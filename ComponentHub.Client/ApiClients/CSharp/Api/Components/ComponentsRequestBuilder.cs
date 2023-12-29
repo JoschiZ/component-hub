@@ -3,11 +3,14 @@ using ComponentHub.ApiClients.Api.Components.Create;
 using ComponentHub.ApiClients.Api.Components.Delete;
 using ComponentHub.ApiClients.Api.Components.Get;
 using ComponentHub.ApiClients.Api.Components.Update;
+using ComponentHub.ApiClients.Models;
+using Microsoft.Kiota.Abstractions.Serialization;
 using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using System;
 namespace ComponentHub.ApiClients.Api.Components {
     /// <summary>
@@ -35,14 +38,91 @@ namespace ComponentHub.ApiClients.Api.Components {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components", pathParameters) {
+        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,sortDirection*,sortingMethod*,page*,pageSize*}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new ComponentsRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components", rawUrl) {
+        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,sortDirection*,sortingMethod*,page*,pageSize*}", rawUrl) {
+        }
+        /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
+        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public async Task<QueryComponentsEndpointResponse?> GetAsync(Action<RequestConfiguration<ComponentsRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default) {
+#nullable restore
+#else
+        public async Task<QueryComponentsEndpointResponse> GetAsync(Action<RequestConfiguration<ComponentsRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default) {
+#endif
+            var requestInfo = ToGetRequestInformation(requestConfiguration);
+            return await RequestAdapter.SendAsync<QueryComponentsEndpointResponse>(requestInfo, QueryComponentsEndpointResponse.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+        }
+        /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<ComponentsRequestBuilderGetQueryParameters>>? requestConfiguration = default) {
+#nullable restore
+#else
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<ComponentsRequestBuilderGetQueryParameters>> requestConfiguration = default) {
+#endif
+            var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
+            requestInfo.Configure(requestConfiguration);
+            requestInfo.Headers.TryAdd("Accept", "application/json");
+            return requestInfo;
+        }
+        /// <summary>
+        /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
+        /// </summary>
+        /// <param name="rawUrl">The raw URL to use for the request builder.</param>
+        public ComponentsRequestBuilder WithUrl(string rawUrl) {
+            return new ComponentsRequestBuilder(rawUrl, RequestAdapter);
+        }
+        public class ComponentsRequestBuilderGetQueryParameters {
+            [QueryParameter("page")]
+            public int? Page { get; set; }
+            [QueryParameter("pageSize")]
+            public int? PageSize { get; set; }
+            [Obsolete("This property is deprecated, use sortDirectionAsSortDirection instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortDirection")]
+            public string? SortDirection { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortDirection")]
+            public string SortDirection { get; set; }
+#endif
+            [QueryParameter("sortDirection")]
+            public ComponentHub.ApiClients.Models.SortDirection? SortDirectionAsSortDirection { get; set; }
+            [Obsolete("This property is deprecated, use sortingMethodAsSortingMethod instead")]
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("sortingMethod")]
+            public string? SortingMethod { get; set; }
+#nullable restore
+#else
+            [QueryParameter("sortingMethod")]
+            public string SortingMethod { get; set; }
+#endif
+            [QueryParameter("sortingMethod")]
+            public ComponentHub.ApiClients.Models.SortingMethod? SortingMethodAsSortingMethod { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("userName")]
+            public string? UserName { get; set; }
+#nullable restore
+#else
+            [QueryParameter("userName")]
+            public string UserName { get; set; }
+#endif
+        }
+        /// <summary>
+        /// Configuration for the request such as headers, query parameters, and middleware options.
+        /// </summary>
+        [Obsolete("This class is deprecated. Please use the generic RequestConfiguration class generated by the generator.")]
+        public class ComponentsRequestBuilderGetRequestConfiguration : RequestConfiguration<ComponentsRequestBuilderGetQueryParameters> {
         }
     }
 }

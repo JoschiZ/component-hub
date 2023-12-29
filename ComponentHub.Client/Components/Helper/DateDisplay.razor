@@ -1,8 +1,9 @@
 @using System.Globalization
+@using MudBlazor.Extensions
 
 @if (DateTime.HasValue)
 {
-    @DateTime.Value.ToString()
+    @DateTime.Value.LocalDateTime.ToIsoDateString()
 }
 
 

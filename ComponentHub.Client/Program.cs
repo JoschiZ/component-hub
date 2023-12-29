@@ -11,7 +11,6 @@ using ComponentHub.Client.Core;
 using ComponentHub.Domain.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using MudBlazor.Services;
 using Serilog;
 
@@ -29,17 +28,19 @@ builder.Services.AddScoped<RedirectHelper>();
 builder.Services.AddHttpClient("ApiClient")
     .AddTypedClient<ComponentHubClient>(client => new ComponentHubClient(client))
     .ConfigureHttpClient(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-    .AddHttpMessageHandler<ErrorDelegatingHandler>()
+  //  .AddHttpMessageHandler<ErrorDelegatingHandler>()
     .AddHttpMessageHandler<ValidationDelegatingHandler>()
     .AddHttpMessageHandler<RedirectDelegatingHandler>();
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
 builder.Services.AddSingleton<SnackbarHelperService>();
 builder.Services.AddSingleton<ValidationDelegatingHandler>();
-builder.Services.AddSingleton<ErrorDelegatingHandler>();
+// builder.Services.AddSingleton<ErrorDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
+builder.Services.AddSingleton<ErrorHelper>();
 
-builder.Services.TryAdd(ServiceDescriptor.Singleton(typeof(SharingService<>)));
+
+builder.Services.AddSingleton(typeof(SharingService<>));
 
 builder.Services.AddValidatorsFromAssemblies(new[]
 {

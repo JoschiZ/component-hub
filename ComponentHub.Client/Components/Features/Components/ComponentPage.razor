@@ -1,32 +1,67 @@
-@page "/{userName}/components/{componentName}"
+@attribute [Route(Routes.Components.ComponentPage)]
 @using ComponentHub.ApiClients.Models
 @using ComponentHub.Client.Core
+@using ComponentHub.Domain.Features.Components
 @inject ComponentService ComponentService
-@inject SharingService<GetComponentResponse> Share
-<h3>ComponentPage</h3>
+@inject SharingService<CreateComponentResponse> Share
 
 @if (_getResponse?.ComponentEntry is not null && _getResponse.CurrentComponent is not null)
 {
-    <MudPaper Outlined>
-        <MudText Typo="Typo.h4">@(_getResponse.ComponentEntry?.Name ?? "Name Not Found")</MudText>
-    </MudPaper>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.h1" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
+            <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
+            <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudText>
+            <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt" /></MudText>
+            <MudSpacer/>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudPaper Outlined>
+                <MudText Typo="Typo.h3">Description</MudText>
+                <MudText>@_getResponse.ComponentEntry.Description</MudText>
+            </MudPaper>
+            <MudPaper Outlined>
+                <MudExpansionPanel>
+                    <TitleContent>
+                        <MudText Typo="Typo.h3">Source Code</MudText>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudText>
+                            @if (_getResponse.CurrentComponent.ComponentSource != null)
+                            {
+                                @Component.DecodeExportString(_getResponse.CurrentComponent.ComponentSource)
+                            }
+                        </MudText>
+                    </ChildContent>
+                </MudExpansionPanel>
+            </MudPaper>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" OnClick="@ShowExportOverlay">Export Component</MudButton>
+        </MudCardActions>
+    </MudCard>
     
-    <MudPaper>
-        <MudStack>
-            <MudText>Creator: <UserDisplay UserName="@UserName"/></MudText>   
-            <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreationDate"/></MudText> 
-            <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudText> 
-        </MudStack>
-    </MudPaper>
-    
-    <MudPaper>
-        <MudText>@_getResponse.ComponentEntry.Description</MudText>
-    </MudPaper>
+    <MudDialog @bind-Visible="@_isExportDialogVisible" Options="@_exportDialogOptions">
+        <TitleContent>Export Component</TitleContent>
+        <DialogContent>
+            <MudTextField
+                T="string"
+                @ref="@_exportStringRef"
+                Disabled="@true" 
+                Text="@_getResponse.CurrentComponent.ComponentSource"
+                Adornment="Adornment.End"
+                AdornmentIcon="@Icons.Material.Filled.StickyNote2"
+                OnAdornmentClick="() => _exportStringRef?.SelectAsync()"
+                />
+        </DialogContent>
+    </MudDialog>
 }
 else
 {
-    <MudText>Either the User <UserDisplay UserName="@UserName"/> or the component <s>@ComponentName</s> could not be found</MudText>
+    <MudText>Either the User <UserDisplay UserName="@UserName"/> or the component <span>@ComponentName</span> could not be found</MudText>
 }
+
+
 
 
 @code {
@@ -39,19 +74,30 @@ else
     [SupplyParameterFromQuery]
     public string? ShareId { get; set; }
 
+    private bool _isExportDialogVisible;
+    private void ShowExportOverlay() => _isExportDialogVisible = true;
+    private MudTextField<string>? _exportStringRef;
+    private readonly DialogOptions _exportDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true };
+    
     private GetComponentResponse? _getResponse;
 
     protected override async Task OnParametersSetAsync()
     {
         if (ShareId is not null)
         {
-            _getResponse = Share.GetItem(ShareId);
+            var shared = Share.GetItem(ShareId);
+            _getResponse = new GetComponentResponse()
+            {
+                ComponentEntry = shared?.Entry, 
+                CurrentComponent = shared?.Component
+            };
         }
         
-        if (_getResponse is not null | UserName is null || ComponentName is null)
+        if (_getResponse is not null || UserName is null || ComponentName is null)
         {
             return;
         }
+        
         
         _getResponse = await ComponentService.GetComponent(UserName, ComponentName);
     }

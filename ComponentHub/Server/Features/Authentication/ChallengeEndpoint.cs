@@ -1,5 +1,6 @@
 using ComponentHub.Domain.Api;
 using ComponentHub.Domain.Features.Users;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 
@@ -32,7 +33,9 @@ internal sealed class ChallengeEndpoint: Endpoint<ChallengeRequest, ChallengeHtt
         var providerProperties = _signInManager.ConfigureExternalAuthenticationProperties(
             req.Provider,
             "external-login-callback"+ $"?ReturnUrl={returnUrl}");
-        return Task.FromResult(TypedResults.Challenge(properties: providerProperties, authenticationSchemes: new[] {req.Provider}));
+        var result =
+            TypedResults.Challenge(properties: providerProperties, authenticationSchemes: new[] { req.Provider });
+        return Task.FromResult(result);
     }
 }
 

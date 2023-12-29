@@ -15,7 +15,9 @@ public static class DependencyInjectionExtensions
 
     public static OpenIddictEntityFrameworkCoreBuilder UseEfCore(this OpenIddictCoreBuilder builder)
     {
-        return builder.UseEntityFrameworkCore().UseDbContext<ComponentHubContext>();
+        return builder
+            .UseEntityFrameworkCore()
+            .UseDbContext<ComponentHubContext>();
     }
 
     public static IServiceCollection AddEfCore(this IServiceCollection services, Action<DbContextOptionsBuilder>? config = null)
@@ -26,6 +28,7 @@ public static class DependencyInjectionExtensions
         return services.AddDbContextFactory<ComponentHubContext>(builder =>
         {
             builder.UseSqlite("Filename=app.db");
+            builder.UseOpenIddict();
             config?.Invoke(builder);
         });
     }

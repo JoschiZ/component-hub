@@ -5,44 +5,29 @@ using System.IO;
 using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
-    public class ComponentSource : IParsable {
-        /// <summary>The component property</summary>
+    public class BaseError : IParsable {
+        /// <summary>The message property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public SourceObject? Component { get; set; }
+        public string? Message { get; set; }
 #nullable restore
 #else
-        public SourceObject Component { get; set; }
+        public string Message { get; set; }
 #endif
-        /// <summary>The h property</summary>
-        public int? H { get; set; }
-        /// <summary>The i property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? I { get; set; }
-#nullable restore
-#else
-        public string I { get; set; }
-#endif
-        /// <summary>The w property</summary>
-        public int? W { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static ComponentSource CreateFromDiscriminatorValue(IParseNode parseNode) {
+        public static BaseError CreateFromDiscriminatorValue(IParseNode parseNode) {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new ComponentSource();
+            return new BaseError();
         }
         /// <summary>
         /// The deserialization information for the current model
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
-                {"component", n => { Component = n.GetObjectValue<SourceObject>(SourceObject.CreateFromDiscriminatorValue); } },
-                {"h", n => { H = n.GetIntValue(); } },
-                {"i", n => { I = n.GetStringValue(); } },
-                {"w", n => { W = n.GetIntValue(); } },
+                {"message", n => { Message = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -51,10 +36,7 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<SourceObject>("component", Component);
-            writer.WriteIntValue("h", H);
-            writer.WriteStringValue("i", I);
-            writer.WriteIntValue("w", W);
+            writer.WriteStringValue("message", Message);
         }
     }
 }

@@ -26,8 +26,8 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
 
     public string Name { get; private init; }
     public string Description { get; private init; }
-    public DateTime CreatedAt { get; private set; } = DateTime.Now;
-    public DateTime UpdatedAt { get; private set; } = DateTime.Now;
+    public DateTimeOffset CreatedAt { get; private set; } = DateTime.Now;
+    public DateTimeOffset UpdatedAt { get; private set; } = DateTime.Now;
 
     // Relations
     /// <summary>

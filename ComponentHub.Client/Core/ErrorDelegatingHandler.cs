@@ -1,5 +1,8 @@
 using System.Net;
+using System.Net.Http.Json;
+using ComponentHub.ApiClients.Models;
 using ComponentHub.Client.Components.Helper;
+using ComponentHub.Domain.Core.Primitives;
 using MudBlazor;
 
 namespace ComponentHub.Client.Core;
@@ -23,7 +26,15 @@ internal class ErrorDelegatingHandler: DelegatingHandler
             return response;
         }
 
-        _snackbarHelperService.AddMessage(new SnackbarMessage(await response.Content.ReadAsStringAsync(cancellationToken), Severity.Error));
+        try
+        {
+            var deserializedError = await response.Content.ReadFromJsonAsync<BaseError>(cancellationToken: cancellationToken);
+            _snackbarHelperService.AddMessage(new SnackbarMessage(deserializedError?.Message ?? "Unknown Error", Severity.Error));
+        }
+        catch (Exception e)
+        {
+            _snackbarHelperService.AddMessage(new SnackbarMessage(await response.Content.ReadAsStringAsync(cancellationToken), Severity.Error));
+        }
 
         return response;
     }

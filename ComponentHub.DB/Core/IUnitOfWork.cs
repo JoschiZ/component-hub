@@ -7,7 +7,7 @@ public interface IUnitOfWork: IDisposable, IAsyncDisposable
 {
     public IComponentEntryRepository Components { get; }
     public DbSet<ApplicationUser> UserSet { get; }
-    ValueTask CompletedAsync(CancellationToken ct);
+    Task<int> CompletedAsync(CancellationToken ct);
 
     public void Attach<TItem>(TItem item) where TItem: notnull;
 }
@@ -36,9 +36,9 @@ internal sealed class UnitOfWork: IUnitOfWork
     public IComponentEntryRepository Components { get; }
     public DbSet<ApplicationUser> UserSet { get; }
 
-    public ValueTask CompletedAsync(CancellationToken ct)
+    public Task<int> CompletedAsync(CancellationToken ct)
     {
-        return _context.DisposeAsync();
+        return _context.SaveChangesAsync(ct);
     }
 
     public void Attach<TItem>(TItem item) where TItem: notnull => _context.Attach(item);

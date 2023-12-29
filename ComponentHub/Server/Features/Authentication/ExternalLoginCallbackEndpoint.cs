@@ -27,7 +27,7 @@ internal sealed class ExternalLoginCallbackEndpoint: Endpoint<ExternalLoginCallb
         if (info is null)
         {
             // Graceful redirect with the BlazorFriendlyRedirect is not possible, because this endpoint is navigated
-            // to from the Authentication Authority not out own HttpHandler and this it is catched in the delegating handler
+            // to from the Authentication Authority not our own HttpHandler and this it is not catched in the delegating handler
             return TypedResults.Redirect(("/Authentication/Login"));
         }
 

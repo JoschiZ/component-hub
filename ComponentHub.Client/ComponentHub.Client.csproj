@@ -24,6 +24,11 @@
         <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.1-dev-10370" />
         <PackageReference Include="Serilog.Sinks.BrowserConsole" Version="2.0.0" />
         <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+
+        <PackageReference Include="Tetractic.CodeAnalysis.ExceptionAnalyzers" Version="1.4.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

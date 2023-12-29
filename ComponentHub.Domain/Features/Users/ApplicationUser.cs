@@ -8,6 +8,7 @@ namespace ComponentHub.Domain.Features.Users;
 public sealed class ApplicationUser: IdentityUser<UserId>, IAggregateRoot<UserId>
 { 
     public IEnumerable<ComponentEntry> Components { get; } = new List<ComponentEntry>();
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.Now;
 }
 
 [StronglyTypedId]

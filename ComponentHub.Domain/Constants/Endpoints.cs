@@ -21,11 +21,18 @@ public static class Endpoints
         public const string Update = ComponentsBasePath + "update/";
         public const string Delete = ComponentsBasePath + "delete/";
         public const string Get = ComponentsBasePath + "get/{UserName}/{ComponentName}";
+        public const string Query = ComponentsBasePath;
 
         public static string FormatGet(string userName, string componentName)
         {
             return Get.Replace("{UserName}", userName).Replace("{ComponentName}", componentName);
         }
+    }
+
+    public static class Users
+    {
+        private const string UsersBasePath = BasePath + "users/";
+        public const string GetDetailedInfo = UsersBasePath + "detailedInfo/";
     }
     
     

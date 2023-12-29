@@ -1,8 +1,8 @@
 using ComponentHub.Domain.Core.Validation;
-using ComponentHub.Server.Features.Components.UpdateComponent;
+using ComponentHub.Domain.Features.Components;
 using FluentValidation;
 
-namespace ComponentHub.Domain.Features.Components;
+namespace ComponentHub.Server.Features.Components.UpdateComponent;
 
 public sealed class UpdateComponentRequestValidator: MudCompatibleAbstractValidator<UpdateComponentRequest>
 {

@@ -2,6 +2,7 @@
 using ComponentHub.ApiClients.Api.Auth;
 using ComponentHub.ApiClients.Api.Components;
 using ComponentHub.ApiClients.Api.Testing;
+using ComponentHub.ApiClients.Api.Users;
 using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,10 @@ namespace ComponentHub.ApiClients.Api {
         /// <summary>The testing property</summary>
         public TestingRequestBuilder Testing { get =>
             new TestingRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The users property</summary>
+        public UsersRequestBuilder Users { get =>
+            new UsersRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new ApiRequestBuilder and sets the default values.

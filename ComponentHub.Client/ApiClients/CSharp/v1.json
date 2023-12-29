@@ -6,6 +6,41 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/users/detailedInfo/": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesUsersGetDetailedUserInfo",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDetailedUserInfoResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/testing/redirect": {
       "post": {
         "tags": [
@@ -119,7 +154,14 @@
             "description": "Success"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -167,14 +209,80 @@
             }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error404"
+                }
+              }
+            }
           }
-        },
-        "security": [
+        }
+      }
+    },
+    "/api/components/": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsQueryComponentsEndpoint",
+        "parameters": [
           {
-            "JWTBearerAuth": []
+            "name": "userName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "sortDirection",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SortDirection"
+            }
+          },
+          {
+            "name": "sortingMethod",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/SortingMethod"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
-        ]
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryComponentsEndpointResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/components/update/": {
@@ -355,6 +463,43 @@
   },
   "components": {
     "schemas": {
+      "GetDetailedUserInfoResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userId": {
+            "type": "string"
+          }
+        }
+      },
+      "Error404": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseError"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
+          }
+        ]
+      },
+      "BaseError": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
       "RedirectMeRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -392,7 +537,7 @@
           "ownerName": {
             "type": "string"
           },
-          "creationDate": {
+          "createdAt": {
             "type": "string",
             "format": "date-time"
           },
@@ -552,6 +697,50 @@
       "GetComponentRequest": {
         "type": "object",
         "additionalProperties": false
+      },
+      "QueryComponentsEndpointResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentEntryDto"
+            }
+          }
+        }
+      },
+      "QueryComponentsEndpointRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SortDirection": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Ascending",
+          "Descending"
+        ],
+        "enum": [
+          "Ascending",
+          "Descending"
+        ]
+      },
+      "SortingMethod": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "ByUserName",
+          "ByName",
+          "ByCreationDate",
+          "ByUpdateDate"
+        ],
+        "enum": [
+          "ByUserName",
+          "ByName",
+          "ByCreationDate",
+          "ByUpdateDate"
+        ]
       },
       "UpdateComponentRequest": {
         "type": "object",

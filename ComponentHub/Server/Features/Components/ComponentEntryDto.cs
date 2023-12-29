@@ -9,14 +9,15 @@ internal readonly record struct ComponentEntryDto(
     string Name,
     string Description,
     string OwnerName,
-    DateTime CreationDate,
-    DateTime UpdatedAt
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt
 );
 
 
 [Mapper]
 internal static partial class ComponentEntryMapper
 {
+    [MapProperty(nameof(@ComponentEntry.Owner.UserName), nameof(ComponentEntryDto.OwnerName))]
     public static partial ComponentEntryDto ToDto(this ComponentEntry entry);
 }
 

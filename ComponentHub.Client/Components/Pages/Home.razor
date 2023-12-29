@@ -7,12 +7,29 @@
 @inject ComponentService ComponentService
 @inject HttpClient HttpClient
 
-<MudText>SomeText</MudText>
-
-
-<MudButton OnClick="SendBadRequest">Submit Bad Request</MudButton>
-<MudButton OnClick="Test.ShowSnackbar">Open Snackbar</MudButton>
-<MudButton OnClick="SendValidRequest">Send Valid Request</MudButton>
+<section>
+    <MudText Typo="Typo.h1" Color="Color.Primary">Welcome to the Component Hub</MudText>
+    <MudText>
+        The Component Hub is your central location for sharing and discovering <MudLink Href="https://articles.warcraftlogs.com/help/what-are-report-components">Archon Report Components</MudLink>.
+        These allow you to create in depth and shareable dashboards to analyze your gameplay.
+        
+        This feature is currently in closed alpha, access can be requested <MudLink Href="https://forms.gle/oFcWCMbgqDK2j2e69.">here</MudLink>.
+    </MudText>
+</section>
+<section>
+    <MudText Typo="Typo.h2">Getting Started</MudText>
+    <MudText>
+        In order to use the Component Hub, you currently require an BattleNet account.
+        This is used to register and login.
+        Component Hub will not store any of your personal data, besides your BattleNet id and name.
+        More login provider will be added in the future.
+        
+        After you created an account you can go <MudLink Href="@Routes.Components.Upload">here</MudLink> upload your first component
+    </MudText>
+</section>
+<MudButton OnClick="@SendBadRequest">Submit Bad Request</MudButton>
+<MudButton OnClick="@Test.ShowSnackbar">Open Snackbar</MudButton>
+<MudButton OnClick="@SendValidRequest">Send Valid Request</MudButton>
 
 <MudTextField @bind-Value="@_componentName"></MudTextField>
 

@@ -6,8 +6,8 @@ using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
     public class ComponentEntryDto : IParsable {
-        /// <summary>The creationDate property</summary>
-        public DateTimeOffset? CreationDate { get; set; }
+        /// <summary>The createdAt property</summary>
+        public DateTimeOffset? CreatedAt { get; set; }
         /// <summary>The description property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -55,7 +55,7 @@ namespace ComponentHub.ApiClients.Models {
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
-                {"creationDate", n => { CreationDate = n.GetDateTimeOffsetValue(); } },
+                {"createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 {"description", n => { Description = n.GetStringValue(); } },
                 {"id", n => { Id = n.GetStringValue(); } },
                 {"name", n => { Name = n.GetStringValue(); } },
@@ -69,7 +69,7 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteDateTimeOffsetValue("creationDate", CreationDate);
+            writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("description", Description);
             writer.WriteStringValue("id", Id);
             writer.WriteStringValue("name", Name);
