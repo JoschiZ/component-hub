@@ -1,7 +1,13 @@
 
-<MudText>@UserName</MudText>
+<MudText Color="Color.Tertiary">@UserName</MudText>
 
 @code {
     [Parameter, EditorRequired]
     public required string UserName { get; set; }
 }
+
+<style>
+    .user-display{
+        
+    }
+</style>

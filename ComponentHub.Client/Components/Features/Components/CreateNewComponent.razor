@@ -16,17 +16,21 @@
     <MudCardContent>
         <MudFocusTrap>
             <MudForm @ref="@_form" Model="_requestModel">
-                        <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
-                        <MudTextField AutoGrow Lines="5" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
-                        <MudTextField AutoGrow Lines="5" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode"/>
-                        <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
-                        <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
-                    </MudForm>    
+                <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
+                <MudTextField AutoGrow Lines="5" Label="Description" Required="true" @bind-Value="_requestModel.Description" Variant="Variant.Outlined"/>
+                <MudTextField AutoGrow Lines="5" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode" Variant="Variant.Outlined"/>
+                <MudStack Row>
+                    <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
+                    <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
+                </MudStack>
+            </MudForm>    
             </MudFocusTrap>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SubmitComponent">Create</MudButton>
-        <MudButton Color="Color.Secondary" Variant="@Variant.Outlined" OnClick="@ShowDialog">Import Component</MudButton>
+        <MudStack Row>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SubmitComponent">Create</MudButton>
+            <MudButton Color="Color.Secondary" Variant="@Variant.Outlined" OnClick="@ShowDialog">Import Component</MudButton>
+        </MudStack>
     </MudCardActions>
 </MudCard>
 

@@ -9,27 +9,30 @@
 {
     <MudCard>
         <MudCardHeader>
-            <MudText Typo="Typo.h1" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
-            <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
-            <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudText>
-            <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt" /></MudText>
+            <MudStack>
+                <MudText Typo="Typo.h2" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
+                <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
+                <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudText>
+                <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudText>
+            </MudStack>
             <MudSpacer/>
         </MudCardHeader>
         <MudCardContent>
             <MudPaper Outlined>
-                <MudText Typo="Typo.h3">Description</MudText>
+                <MudText Typo="Typo.h4">Description</MudText>
                 <MudText>@_getResponse.ComponentEntry.Description</MudText>
             </MudPaper>
-            <MudPaper Outlined>
+            <MudPaper>
                 <MudExpansionPanel>
                     <TitleContent>
-                        <MudText Typo="Typo.h3">Source Code</MudText>
+                        <MudText Typo="Typo.h4">Source Code</MudText>
                     </TitleContent>
                     <ChildContent>
                         <MudText>
                             @if (_getResponse.CurrentComponent.ComponentSource != null)
                             {
-                                @Component.DecodeExportString(_getResponse.CurrentComponent.ComponentSource)
+                                <!--TODO: Component for displaying the source-->
+                                @Component.DecodeExportString(_getResponse.CurrentComponent.ComponentSource).ResultObject
                             }
                         </MudText>
                     </ChildContent>
@@ -41,13 +44,13 @@
         </MudCardActions>
     </MudCard>
     
-    <MudDialog @bind-Visible="@_isExportDialogVisible" Options="@_exportDialogOptions">
+    <MudDialog @bind-IsVisible="@_isExportDialogVisible" Options="@_exportDialogOptions">
         <TitleContent>Export Component</TitleContent>
         <DialogContent>
             <MudTextField
                 T="string"
                 @ref="@_exportStringRef"
-                Disabled="@true" 
+                ReadOnly
                 Text="@_getResponse.CurrentComponent.ComponentSource"
                 Adornment="Adornment.End"
                 AdornmentIcon="@Icons.Material.Filled.StickyNote2"
@@ -75,7 +78,10 @@ else
     public string? ShareId { get; set; }
 
     private bool _isExportDialogVisible;
-    private void ShowExportOverlay() => _isExportDialogVisible = true;
+    private void ShowExportOverlay(){
+        _isExportDialogVisible = true;
+        _exportStringRef?.SelectAsync();
+    }
     private MudTextField<string>? _exportStringRef;
     private readonly DialogOptions _exportDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true };
     
