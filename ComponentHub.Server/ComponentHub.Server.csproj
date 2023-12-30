@@ -29,8 +29,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\ComponentHub.Client\ComponentHub.Client.csproj" />
-        <ProjectReference Include="..\..\ComponentHub.DB\ComponentHub.DB.csproj" />
+        <ProjectReference Include="..\ComponentHub.Client\ComponentHub.Client.csproj" />
+        <ProjectReference Include="..\ComponentHub.DB\ComponentHub.DB.csproj" />
+        <ProjectReference Include="..\ComponentHub.Domain\ComponentHub.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentHub.Server", "ComponentHub\Server\ComponentHub.Server.csproj", "{926CA54D-6141-4797-8AE9-BDF34481EE1D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentHub.Server", "ComponentHub.Server\ComponentHub.Server.csproj", "{926CA54D-6141-4797-8AE9-BDF34481EE1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentHub.Client", "ComponentHub.Client\ComponentHub.Client.csproj", "{2ACC8180-F56A-4C6D-94ED-E62BBA07CD5E}"
 EndProject
