@@ -34,7 +34,7 @@ internal sealed class
 
         var componentsQuery = unitOfWork.Components.Query()
             .Include(entry => entry.Owner)
-            .Where(entry => entry.Owner.UserName == req.UserName);
+            .Where(entry => entry.Owner.UserName!.Contains(req.UserName) && entry.Name.Contains(req.ComponentName));
         var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod).GetOrderMethod();
         var componentsOrderedQuery = orderAction(componentsQuery)
             .ThenBy(entry => entry.Name)
@@ -50,7 +50,8 @@ internal sealed class
 }
 
 internal sealed record QueryComponentsEndpointRequest(
-    string? UserName,
+    string UserName = "",
+    string ComponentName = "",
     SortDirection SortDirection = SortDirection.Ascending,
     SortingMethod SortingMethod = SortingMethod.ByName,
     int Page = 0,

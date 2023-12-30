@@ -41,6 +41,54 @@
         ]
       }
     },
+    "/RandomTestingEndpoint": {
+      "get": {
+        "tags": [
+          "Randomtestingendpoint"
+        ],
+        "operationId": "ComponentHubServerFeaturesTestingRandomTestingEndpoint",
+        "parameters": [
+          {
+            "name": "nestedRecord",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "nullable": true,
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/NestedRecord"
+                }
+              ]
+            },
+            "example": {
+              "someProp": "someProp",
+              "somePropWithDefault": "Default from Attribute"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {}
+              },
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/testing/redirect": {
       "post": {
         "tags": [
@@ -497,6 +545,23 @@
         "properties": {
           "message": {
             "type": "string"
+          }
+        }
+      },
+      "RandomTestingRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "NestedRecord": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "someProp": {
+            "type": "string"
+          },
+          "somePropWithDefault": {
+            "type": "string",
+            "default": "Default from Attribute"
           }
         }
       },
