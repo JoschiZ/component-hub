@@ -1,0 +1,54 @@
+@using MudExtensions.Enums
+
+<MudDialog>
+    <DialogContent>
+        <MudTextM3 Typo="TypoM3.Body">@Message</MudTextM3>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="@Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    public MudDialogInstance? MudDialog { get; set; }
+
+    
+    [Parameter, EditorRequired]
+    public required string Message { get; set; }
+    
+    [Parameter]
+    public Action? OnOk { get; set; }
+
+
+    void Submit()
+    {
+        OnOk?.Invoke();
+        MudDialog?.Close(DialogResult.Ok(true));
+    }
+    void Cancel() => MudDialog?.Cancel();
+
+    public static DialogParameters<ConfirmationDialog> CreateParameters(string message, Action? onOkAction = null)
+    {
+        var parameters = new DialogParameters<ConfirmationDialog>();
+        parameters.Add(dialog => dialog.Message, message);
+        parameters.Add(dialog => dialog.OnOk, onOkAction);
+
+        return parameters;
+    }
+
+    public static async Task<DialogResult> Show(IDialogService service, string message, string title)
+    {
+        var parameters = CreateParameters(message);
+        var defaultOptions = new DialogOptions()
+        {
+            CloseOnEscapeKey = true,
+        };
+        var dialog = await service.ShowAsync<ConfirmationDialog>(title, parameters, defaultOptions);
+        return await dialog.Result;
+    }
+    
+    
+}
+

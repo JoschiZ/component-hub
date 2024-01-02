@@ -14,19 +14,19 @@
         <MudText Typo="Typo.h4">Create a new Component</MudText>
     </MudCardHeader>
     <MudCardContent>
-        <MudFocusTrap>
-            <MudForm @ref="@_form" Model="_requestModel">
-                        <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
-                        <MudTextField AutoGrow Lines="5" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
-                        <MudTextField AutoGrow Lines="5" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode"/>
-                        <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
-                        <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
-                    </MudForm>    
-            </MudFocusTrap>
+        <MudForm @ref="@_form" Model="_requestModel">
+            <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
+            <MudTextField Variant="Variant.Outlined" AutoGrow Lines="3" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
+            <MudTextField Variant="Variant.Outlined" AutoGrow Lines="3" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode"/>
+            <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
+            <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
+        </MudForm>    
     </MudCardContent>
     <MudCardActions>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SubmitComponent">Create</MudButton>
-        <MudButton Color="Color.Secondary" Variant="@Variant.Outlined" OnClick="@ShowDialog">Import Component</MudButton>
+        <MudStack Row Spacing="4" Justify="Justify.Center">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@SubmitComponent">Create</MudButton>
+            <MudButton Color="Color.Secondary" Variant="@Variant.Outlined" OnClick="@ShowDialog">Import Component</MudButton>
+        </MudStack>
     </MudCardActions>
 </MudCard>
 

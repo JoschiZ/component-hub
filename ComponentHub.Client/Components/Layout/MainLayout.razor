@@ -1,14 +1,16 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudExtensions.Enums
+@inherits LayoutComponentBase
 
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode"/>
+<MudThemeProvider  @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 <SnackbarHelper/>
+<MudTypographyProvider/>
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudText Typo="Typo.h5" Class="ml-3">ComponentHub</MudText>
+        <MudTextM3 Typo="TypoM3.Display" Size="Size.Medium" Class="ml-3">ComponentHub</MudTextM3>
         <MudSpacer />
         <LogoutLogin/>
     </MudAppBar>
@@ -22,6 +24,17 @@
 @code {
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider = default!;
+
+    private MudTheme _theme = new MudTheme()
+    {
+        Typography = new Typography()
+        {
+            Default = new Default()
+            {
+                FontFamily = new[] { "Roboto", "Poppins", "Helvetica", "sans-serif" }
+            }
+        }
+    };
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

@@ -1,4 +1,12 @@
+@using MudExtensions.Enums
+@using ComponentHub.ApiClients.Models
+@using ComponentHub.Client.Components.Features.Components
+
 @attribute [Route(Routes.Users.PrivateProfile)]
+@inject UserService UserService
+@inject ComponentService ComponentService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 
 <section>
@@ -16,6 +24,65 @@
     Name ... Delete
 </section>
 
-@code {
+<MudCard>
+    <MudCardHeader>
+        <MudTextM3 Typo="TypoM3.Title">Your Components</MudTextM3>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudDataGrid Items="_components" Loading="@(_components.Count == 0)">
+            <Columns>
+                <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
+                <PropertyColumn Property="arg => arg.Name"/>
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudLink Href="@Routes.Components.GetComponentPage(context.Item.Name, _userInfo.Name)"></MudLink>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="arg => arg.CreatedAt"/>
+                <PropertyColumn Property="arg => arg.UpdatedAt"/>
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudButton OnClick="@(() => DeleteComponent(context.Item))" Variant="Variant.Filled" Color="Color.Warning">
+                            DELETE
+                        </MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <ChildRowContent>
+                @context.Item.Description
+            </ChildRowContent>
+        </MudDataGrid>
+    </MudCardContent>
+</MudCard>
 
+
+@code {
+    private List<ComponentEntryDto> _components = [];
+    private GetDetailedUserInfoResponse? _userInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _userInfo = await UserService.GetDetailedUserInfo();
+    }
+
+    private async Task DeleteComponent(ComponentEntryDto? componentEntryDto)
+    {
+        var dialogParams = ConfirmationDialog.CreateParameters("Are you sure? This CANNOT be undone?");
+        var dialog = await DialogService.ShowAsync<ConfirmationDialog>($"Delete {componentEntryDto?.Name}?", dialogParams);
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+        {
+            Snackbar.Add("Component not deleted", Severity.Info);
+            return;
+        }
+        
+        if (componentEntryDto?.Id is null)
+        {
+            Snackbar.Add("Component ID was empty, there is nothing you can do", Severity.Warning);
+            return;
+        }
+        await ComponentService.Delete(componentEntryDto.Id).ConfigureAwait(false);
+        Snackbar.Add("Component Deleted Successfully", Severity.Success);
+    }
 }

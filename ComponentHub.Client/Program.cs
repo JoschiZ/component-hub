@@ -6,18 +6,20 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ComponentHub.Client.Components;
 using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Components.Features.Components;
+using ComponentHub.Client.Components.Features.User;
 using ComponentHub.Client.Components.Helper;
 using ComponentHub.Client.Core;
 using ComponentHub.Domain.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
+using MudExtensions.Services;
 using Serilog;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddMudServices();
+builder.Services.AddMudServices().AddMudExtensions();
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<RedirectHelper>();
@@ -56,6 +58,7 @@ builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose:
 builder.Services.AddScoped<Test>();
 
 builder.Services.AddScoped<ComponentService>();
+builder.Services.AddSingleton<UserService>();
 
 builder.Services.AddScoped<AuthApiClient>();
 builder.Services.AddScoped<IdentityAuthenticationStateProvider>();

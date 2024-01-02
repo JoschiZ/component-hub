@@ -2,6 +2,7 @@ using ComponentHub.ApiClients;
 using ComponentHub.ApiClients.Api.Auth;
 using ComponentHub.ApiClients.Api.Components;
 using ComponentHub.ApiClients.Api.Testing;
+using ComponentHub.ApiClients.Api.Users;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 
@@ -14,6 +15,7 @@ internal class ComponentHubClient
     public AuthRequestBuilder Auth => _client.Api.Auth;
     public ComponentsRequestBuilder Components => _client.Api.Components;
     public TestingRequestBuilder Testing => _client.Api.Testing;
+    public UsersRequestBuilder User => _client.Api.Users;
 
     public ComponentHubClient(HttpClient httpClient)
     {
