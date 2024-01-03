@@ -57,11 +57,13 @@ internal sealed record QueryComponentsEndpointRequest(
     int Page = 0,
     int PageSize = 10);
 
+internal sealed record QueryComponentsEndpointResponse(ComponentEntryDto[] Components);
+
 internal sealed class QueryComponentsEndpointRequestValidator: Validator<QueryComponentsEndpointRequest>
 {
     public QueryComponentsEndpointRequestValidator()
     {
-        RuleFor(request => request.PageSize).InclusiveBetween(1, 50);
+        RuleFor(request => request.PageSize).InclusiveBetween(1, 20);
         RuleFor(request => request.Page).GreaterThanOrEqualTo(0);
     }
 }
@@ -96,6 +98,3 @@ internal enum SortingMethod
     ByCreationDate,
     ByUpdateDate,
 }
-
-
-internal sealed record QueryComponentsEndpointResponse(ComponentEntryDto[] Components);

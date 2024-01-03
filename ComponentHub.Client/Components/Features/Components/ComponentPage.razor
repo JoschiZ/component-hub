@@ -4,16 +4,17 @@
 @using ComponentHub.Domain.Features.Components
 @inject ComponentService ComponentService
 @inject SharingService<CreateComponentResponse> Share
+@inject NavigationManager NavManager
 
 @if (_getResponse?.ComponentEntry is not null && _getResponse.CurrentComponent is not null)
 {
     <MudCard>
         <MudCardHeader>
-            <MudStack>
-                <MudText Typo="Typo.h2" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
-                <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
+            <MudText Typo="Typo.h1" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
+            <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
+            <MudStack Justify="Justify.Center" Spacing="4">
                 <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudText>
-                <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudText>
+                <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt" /></MudText>
             </MudStack>
             <MudSpacer/>
         </MudCardHeader>
@@ -22,32 +23,42 @@
                 <MudText Typo="Typo.h4">Description</MudText>
                 <MudText>@_getResponse.ComponentEntry.Description</MudText>
             </MudPaper>
-            <MudPaper>
-                <MudExpansionPanel>
-                    <TitleContent>
-                        <MudText Typo="Typo.h4">Source Code</MudText>
-                    </TitleContent>
-                    <ChildContent>
-                        <MudText>
-                            @if (_getResponse.CurrentComponent.ComponentSource != null)
-                            {
-                                <!--TODO: Component for displaying the source-->
-                                @Component.DecodeExportString(_getResponse.CurrentComponent.ComponentSource).ResultObject
-                            }
-                        </MudText>
-                    </ChildContent>
-                </MudExpansionPanel>
-            </MudPaper>
+            @if (_componentSource is not null)
+            {
+                <MudPaper Outlined>
+                    <MudExpansionPanel>
+                        <TitleContent>
+                            <MudText Typo="Typo.h3">Source Code</MudText>
+                        </TitleContent>
+                        <ChildContent>
+                            <MudCard>
+                                <MudCardContent>
+                                    <MudText>
+                                        @_componentSource.Source
+                                    </MudText>
+                                </MudCardContent>
+                                <MudStack Justify="Justify.Center" Spacing="4" Row>
+                                    <MudText>Height: @_componentSource.Height</MudText>
+                                    <MudText>Width: @_componentSource.Width</MudText>
+                                </MudStack>
+                                <MudText>ID: @_componentSource.WclComponentId</MudText>
+                            </MudCard>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                </MudPaper>    
+            }
         </MudCardContent>
         <MudCardActions>
             <MudButton Variant="Variant.Filled" OnClick="@ShowExportOverlay">Export Component</MudButton>
         </MudCardActions>
     </MudCard>
     
-    <MudDialog @bind-IsVisible="@_isExportDialogVisible" Options="@_exportDialogOptions">
+    
+    <MudDialog @bind-Visible="@_isExportDialogVisible" Options="@_exportDialogOptions">
         <TitleContent>Export Component</TitleContent>
         <DialogContent>
             <MudTextField
+                OnInternalInputChanged="() => _exportStringRef?.SelectAsync()"
                 T="string"
                 @ref="@_exportStringRef"
                 ReadOnly
@@ -61,7 +72,7 @@
 }
 else
 {
-    <MudText>Either the User <UserDisplay UserName="@UserName"/> or the component <span>@ComponentName</span> could not be found</MudText>
+    <MudProgressCircular Indeterminate Color="Color.Info" Size="Size.Large"></MudProgressCircular>
 }
 
 
@@ -86,21 +97,27 @@ else
     private readonly DialogOptions _exportDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true };
     
     private GetComponentResponse? _getResponse;
+    private ComponentSource? _componentSource;
 
     protected override async Task OnParametersSetAsync()
     {
         if (ShareId is not null)
         {
             var shared = Share.GetItem(ShareId);
+            
             _getResponse = new GetComponentResponse()
             {
                 ComponentEntry = shared?.Entry, 
                 CurrentComponent = shared?.Component
             };
+
+            var encodedSource = _getResponse.CurrentComponent?.ComponentSource ?? "";
+            _componentSource = Component.DecodeExportString(encodedSource).ResultObject;
         }
         
-        if (_getResponse is not null || UserName is null || ComponentName is null)
+        if (_getResponse?.ComponentEntry is not null || UserName is null || ComponentName is null)
         {
+            NavManager.NavigateTo(Routes.General.NotFound);
             return;
         }
         

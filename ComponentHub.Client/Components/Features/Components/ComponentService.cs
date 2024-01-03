@@ -1,7 +1,7 @@
-using ComponentHub.ApiClients.Api.Components;
 using ComponentHub.ApiClients.Models;
 using ComponentHub.Client.ApiClients;
 using ComponentHub.Client.Core;
+using Microsoft.Kiota.Abstractions;
 
 
 namespace ComponentHub.Client.Components.Features.Components;
@@ -42,6 +42,18 @@ internal sealed class ComponentService
         {
             config.QueryParameters.SortDirectionAsSortDirection = SortDirection.Ascending;
         });
-        return response.Components;
+        return response?.Components ?? [];
+    }
+
+    public async Task Delete(string componentEntryId)
+    {
+        try
+        {
+            await _client.Components.DeletePath.DeleteAsync(new DeleteComponentRequest() { ComponentId = componentEntryId });
+        }
+        catch (ApiException e)
+        {
+            _errorHelper.DisplayError(e);
+        }
     }
 }
