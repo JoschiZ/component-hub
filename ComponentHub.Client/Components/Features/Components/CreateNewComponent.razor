@@ -99,15 +99,15 @@
             // Show validation Errors here later on or some kind of feedback
             return;
         }
-
-        Snackbar.Add("Creating Component", Severity.Info);
+        
         var response = await Service.CreateComponent(_requestModel);
 
         if (response is not null)
         {
             Snackbar.Add("Component Created", Severity.Success);
             var shareId = Share.AddItemToStorage(response);
-            RedirectHelper.Redirect($"/{response.Entry?.OwnerName}/components/{response.Entry?.Name}", new Dictionary<string, string?>(){{"shareId", shareId}});
+            var redirectRoute = Routes.Components.GetComponentPage(response.Entry?.OwnerName ?? "", response.Entry?.Name ?? "");
+            RedirectHelper.Redirect(redirectRoute, new Dictionary<string, string?>(){{"shareId", shareId}});
             return;
         }
 

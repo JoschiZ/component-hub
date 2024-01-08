@@ -28,7 +28,6 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
         var entry = await context
             .Components
             .Include(entry => entry.ComponentHistory)
-            .Include(entry => entry.Owner)
             .FirstOrDefaultAsync(
                 component => 
                     component.Name == req.ComponentName &&

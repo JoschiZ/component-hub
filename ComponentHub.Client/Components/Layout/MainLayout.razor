@@ -10,11 +10,15 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-
         <a href="@Routes.General.Home">
             <MudTextM3 Typo="TypoM3.Display" Size="Size.Medium" Class="ml-3">ComponentHub</MudTextM3>
         </a>
         <MudSpacer/>
+        <AuthorizeView>
+            <Authorized>
+                <MudButton Href="@Routes.Users.PrivateProfile" Variant="Variant.Filled" Color="Color.Info">PROFILE</MudButton>
+            </Authorized>
+        </AuthorizeView>
         <LogoutLogin/>
     </MudAppBar>
     <MudMainContent>

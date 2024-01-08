@@ -28,19 +28,22 @@ internal sealed class
         await using var context = await _contextFactory.CreateDbContextAsync(ct);
 
         var query = context.Components
-            .Include(entry => entry.Owner)
+            .AsNoTracking()
             .Where(entry => entry.Owner.UserName == req.UserName)
-            .OrderBy(entry => entry.Name)
+            .OrderBy(entry => entry.Name);
+
+
+        var totalCount = await query.CountAsync(cancellationToken: ct);
+        
+
+        var data = await query
             .Paginate(req)
-            .Select(entry => entry.ToDto());
-
-        query.TryGetNonEnumeratedCount(out var overallCount);
-
-        var data = await query.ToArrayAsync(cancellationToken: ct);
+            .ProjectToDto()
+            .ToArrayAsync(cancellationToken: ct);
 
         var response = new ResponseDto(
             data,
-            ResponsePagination.CreateFromRequest(req, overallCount));
+            ResponsePagination.CreateFromRequest(req, totalCount));
         return TypedResults.Ok(response);
     }
     

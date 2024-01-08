@@ -29,6 +29,8 @@ internal static partial class ComponentEntryMapper
     [MapProperty(nameof(@ComponentEntry.Owner.UserName), nameof(ComponentEntryDto.OwnerName))]
     public static partial ComponentEntryDto ToDto(this ComponentEntry entry);
     
+    public static partial IQueryable<ComponentEntryDto> ProjectToDto(this IQueryable<ComponentEntry> entry);
+    
     [MapProperty(nameof(@ComponentEntry.Owner.UserName), nameof(ComponentEntryMinimalDto.OwnerName))]
     public static partial ComponentEntryMinimalDto ToMinimalDto(this ComponentEntry entry);
 }

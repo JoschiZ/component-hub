@@ -1,3 +1,5 @@
+using System.Diagnostics.Contracts;
+
 namespace ComponentHub.Domain.Constants;
 
 public static class Routes
@@ -23,8 +25,9 @@ public static class Routes
     public static class Components
     {
         public const string Upload = "/CreateNewComponent";
+        
         public const string ComponentPage = "/{userName}/{componentName}";
-
+        [Pure]
         public static string GetComponentPage(string userName, string componentName)
         {
             return ComponentPage
