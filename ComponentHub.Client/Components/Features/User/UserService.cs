@@ -3,6 +3,7 @@ using ComponentHub.Client.ApiClients;
 using ComponentHub.Client.Components.Features.Auth;
 using ComponentHub.Client.Core;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Kiota.Abstractions;
 
 namespace ComponentHub.Client.Components.Features.User;
 
@@ -39,5 +40,22 @@ internal sealed class UserService
         var response = await _client.User.DeletePath.DeleteAsync(null, cancellationToken);
         await _authApiClient.Logout();
         return response;
+    }
+
+    public async Task<bool> ChangeUsername(string userName)
+    {
+        try
+        {
+            await _client.User.ChangeName.PatchAsync(new ChangeUsernameEndpoint_Request()
+            {
+                NewName = userName
+            });
+            return true;
+        }
+        catch (ApiException e)
+        {
+            _errorHelper.DisplayError(e);
+            return false;
+        }
     }
 }

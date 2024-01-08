@@ -6,6 +6,44 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/users/changeName": {
+      "patch": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesUsersChangeUsernameEndpoint",
+        "requestBody": {
+          "x-name": "Request",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUsernameEndpoint_Request"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeUsernameEndpoint_ResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/users/delete": {
       "delete": {
         "tags": [
@@ -57,6 +95,24 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/download": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesUsersDownloadUserdataEndpoint",
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         },
         "security": [
@@ -595,6 +651,24 @@
   },
   "components": {
     "schemas": {
+      "ChangeUsernameEndpoint_ResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "newName": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeUsernameEndpoint_Request": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "newName": {
+            "type": "string"
+          }
+        }
+      },
       "AccountDeletionResponse": {
         "type": "object",
         "additionalProperties": false,

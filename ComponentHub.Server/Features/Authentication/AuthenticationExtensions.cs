@@ -27,7 +27,7 @@ internal static class AuthenticationExtensions
         services
             .AddIdentity<ApplicationUser, IdentityRole<UserId>>(options =>
             {
-                options.User.AllowedUserNameCharacters = ApplicationUser.ValidationConstants.AllowedCharacters;
+                options.User.AllowedUserNameCharacters = ApplicationUser.Validation.AllowedCharacters;
                 options.User.RequireUniqueEmail = false;
             })
             .AddEntityFrameworkStores()
