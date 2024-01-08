@@ -1,8 +1,6 @@
 using ComponentHub.Domain.Constants;
-using ComponentHub.Domain.Core.Primitives.Results;
 using ComponentHub.Domain.Features.Authentication;
 using ComponentHub.Domain.Features.Users;
-using FastEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 

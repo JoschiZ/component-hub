@@ -1,22 +1,26 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
+using ComponentHub.Domain.Core.Primitives.Results;
+using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
-using ComponentHub.Server.Features.Components.UpdateComponent;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using OneOf;
 
-namespace ComponentHub.Server.Features.Components;
+namespace ComponentHub.Server.Features.Components.UpdateComponent;
 
 internal sealed class
     UpdateComponentEndpoint : Endpoint<UpdateComponentRequest, Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>
 {
 
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _contextFactory;
     private readonly UserManager<ApplicationUser> _userManager;
     
-    public UpdateComponentEndpoint(IUnitOfWorkFactory unitOfWorkFactory, UserManager<ApplicationUser> userManager)
+    public UpdateComponentEndpoint(IDbContextFactory<ComponentHubContext> contextFactory, UserManager<ApplicationUser> userManager)
     {
-        _unitOfWorkFactory = unitOfWorkFactory;
+        _contextFactory = contextFactory;
         _userManager = userManager;
     }
 
@@ -34,10 +38,8 @@ internal sealed class
             return TypedResults.Unauthorized();
         }
 
-        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
-        var updateResult = await unitOfWork
-            .Components
-            .UpdateComponent(
+        await using var context = await _contextFactory.CreateDbContextAsync(ct);
+        var updateResult = await UpdateComponent(
                 new UserId(Guid.Parse(userId)),
                 req.EntryId, 
                 req.ComponentId,
@@ -46,16 +48,64 @@ internal sealed class
                 req.Height, 
                 req.Width, 
                 req.WclComponentId,
+                context, 
                 ct: ct);
 
         if (updateResult.IsT0)
         {
-            await unitOfWork.CompletedAsync(ct);
+            await context.SaveChangesAsync(ct);
         }
         return updateResult.Match<Results<Ok, UnauthorizedHttpResult, ProblemDetails, BadRequest<string>>>(
                 component => TypedResults.Ok(),
                 error => TypedResults.BadRequest(error.ErrorCode),
                 list => new ProblemDetails(list));
         
+    }
+
+
+    private static async Task<OneOf<ComponentEntry, Error, List<ValidationFailure>>> UpdateComponent(
+        UserId userId,
+        ComponentEntryId reqEntryId,
+        ComponentId reqComponentId,
+        string reqName,
+        string reqSourceCode,
+        short reqHeight,
+        short reqWidth,
+        Guid reqWclComponentId,
+        ComponentHubContext context,
+        CancellationToken ct)
+    {
+        var root = await context.Components
+            .Where(entry => entry.Owner.Id == userId)
+            .FirstOrDefaultAsync(entry => entry.Id == reqEntryId, cancellationToken: ct);
+
+        if (root is null)
+        {
+            return Error.UserNotFoundError;
+        }
+
+        var currentComponent = root.GetCurrentComponent();
+
+        var updatedSourceResult = currentComponent.Source.TryGetUpdatedSource(reqSourceCode, reqHeight, reqWidth, reqWclComponentId);
+
+        if (updatedSourceResult.IsError)
+        {
+            return updatedSourceResult.Error;
+        }
+
+        var updatedSource = updatedSourceResult.ResultObject;
+
+        var updatedComponentResult = Component.TryCreate(updatedSource, reqName, root.Id, root);
+
+        if (updatedComponentResult.IsError)
+        {
+            return updatedComponentResult.Error;
+        }
+
+        var updatedComponent = updatedComponentResult.ResultObject;
+
+        root.UpdateCurrentComponent(updatedComponent);
+
+        return root;
     }
 }

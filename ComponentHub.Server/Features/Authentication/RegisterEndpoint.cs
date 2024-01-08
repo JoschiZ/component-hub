@@ -1,16 +1,10 @@
-using System.Security.Claims;
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
-using ComponentHub.Domain.Core.Primitives;
-using ComponentHub.Domain.Features.Authentication;
 using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Core;
-using FastEndpoints;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OpenIddict.Abstractions;
 
 
 namespace ComponentHub.Server.Features.Authentication;
@@ -20,14 +14,15 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, Results<Confli
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IUserStore<ApplicationUser> _userStore;
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _contextFactory;
 
-    public RegisterEndpoint(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserStore<ApplicationUser> userStore, IUnitOfWorkFactory unitOfWorkFactory)
+
+    public RegisterEndpoint(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserStore<ApplicationUser> userStore, IDbContextFactory<ComponentHubContext> contextFactory)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _userStore = userStore;
-        _unitOfWorkFactory = unitOfWorkFactory;
+        _contextFactory = contextFactory;
     }
 
     public override void Configure()
@@ -42,9 +37,10 @@ internal sealed class RegisterEndpoint: Endpoint<RegisterRequest, Results<Confli
         {
             return TypedResults.Conflict("You seem to be already registered");
         }
-        
-        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
-        if (await unitOfWork.UserSet.AnyAsync(applicationUser => req.UserName == applicationUser.UserName, cancellationToken: ct))
+
+        await using var context = await _contextFactory.CreateDbContextAsync(ct);
+
+        if (await context.Users.AnyAsync(applicationUser => req.UserName == applicationUser.UserName, cancellationToken: ct))
         {
             return TypedResults.Conflict("This username is already taken");
         }

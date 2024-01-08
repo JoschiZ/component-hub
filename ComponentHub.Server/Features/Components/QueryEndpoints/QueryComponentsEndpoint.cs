@@ -1,4 +1,4 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Server.Core.Extensions;
@@ -10,11 +10,11 @@ namespace ComponentHub.Server.Features.Components.QueryEndpoints;
 
 internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpointRequest, Ok<QueryComponentsEndpointResponse>>
 {
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _contextFactory;
 
-    public QueryComponentsEndpoint(IUnitOfWorkFactory unitOfWorkFactory)
+    public QueryComponentsEndpoint(IDbContextFactory<ComponentHubContext> contextFactory)
     {
-        _unitOfWorkFactory = unitOfWorkFactory;
+        _contextFactory = contextFactory;
     }
 
     public override void Configure()
@@ -25,9 +25,9 @@ internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpoint
 
     public override async Task<Ok<QueryComponentsEndpointResponse>> ExecuteAsync(QueryComponentsEndpointRequest req, CancellationToken ct)
     {
-        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
+        await using var context = await _contextFactory.CreateDbContextAsync(ct);
 
-        var componentsQuery = unitOfWork.Components.Query()
+        var componentsQuery = context.Components
             .Include(entry => entry.Owner)
             .Where(entry => entry.Owner.UserName!.Contains(req.UserName) && entry.Name.Contains(req.ComponentName));
         var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod)

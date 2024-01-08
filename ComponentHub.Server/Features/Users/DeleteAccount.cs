@@ -1,18 +1,16 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
-using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Core.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComponentHub.Server.Features.Users;
 
 internal sealed class DeleteAccountEndpoint: EndpointWithoutRequest<Results<Ok<AccountDeletionResponse>, UnauthorizedHttpResult>>
 {
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _unitOfWorkFactory;
 
-    public DeleteAccountEndpoint(IUnitOfWorkFactory unitOfWorkFactory)
+    public DeleteAccountEndpoint(IDbContextFactory<ComponentHubContext> unitOfWorkFactory)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
     }
@@ -32,9 +30,10 @@ internal sealed class DeleteAccountEndpoint: EndpointWithoutRequest<Results<Ok<A
         }
         
         
-        await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
+        await using var context = await _unitOfWorkFactory.CreateDbContextAsync(ct);
 
-        var deletion = await unitOfWork.UserSet.Where(user => user.Id == idResult.ResultObject)
+        var deletion = await context.Users
+            .Where(user => user.Id == idResult.ResultObject)
             .Take(1)
             .ExecuteDeleteAsync(ct);
 

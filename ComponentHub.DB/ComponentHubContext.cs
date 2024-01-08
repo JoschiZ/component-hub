@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComponentHub.DB;
 
-internal sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, IdentityRole<UserId>, UserId>
+public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, IdentityRole<UserId>, UserId>
 {
     public DbSet<ComponentEntry> Components { get; set; } = default!;
 

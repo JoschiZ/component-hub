@@ -1,4 +1,4 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Server.Core.ResponseObjects;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,11 +8,11 @@ namespace ComponentHub.Server.Features.Components.QueryEndpoints;
 
 internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<GetComponentResponse>, NotFound<Error404>, ProblemHttpResult>>
 {
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _contextFactory;
 
-    public GetComponentEndpoint(IUnitOfWorkFactory unitOfWorkFactory)
+    public GetComponentEndpoint(IDbContextFactory<ComponentHubContext> contextFactory)
     {
-        _unitOfWorkFactory = unitOfWorkFactory;
+        _contextFactory = contextFactory;
     }
 
     public override void Configure()
@@ -24,9 +24,9 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
     public override async Task<Results<Ok<GetComponentResponse>, NotFound<Error404>, ProblemHttpResult>> ExecuteAsync(GetComponentRequest req, CancellationToken ct)
     {
         Console.WriteLine(req);
-        var unit = _unitOfWorkFactory.GetUnitOfWork();
-        var entry = await unit.Components
-            .Query()
+        await using var context = await _contextFactory.CreateDbContextAsync(ct);
+        var entry = await context
+            .Components
             .Include(entry => entry.ComponentHistory)
             .Include(entry => entry.Owner)
             .FirstOrDefaultAsync(

@@ -1,5 +1,4 @@
 using ComponentHub.Domain.Constants;
-using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.AspNetCore.Identity;
 

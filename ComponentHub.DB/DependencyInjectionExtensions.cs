@@ -1,4 +1,3 @@
-using ComponentHub.DB.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +21,6 @@ public static class DependencyInjectionExtensions
 
     public static IServiceCollection AddEfCore(this IServiceCollection services, Action<DbContextOptionsBuilder>? config = null)
     {
-        services.AddSingleton<IUnitOfWorkFactory, UnitOfWorkFactory>();
-        
-        
         return services.AddDbContextFactory<ComponentHubContext>(builder =>
         {
             builder.UseSqlite("Filename=app.db");

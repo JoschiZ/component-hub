@@ -1,4 +1,4 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -8,11 +8,11 @@ namespace ComponentHub.Server.Features.Components.QueryEndpoints;
 internal sealed class
     GetComponentsByUserEndpoint : Endpoint<GetComponentsByUserRequest, Ok<ComponentEntryDto[]>>
 {
-    private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _contextFactory;
 
-    public GetComponentsByUserEndpoint(IUnitOfWorkFactory unitOfWorkFactory)
+    public GetComponentsByUserEndpoint(IDbContextFactory<ComponentHubContext> contextFactory)
     {
-        _unitOfWorkFactory = unitOfWorkFactory;
+        _contextFactory = contextFactory;
     }
 
     public override void Configure()
@@ -23,10 +23,9 @@ internal sealed class
 
     public override async Task<Ok<ComponentEntryDto[]>> ExecuteAsync(GetComponentsByUserRequest req, CancellationToken ct)
     {
-        await using var uof = _unitOfWorkFactory.GetUnitOfWork();
+        await using var context = await _contextFactory.CreateDbContextAsync(ct);
         
-        var found = await uof.Components
-            .Query()
+        var found = await context.Components
             .Where(entry => entry.Owner.UserName == req.UserName)
             .OrderBy(entry => entry.Name)
             .Skip(req.Page * req.PageSize)

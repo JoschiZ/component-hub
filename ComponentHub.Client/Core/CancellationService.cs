@@ -2,17 +2,23 @@ using Microsoft.AspNetCore.Components;
 
 namespace ComponentHub.Client.Core;
 
-public abstract class CancellationService: IDisposable, IAsyncDisposable
+public interface ICancellationService : IDisposable, IAsyncDisposable
+{
+    CancellationTokenSource Cts { get; }
+    CancellationToken Token { get; }
+}
+
+public sealed class CancellationService: ICancellationService
 {
     private readonly NavigationManager _navigationManager;
     
-#pragma warning disable Ex0104
+
     public CancellationTokenSource Cts { get; } = new();
-#pragma warning restore Ex0104
+
 
     public CancellationToken Token => Cts.Token;
 
-    protected CancellationService(NavigationManager navigationManager)
+    public CancellationService(NavigationManager navigationManager)
     {
         _navigationManager = navigationManager;
         _navigationManager.LocationChanged += (_, _) => Cts.Cancel();

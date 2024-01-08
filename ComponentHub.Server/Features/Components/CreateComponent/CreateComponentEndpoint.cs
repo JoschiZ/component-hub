@@ -1,21 +1,20 @@
-using ComponentHub.DB.Core;
+using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
-using ComponentHub.Server.Features.Components.CreateComponent;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ComponentHub.Server.Features.Components;
+namespace ComponentHub.Server.Features.Components.CreateComponent;
 
 internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, Results<Created<CreateComponentResponse>, ProblemDetails, UnauthorizedHttpResult, Conflict<string>>>
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<CreateComponentEndpoint> _logger;
-    private readonly IUnitOfWorkFactory _workFactory;
+    private readonly IDbContextFactory<ComponentHubContext> _workFactory;
 
-    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, ILogger<CreateComponentEndpoint> logger, IUnitOfWorkFactory workFactory)
+    public CreateComponentEndpoint(UserManager<ApplicationUser> userManager, ILogger<CreateComponentEndpoint> logger, IDbContextFactory<ComponentHubContext> workFactory)
     {
         _userManager = userManager;
         _logger = logger;
@@ -36,7 +35,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return TypedResults.Unauthorized();
         }
 
-        var unitOfWork = _workFactory.GetUnitOfWork();
+        await using var context = await _workFactory.CreateDbContextAsync(ct);
 
         // Create a Stub user to attach the component to
         var user = new ApplicationUser() {Id = new UserId(new Guid(userId)), UserName = userName};
@@ -69,9 +68,9 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
 
         try
         {
-            unitOfWork.Attach(user);
-            await unitOfWork.Components.AddAsync(componentEntry.ResultObject, ct);
-            await unitOfWork.CompletedAsync(ct);
+            context.Attach(user);
+            await context.Components.AddAsync(componentEntry.ResultObject, ct);
+            await context.SaveChangesAsync(ct);
             
             return TypedResults.Created(
                 new Uri(BaseURL + Endpoints.Components.FormatGet(userName, component.Name)), 

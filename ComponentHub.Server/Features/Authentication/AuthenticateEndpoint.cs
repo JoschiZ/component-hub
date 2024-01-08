@@ -1,10 +1,8 @@
 using System.Security.Claims;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Users;
-using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Client.AspNetCore;

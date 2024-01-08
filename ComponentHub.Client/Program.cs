@@ -22,6 +22,7 @@ builder.Services.AddMudServices().AddMudExtensions();
 builder.Services.AddAuthorizationCore();
 
 builder.Services.AddScoped<RedirectHelper>();
+builder.Services.AddTransient<CancellationService>();
 
 
 //builder.Services.AddHttpClient("ApiClient", client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); }).AddHttpMessageHandler<ValidationDelegatingHandler>().AddHttpMessageHandler<RedirectDelegatingHandler>();
@@ -34,15 +35,11 @@ builder.Services.AddHttpClient("ApiClient")
     .AddHttpMessageHandler<RedirectDelegatingHandler>();
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
-builder.Services.AddSingleton<SnackbarHelperService>();
-builder.Services.AddSingleton<ValidationDelegatingHandler>();
-// builder.Services.AddSingleton<ErrorDelegatingHandler>();
+builder.Services.AddScoped<SnackbarHelperService>();
+builder.Services.AddScoped<ValidationDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
-builder.Services.AddSingleton<ErrorHelper>();
-
-builder.Services.AddTransient<CancellationService>();
-
-builder.Services.AddSingleton(typeof(SharingService<>));
+builder.Services.AddScoped<ErrorHelper>();
+builder.Services.AddScoped(typeof(SharingService<>));
 
 builder.Services.AddValidatorsFromAssemblies(new[]
 {
@@ -54,11 +51,12 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Debug()
     .WriteTo.BrowserConsole()
     .CreateLogger();
+
 builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 builder.Services.AddScoped<Test>();
 
 builder.Services.AddScoped<ComponentService>();
-builder.Services.AddSingleton<UserService>();
+builder.Services.AddScoped<UserService>();
 
 builder.Services.AddScoped<AuthApiClient>();
 builder.Services.AddScoped<IdentityAuthenticationStateProvider>();
