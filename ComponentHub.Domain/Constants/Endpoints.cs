@@ -1,4 +1,4 @@
-namespace ComponentHub.Domain.Api;
+namespace ComponentHub.Domain.Constants;
 
 public static class Endpoints
 {
@@ -17,10 +17,15 @@ public static class Endpoints
     public static class Components
     {
         private const string ComponentsBasePath = BasePath + "components/";
-        public const string Create = ComponentsBasePath + "create/";
-        public const string Update = ComponentsBasePath + "update/";
-        public const string Delete = ComponentsBasePath + "delete/";
+        public const string Create = ComponentsBasePath + "create";
+        public const string Update = ComponentsBasePath + "update";
+        public const string Delete = ComponentsBasePath + "delete";
         public const string Get = ComponentsBasePath + "get/{UserName}/{ComponentName}";
+        public const string GetByUser = ComponentsBasePath + "{UserName}";
+        public static string FormatGetByUser(string userName) => 
+            GetByUser.Replace("{UserName}", userName);
+        
+        
         public const string Query = ComponentsBasePath;
 
         public static string FormatGet(string userName, string componentName)
@@ -32,7 +37,8 @@ public static class Endpoints
     public static class Users
     {
         private const string UsersBasePath = BasePath + "users/";
-        public const string GetDetailedInfo = UsersBasePath + "detailedInfo/";
+        public const string GetDetailedInfo = UsersBasePath + "detailedInfo";
+        public const string Delete = UsersBasePath + "delete";
     }
     
     

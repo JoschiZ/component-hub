@@ -68,7 +68,7 @@ public sealed record ComponentSource
     
     public sealed class Validator: MudCompatibleAbstractValidator<ComponentSource>
     {
-        public const int MaxSourceLength = 2000;
+        public const int MaxSourceLength = 20000;
         public const short MaxSize = 10;
         public const short MinSize = 1;
         public Validator()

@@ -1,5 +1,5 @@
 using ComponentHub.DB.Core;
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Features.Components.CreateComponent;

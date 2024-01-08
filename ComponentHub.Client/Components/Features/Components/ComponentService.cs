@@ -1,6 +1,7 @@
 using ComponentHub.ApiClients.Models;
 using ComponentHub.Client.ApiClients;
 using ComponentHub.Client.Core;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Kiota.Abstractions;
 
 
@@ -10,11 +11,13 @@ internal sealed class ComponentService
 {
     private readonly ComponentHubClient _client;
     private readonly ErrorHelper _errorHelper;
+    private readonly NavigationManager _navigationManager;
 
-    public ComponentService(ComponentHubClient componentHubClient, ErrorHelper errorHelper)
+    public ComponentService(ComponentHubClient componentHubClient, ErrorHelper errorHelper, NavigationManager navigationManager)
     {
         _client = componentHubClient;
         _errorHelper = errorHelper;
+        _navigationManager = navigationManager;
     }
 
     public Task<CreateComponentResponse?> CreateComponent(CreateComponentRequest request)
@@ -30,10 +33,24 @@ internal sealed class ComponentService
         }
         catch (Error404 e)
         {
-            _errorHelper.DisplayError(e);
+            _navigationManager.NavigateTo(Routes.General.NotFound, replace: true);
         }
 
         return default;
+    }
+
+    public async Task<List<ComponentEntryDto>> GetByUser(string userName, CancellationToken ct)
+    {
+        try
+        {
+            return await _client.Components[userName].GetAsync(null, ct) ?? [];
+        }
+        catch (ApiException e)
+        {
+            _errorHelper.DisplayError(e);
+        }
+
+        return [];
     }
 
     public async Task<List<ComponentEntryDto>> QueryComponents()

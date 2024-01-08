@@ -69,7 +69,7 @@ public sealed class Component: Entity<ComponentId>, IComparable<Component>
     
     public class Validator: AbstractValidator<Component>
     {
-        public const int MaxNameLength = 24;
+        public const int MaxNameLength = 40;
         public const int MinNameLength = 4;
         public Validator()
         {

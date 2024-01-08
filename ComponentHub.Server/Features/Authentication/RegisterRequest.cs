@@ -1,7 +1,8 @@
 using ComponentHub.Domain.Core.Validation;
+using ComponentHub.Domain.Features.Users;
 using FluentValidation;
 
-namespace ComponentHub.Domain.Features.Authentication;
+namespace ComponentHub.Server.Features.Authentication;
 
 /// <summary>
 /// The request DTO to register a user.
@@ -21,7 +22,8 @@ public class RegisterRequestValidator : MudCompatibleAbstractValidator<RegisterR
     {
         RuleFor(request => request.UserName)
             .NotEmpty()
-            .MinimumLength(5)
-            .MaximumLength(16);
+            .MinimumLength(ApplicationUser.ValidationConstants.MinUserNameLength)
+            .MaximumLength(ApplicationUser.ValidationConstants.MaxUserNameLength)
+            .Must(ApplicationUser.ValidationConstants.IsAllowedUserName);
     }
 }

@@ -1,12 +1,18 @@
 @using MudExtensions.Enums
 @using ComponentHub.ApiClients.Models
 @using ComponentHub.Client.Components.Features.Components
+@using ComponentHub.Client.Core
+@using ComponentHub.Domain.Features.Users
+@using Microsoft.AspNetCore.Authorization
 
 @attribute [Route(Routes.Users.PrivateProfile)]
+@attribute [Authorize]
 @inject UserService UserService
 @inject ComponentService ComponentService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject CancellationService CancellationService 
+@inject NavigationManager NavigationManager
 
 
 <section>
@@ -17,52 +23,83 @@
     Delete Account
 </section>
 
-<section>
-    My Components
-    
-    Table
-    Name ... Delete
-</section>
+@if (_userInfo is not null)
+{
+    <MudCard>
+        <MudCardHeader>
+            <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">Hello @_userInfo.Name !</MudTextM3>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudPaper>
+                <MudTextField 
+                    T="string"
+                    Margin="Margin.Dense"
+                    @bind-Value="@_newUserName"
+                    Validation="@((string name) => ApplicationUser.ValidationConstants.IsAllowedUserName(name))"
+                    MaxLength="ApplicationUser.ValidationConstants.MaxUserNameLength"
+                    Immediate
+                    />
+            </MudPaper>
+            <MudButton>Download Userdata</MudButton>
+            <MudButton Color="Color.Warning">Delete Account</MudButton>
+        </MudCardContent>
+    </MudCard>
 
-<MudCard>
-    <MudCardHeader>
-        <MudTextM3 Typo="TypoM3.Title">Your Components</MudTextM3>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudDataGrid Items="_components" Loading="@(_components.Count == 0)">
-            <Columns>
-                <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
-                <PropertyColumn Property="arg => arg.Name"/>
-                <TemplateColumn>
-                    <CellTemplate>
-                        <MudLink Href="@Routes.Components.GetComponentPage(context.Item.Name, _userInfo.Name)"></MudLink>
-                    </CellTemplate>
-                </TemplateColumn>
-                <PropertyColumn Property="arg => arg.CreatedAt"/>
-                <PropertyColumn Property="arg => arg.UpdatedAt"/>
-                <TemplateColumn>
-                    <CellTemplate>
-                        <MudButton OnClick="@(() => DeleteComponent(context.Item))" Variant="Variant.Filled" Color="Color.Warning">
-                            DELETE
-                        </MudButton>
-                    </CellTemplate>
-                </TemplateColumn>
-            </Columns>
-            <ChildRowContent>
-                @context.Item.Description
-            </ChildRowContent>
-        </MudDataGrid>
-    </MudCardContent>
-</MudCard>
-
+    <MudCard>
+        <MudCardHeader>
+            <MudTextM3 Typo="TypoM3.Title">Your Components</MudTextM3>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudDataGrid 
+                Items="_components" 
+                Loading="@(_components is null)">
+                <Columns>
+                    <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
+                    <PropertyColumn Property="arg => arg.Name"/>
+                    <TemplateColumn>
+                        <CellTemplate>
+                            @if (context.Item?.Name is not null && _userInfo.Name is not null)
+                            {
+                                <MudLink Href="@Routes.Components.GetComponentPage(context.Item.Name, _userInfo.Name)"></MudLink>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                    <PropertyColumn Property="arg => arg.CreatedAt"/>
+                    <PropertyColumn Property="arg => arg.UpdatedAt"/>
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudButton OnClick="@(() => DeleteComponent(context.Item))" Variant="Variant.Filled" Color="Color.Warning">
+                                DELETE
+                            </MudButton>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <ChildRowContent>
+                    @context.Item.Description
+                </ChildRowContent>
+                <PagerContent>
+                    <MudDataGridPager/>
+                </PagerContent>
+            </MudDataGrid>
+        </MudCardContent>
+    </MudCard>
+}
 
 @code {
-    private List<ComponentEntryDto> _components = [];
+    private List<ComponentEntryDto>? _components;
     private GetDetailedUserInfoResponse? _userInfo;
+    private string _newUserName = "";
+
+    
 
     protected override async Task OnInitializedAsync()
     {
         _userInfo = await UserService.GetDetailedUserInfo();
+        if (_userInfo.Name is null)
+        {
+            return;
+        }
+        _components = await ComponentService.GetByUser(_userInfo.Name, CancellationService.Token);
     }
 
     private async Task DeleteComponent(ComponentEntryDto? componentEntryDto)
@@ -85,4 +122,29 @@
         await ComponentService.Delete(componentEntryDto.Id).ConfigureAwait(false);
         Snackbar.Add("Component Deleted Successfully", Severity.Success);
     }
+
+    private async Task DeleteAccount()
+    {
+        var result = await ConfirmationDialog.Show(DialogService, "You are about to delete your account including all of your components!", "Confirm Deletion");
+
+        if (result.Canceled)
+        {
+            Snackbar.Add("Deletion aborted", Severity.Info);
+            return;
+        }
+
+        var deletion = await UserService.DeleteAccount(CancellationService.Token);
+
+        if (deletion?.IsDeleted is null || !deletion.IsDeleted.Value)
+        {
+            Snackbar.Add("Account Deletion Failed", Severity.Error);
+            return;
+        }
+
+        Snackbar.Add("Account Deleted", Severity.Success);
+        NavigationManager.NavigateTo("/");
+    }
+
+
+
 }

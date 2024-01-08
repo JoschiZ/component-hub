@@ -1,13 +1,28 @@
+@using MudExtensions.Enums
 
-<MudText Color="Color.Tertiary">@UserName</MudText>
+@inherits MudComponentBase
 
+
+
+<MudLink Href="@Routes.Users.GetPublicProfile(UserName)">
+    <MudTextM3 Color="@Color" Class="@Class" Style="@Style" Typo="@Typo" Size="Size">
+        @UserName
+    </MudTextM3>
+</MudLink>
 @code {
     [Parameter, EditorRequired]
     public required string UserName { get; set; }
+
+    [Parameter]
+    public TypoM3 Typo { get; set; } = TypoM3.Body;
+
+    [Parameter] 
+    public Size Size { get; set; } = Size.Large;
+
+    [Parameter] 
+    public Color Color { get; set; } = Color.Tertiary;
 }
 
 <style>
-    .user-display{
-        
-    }
+
 </style>

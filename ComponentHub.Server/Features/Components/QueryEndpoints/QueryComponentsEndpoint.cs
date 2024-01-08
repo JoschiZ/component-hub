@@ -1,19 +1,14 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using ComponentHub.DB.Core;
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
-using ComponentHub.Server.Core;
 using ComponentHub.Server.Core.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using NJsonSchema.Annotations;
 
-namespace ComponentHub.Server.Features.Components;
+namespace ComponentHub.Server.Features.Components.QueryEndpoints;
 
-internal sealed class
-    QueryComponentsEndpoint : Endpoint<QueryComponentsEndpointRequest, Ok<QueryComponentsEndpointResponse>>
+internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpointRequest, Ok<QueryComponentsEndpointResponse>>
 {
     private readonly IUnitOfWorkFactory _unitOfWorkFactory;
 
@@ -35,7 +30,8 @@ internal sealed class
         var componentsQuery = unitOfWork.Components.Query()
             .Include(entry => entry.Owner)
             .Where(entry => entry.Owner.UserName!.Contains(req.UserName) && entry.Name.Contains(req.ComponentName));
-        var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod).GetOrderMethod();
+        var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod)
+            .GetOrderMethod();
         var componentsOrderedQuery = orderAction(componentsQuery)
             .ThenBy(entry => entry.Name)
             .Skip(req.PageSize * req.Page)
@@ -46,7 +42,6 @@ internal sealed class
             
         return TypedResults.Ok(new QueryComponentsEndpointResponse(components));
     }
-    
 }
 
 internal sealed record QueryComponentsEndpointRequest(

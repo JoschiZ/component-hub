@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Users;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication;

@@ -2,46 +2,64 @@
 @using ComponentHub.ApiClients.Models
 @using ComponentHub.Client.Core
 @using ComponentHub.Domain.Features.Components
+@using MudExtensions.Enums
 @inject ComponentService ComponentService
 @inject SharingService<CreateComponentResponse> Share
 @inject NavigationManager NavManager
+@inject IJsApiService ClipBoardService
+@inject ISnackbar SnackBar
 
 @if (_getResponse?.ComponentEntry is not null && _getResponse.CurrentComponent is not null)
 {
     <MudCard>
         <MudCardHeader>
-            <MudText Typo="Typo.h1" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudText>
-            <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
-            <MudStack Justify="Justify.Center" Spacing="4">
-                <MudText>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudText>
-                <MudText>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt" /></MudText>
+            <MudStack>
+                <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudTextM3>
+                <MudStack Row Justify="Justify.Center" Spacing="4">
+                    <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
+                    <MudTextM3>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudTextM3>
+                    <MudTextM3>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudTextM3>
+                </MudStack>
             </MudStack>
             <MudSpacer/>
         </MudCardHeader>
         <MudCardContent>
-            <MudPaper Outlined>
-                <MudText Typo="Typo.h4">Description</MudText>
-                <MudText>@_getResponse.ComponentEntry.Description</MudText>
+            <MudPaper>
+                <MudTextM3 GutterBottom="true" Typo="TypoM3.Title">Description</MudTextM3>
+                <MudTextField
+                    T="string"
+                    ReadOnly
+                    Lines="5"
+                    AutoGrow
+                    MaxLines="30"
+                    Text="@_getResponse.ComponentEntry.Description"
+                    DisableUnderLine/>
             </MudPaper>
             @if (_componentSource is not null)
             {
                 <MudPaper Outlined>
                     <MudExpansionPanel>
                         <TitleContent>
-                            <MudText Typo="Typo.h3">Source Code</MudText>
+                            <MudTextM3 Typo="TypoM3.Title">Source</MudTextM3>
                         </TitleContent>
                         <ChildContent>
                             <MudCard>
                                 <MudCardContent>
-                                    <MudText>
-                                        @_componentSource.Source
-                                    </MudText>
+                                    <MudTextField
+                                        Variant="Variant.Filled"
+                                        ReadOnly
+                                        Text="@_componentSource.Source.Script"
+                                        Lines="5"
+                                        AutoGrow
+                                        T="string"
+                                        DisableUnderLine/>
+                                    <MudStack Spacing="4" Row>
+                                        <MudTextM3>Height: @_componentSource.Height</MudTextM3>
+                                        <MudTextM3>Width: @_componentSource.Width</MudTextM3>
+                                        <MudSpacer/>
+                                        <MudTextM3 Align="Align.Right" Typo="TypoM3.Label" Color="Color.Surface">ID: @_componentSource.WclComponentId</MudTextM3>
+                                    </MudStack>
                                 </MudCardContent>
-                                <MudStack Justify="Justify.Center" Spacing="4" Row>
-                                    <MudText>Height: @_componentSource.Height</MudText>
-                                    <MudText>Width: @_componentSource.Width</MudText>
-                                </MudStack>
-                                <MudText>ID: @_componentSource.WclComponentId</MudText>
                             </MudCard>
                         </ChildContent>
                     </MudExpansionPanel>
@@ -54,7 +72,7 @@
     </MudCard>
     
     
-    <MudDialog @bind-Visible="@_isExportDialogVisible" Options="@_exportDialogOptions">
+    <MudDialog @bind-IsVisible="@_isExportDialogVisible" Options="@_exportDialogOptions">
         <TitleContent>Export Component</TitleContent>
         <DialogContent>
             <MudTextField
@@ -65,7 +83,7 @@
                 Text="@_getResponse.CurrentComponent.ComponentSource"
                 Adornment="Adornment.End"
                 AdornmentIcon="@Icons.Material.Filled.StickyNote2"
-                OnAdornmentClick="() => _exportStringRef?.SelectAsync()"
+                OnAdornmentClick="@OnAdornmentClick"
                 />
         </DialogContent>
     </MudDialog>
@@ -110,19 +128,35 @@ else
                 ComponentEntry = shared?.Entry, 
                 CurrentComponent = shared?.Component
             };
+        }
 
-            var encodedSource = _getResponse.CurrentComponent?.ComponentSource ?? "";
-            _componentSource = Component.DecodeExportString(encodedSource).ResultObject;
+        if (_getResponse is null && UserName is not null && ComponentName is not null)
+        {
+            _getResponse = await ComponentService.GetComponent(UserName, ComponentName);
         }
         
-        if (_getResponse?.ComponentEntry is not null || UserName is null || ComponentName is null)
+        if (_getResponse is null)
         {
             NavManager.NavigateTo(Routes.General.NotFound);
             return;
         }
         
+        var encodedSource = _getResponse?.CurrentComponent?.ComponentSource ?? "";
+        _componentSource = Component.DecodeExportString(encodedSource).ResultObject;
+    }
+
+    private async Task OnAdornmentClick()
+    {
+        if (_exportStringRef is null)
+        {
+            return;
+        }
         
-        _getResponse = await ComponentService.GetComponent(UserName, ComponentName);
+        await ClipBoardService.CopyToClipboardAsync(_exportStringRef.Text);
+        await _exportStringRef.SelectAsync();
+        await _exportStringRef.FocusAsync();
+
+        SnackBar.Add("Copied to Clipboard", Severity.Success);
     }
 
 }

@@ -1,4 +1,4 @@
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Server.Core;

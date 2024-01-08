@@ -1,5 +1,5 @@
 using ComponentHub.DB.Core;
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Server.Core.ResponseObjects;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -23,7 +23,7 @@ internal sealed class DeleteComponentEndpoint : Endpoint<DeleteComponentRequest,
     public override async Task<Results<Ok, NotFound<Error404>>> ExecuteAsync(DeleteComponentRequest req, CancellationToken ct)
     {
         await using var unitOfWork = _unitOfWorkFactory.GetUnitOfWork();
-        var deletedRows = await unitOfWork.Components.RemoveByIdAsync(req.ComponentId, ct);
+        var deletedRows = await unitOfWork.Components.RemoveByIdAsync(req.ComponentId, User, ct);
         if (deletedRows < 1)
         {
             return TypedResults.NotFound(new Error404());

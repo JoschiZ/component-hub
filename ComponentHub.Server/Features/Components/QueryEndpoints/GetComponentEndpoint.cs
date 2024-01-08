@@ -1,11 +1,10 @@
 using ComponentHub.DB.Core;
-using ComponentHub.Domain.Api;
-using ComponentHub.Domain.Features.Components;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Server.Core.ResponseObjects;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace ComponentHub.Server.Features.Components;
+namespace ComponentHub.Server.Features.Components.QueryEndpoints;
 
 internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<GetComponentResponse>, NotFound<Error404>, ProblemHttpResult>>
 {

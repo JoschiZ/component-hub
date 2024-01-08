@@ -10,25 +10,31 @@ internal sealed class IdentityAuthenticationStateProvider(
     RedirectHelper redirectHelper
     ): AuthenticationStateProvider
 {
+    public UserInfo? CurrentUser { get; set; }
+    
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var userInfo = await authClient.GetUserInfo();
+        if (CurrentUser is null)
+        { 
+            CurrentUser = await authClient.GetUserInfo();
+        }
+        
         var identity = new ClaimsIdentity();
         
-        if (userInfo.IsAuthenticated != null && (userInfo == AuthApiClient.Empty || !userInfo.IsAuthenticated.Value))
+        if (CurrentUser.IsAuthenticated != null && (CurrentUser == AuthApiClient.Empty || !CurrentUser.IsAuthenticated.Value))
         {
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
 
-        if (userInfo.Name is null || userInfo.ExposedClaims is null)
+        if (CurrentUser.Name is null || CurrentUser.ExposedClaims is null)
         {
             return new AuthenticationState(new ClaimsPrincipal(identity));
         }
         
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, userInfo.Name)
-        }.Concat(userInfo.ExposedClaims.AdditionalData.Select(claim => new Claim(claim.Key, claim.Value.ToString())));
+            new Claim(ClaimTypes.Name, CurrentUser.Name)
+        }.Concat(CurrentUser.ExposedClaims.AdditionalData.Select(claim => new Claim(claim.Key, claim.Value.ToString())));
         identity = new ClaimsIdentity(claims, "Server Authentication");
 
         return new AuthenticationState(new ClaimsPrincipal(identity));
@@ -37,18 +43,26 @@ internal sealed class IdentityAuthenticationStateProvider(
     public async Task Register(RegisterRequest options, CancellationToken ctx)
     {
         await authClient.Register(options, ctx);
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        AuthStateHasChanged();
         redirectHelper.Redirect("/");
     }
     
     public async Task Logout()
     {
         await authClient.Logout();
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        AuthStateHasChanged();
     }
 
-    public void NotifyAuthenticationStateChanged()
+    public void Login()
     {
+        //Void the current user cache for a new login.
+        // The rest is done as a form request
+        CurrentUser = null;
+    }
+
+    public void AuthStateHasChanged()
+    {
+        CurrentUser = null;
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

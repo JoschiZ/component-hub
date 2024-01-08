@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ComponentHub.DB.Core;
 
-public interface IRepository<TItem, TId> 
+public interface IRepository<TItem, in TId> 
     where TItem : class, IAggregateRoot<TId>
     where TId: struct, IEquatable<TId>
 {

@@ -1,58 +1,33 @@
-﻿@attribute [Route(Routes.General.Home)]
-@using ComponentHub.Client.Components.Features.Components
-@using ComponentHub.Domain.Api
-@using ComponentHub.ApiClients.Models
-@inject ISnackbar Snackbar
-@inject ComponentService ComponentService
-@inject HttpClient HttpClient
+﻿@using MudExtensions.Enums
+@attribute [Route(Routes.General.Home)]
 
-<MudCard>
+
+<MudCard Style="margin-bottom: 20px">
     <MudCardHeader>
-        <MudText Typo="Typo.h1" Color="Color.Primary">Welcome to the Component Hub</MudText>
+        <MudTextM3 Typo="TypoM3.Display" Color="Color.Primary">Welcome to the Component Hub!</MudTextM3>
     </MudCardHeader>
     <MudCardContent>
-        <MudText>
-            The Component Hub is your central location for sharing and discovering <MudLink Href="https://articles.warcraftlogs.com/help/what-are-report-components">Archon Report Components</MudLink>.
+        <MudTextM3 Typo="TypoM3.Body">
+            The Component Hub is your central location for sharing and discovering <MudLink Target="_blank" Href="https://articles.warcraftlogs.com/help/what-are-report-components">Archon Report Components</MudLink>.
             These allow you to create in depth and shareable dashboards to analyze your gameplay.
              
-            This feature is currently in closed alpha, access can be requested <MudLink Href="https://forms.gle/oFcWCMbgqDK2j2e69.">here</MudLink>.
-        </MudText>        
+            This feature is currently in closed alpha, access can be requested <MudLink Target="_blank" Href="https://docs.google.com/forms/d/e/1FAIpQLScJbwNOgiqG30pj_w6kwT2UXLY3x5ndYiiyxXi4fEJYhF33Cw/viewform">here</MudLink>.
+        </MudTextM3>        
     </MudCardContent>
 </MudCard>
 
 <MudCard>
     <MudCardHeader>
-        <MudText Typo="Typo.h2">Getting Started</MudText>    
+        <MudTextM3 U Typo="TypoM3.Title">Getting Started</MudTextM3>    
     </MudCardHeader>
     <MudCardContent>
-        <MudText>
+        <MudTextM3 Typo="TypoM3.Body">
             In order to use the Component Hub, you currently require an BattleNet account.
             This is used to register and login.
-            Component Hub will not store any of your personal data, besides your BattleNet id and name.
+            Component Hub will not store any of your personal data, beside your BattleNet ID and username.
             More login provider will be added in the future.
             
             After you created an account you can go <MudLink Href="@Routes.Components.Upload">here</MudLink> upload your first component
-        </MudText>    
+        </MudTextM3>    
     </MudCardContent>
 </MudCard>
-
-
-@code
-{
-    private string _componentName = "SomeComponent";
-    
-    private async Task SendBadRequest()
-    {
-        await HttpClient.PutAsJsonAsync(Endpoints.Components.Create, new CreateComponentRequest(){Name = "asddddddddddddddddddddddddddddddddddddddddddddddddddddd", SourceCode = "", Language = Language.JS});
-    }
-
-    private async Task OpenBar() => Snackbar.Add("Test", Severity.Error);
-
-    private async Task SendValidRequest()
-    {
-        await ComponentService.CreateComponent(new CreateComponentRequest(){Name = _componentName, Language = Language.JS, SourceCode = "My Source SourceCode"});
-    }
-
-
-}
-

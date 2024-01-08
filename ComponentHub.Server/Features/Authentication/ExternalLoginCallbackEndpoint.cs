@@ -1,4 +1,4 @@
-using ComponentHub.Domain.Api;
+using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.AspNetCore.Identity;
@@ -36,7 +36,7 @@ internal sealed class ExternalLoginCallbackEndpoint: Endpoint<ExternalLoginCallb
 
         if (result.Succeeded)
         {
-            return TypedResults.Redirect(req.ReturnUrl);
+            return TypedResults.Redirect("~/"+req.ReturnUrl);
         }
 
         return TypedResults.Redirect("/Authentication/Register");

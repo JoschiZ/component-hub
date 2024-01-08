@@ -2,6 +2,7 @@
 using ComponentHub.ApiClients.Api.Components.Create;
 using ComponentHub.ApiClients.Api.Components.Delete;
 using ComponentHub.ApiClients.Api.Components.Get;
+using ComponentHub.ApiClients.Api.Components.Item;
 using ComponentHub.ApiClients.Api.Components.Update;
 using ComponentHub.ApiClients.Models;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -33,19 +34,26 @@ namespace ComponentHub.ApiClients.Api.Components {
         public UpdateRequestBuilder Update { get =>
             new UpdateRequestBuilder(PathParameters, RequestAdapter);
         }
+        /// <summary>Gets an item from the ComponentHub.ApiClients.api.components.item collection</summary>
+        /// <param name="position">Unique identifier of the item</param>
+        public WithUserNameItemRequestBuilder this[string position] { get {
+            var urlTplParams = new Dictionary<string, object>(PathParameters);
+            urlTplParams.Add("UserName", position);
+            return new WithUserNameItemRequestBuilder(urlTplParams, RequestAdapter);
+        } }
         /// <summary>
         /// Instantiates a new ComponentsRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,sortDirection*,sortingMethod*,page*,pageSize*}", pathParameters) {
+        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,sortDirection*,sortingMethod*,page*,pageSize*}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new ComponentsRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,sortDirection*,sortingMethod*,page*,pageSize*}", rawUrl) {
+        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,sortDirection*,sortingMethod*,page*,pageSize*}", rawUrl) {
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -80,6 +88,15 @@ namespace ComponentHub.ApiClients.Api.Components {
             return new ComponentsRequestBuilder(rawUrl, RequestAdapter);
         }
         public class ComponentsRequestBuilderGetQueryParameters {
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("componentName")]
+            public string? ComponentName { get; set; }
+#nullable restore
+#else
+            [QueryParameter("componentName")]
+            public string ComponentName { get; set; }
+#endif
             [QueryParameter("page")]
             public int? Page { get; set; }
             [QueryParameter("pageSize")]

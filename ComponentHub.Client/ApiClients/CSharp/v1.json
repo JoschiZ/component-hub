@@ -6,7 +6,32 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/api/users/detailedInfo/": {
+    "/api/users/delete": {
+      "delete": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesUsersDeleteAccountEndpoint",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDeletionResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/detailedInfo": {
       "get": {
         "tags": [
           "Api"
@@ -115,7 +140,7 @@
         }
       }
     },
-    "/api/components/create/": {
+    "/api/components/create": {
       "put": {
         "tags": [
           "Api"
@@ -173,7 +198,7 @@
         ]
       }
     },
-    "/api/components/delete/": {
+    "/api/components/delete": {
       "delete": {
         "tags": [
           "Api"
@@ -219,12 +244,53 @@
         ]
       }
     },
+    "/api/components/update": {
+      "patch": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsUpdateComponentEndpoint",
+        "requestBody": {
+          "x-name": "UpdateComponentRequest",
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateComponentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWTBearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/components/get/{UserName}/{ComponentName}": {
       "get": {
         "tags": [
           "Api"
         ],
-        "operationId": "ComponentHubServerFeaturesComponentsGetComponentEndpoint",
+        "operationId": "ComponentHubServerFeaturesComponentsQueryEndpointsGetComponentEndpoint",
         "parameters": [
           {
             "name": "userName",
@@ -269,18 +335,80 @@
         }
       }
     },
+    "/api/components/{UserName}": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesComponentsQueryEndpointsGetComponentsByUserEndpoint",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ComponentEntryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/components/": {
       "get": {
         "tags": [
           "Api"
         ],
-        "operationId": "ComponentHubServerFeaturesComponentsQueryComponentsEndpoint",
+        "operationId": "ComponentHubServerFeaturesComponentsQueryEndpointsQueryComponentsEndpoint",
         "parameters": [
           {
             "name": "userName",
             "in": "query",
             "schema": {
               "type": "string",
+              "default": "",
+              "nullable": true
+            }
+          },
+          {
+            "name": "componentName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "",
               "nullable": true
             }
           },
@@ -331,47 +459,6 @@
             }
           }
         }
-      }
-    },
-    "/api/components/update/": {
-      "patch": {
-        "tags": [
-          "Api"
-        ],
-        "operationId": "ComponentHubServerFeaturesComponentsUpdateComponentEndpoint",
-        "requestBody": {
-          "x-name": "UpdateComponentRequest",
-          "description": "",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateComponentRequest"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWTBearerAuth": []
-          }
-        ]
       }
     },
     "/api/auth/login-battlenet": {
@@ -511,6 +598,15 @@
   },
   "components": {
     "schemas": {
+      "AccountDeletionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "isDeleted": {
+            "type": "boolean"
+          }
+        }
+      },
       "GetDetailedUserInfoResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -696,13 +792,13 @@
         "properties": {
           "name": {
             "type": "string",
-            "maxLength": 24,
+            "maxLength": 40,
             "minLength": 1,
             "nullable": false
           },
           "sourceCode": {
             "type": "string",
-            "maxLength": 2000,
+            "maxLength": 20000,
             "minLength": 1,
             "nullable": false
           },
@@ -747,6 +843,41 @@
           }
         }
       },
+      "UpdateComponentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sourceCode"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "nullable": false
+          },
+          "sourceCode": {
+            "type": "string",
+            "maxLength": 20000,
+            "minLength": 1,
+            "nullable": false
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "wclComponentId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "entryId": {
+            "type": "string"
+          }
+        }
+      },
       "GetComponentResponse": {
         "type": "object",
         "additionalProperties": false,
@@ -760,6 +891,10 @@
         }
       },
       "GetComponentRequest": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "GetComponentsByUserRequest": {
         "type": "object",
         "additionalProperties": false
       },
@@ -807,41 +942,6 @@
           "ByUpdateDate"
         ]
       },
-      "UpdateComponentRequest": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "name",
-          "sourceCode"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "maxLength": 24,
-            "minLength": 1,
-            "nullable": false
-          },
-          "sourceCode": {
-            "type": "string",
-            "maxLength": 2000,
-            "minLength": 1,
-            "nullable": false
-          },
-          "width": {
-            "type": "integer"
-          },
-          "height": {
-            "type": "integer"
-          },
-          "wclComponentId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "entryId": {
-            "type": "string"
-          }
-        }
-      },
       "ChallengeRequest": {
         "type": "object",
         "additionalProperties": false,
@@ -888,7 +988,7 @@
         "properties": {
           "userName": {
             "type": "string",
-            "maxLength": 16,
+            "maxLength": 24,
             "minLength": 1,
             "nullable": false
           }

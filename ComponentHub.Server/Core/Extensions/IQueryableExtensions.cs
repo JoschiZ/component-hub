@@ -1,6 +1,10 @@
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using System.Security.Claims;
+using ComponentHub.Domain.Core.Interfaces;
+using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Features.Components;
+using ComponentHub.Server.Features.Components.QueryEndpoints;
 
 namespace ComponentHub.Server.Core.Extensions;
 
@@ -33,4 +37,6 @@ internal static class QueryableExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
     }
+
+
 }

@@ -9,7 +9,6 @@ using ComponentHub.Client.Components.Features.Components;
 using ComponentHub.Client.Components.Features.User;
 using ComponentHub.Client.Components.Helper;
 using ComponentHub.Client.Core;
-using ComponentHub.Domain.Api;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
@@ -41,6 +40,7 @@ builder.Services.AddSingleton<ValidationDelegatingHandler>();
 builder.Services.AddScoped<RedirectDelegatingHandler>();
 builder.Services.AddSingleton<ErrorHelper>();
 
+builder.Services.AddTransient<CancellationService>();
 
 builder.Services.AddSingleton(typeof(SharingService<>));
 

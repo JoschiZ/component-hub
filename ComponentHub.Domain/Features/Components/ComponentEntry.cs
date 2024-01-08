@@ -1,6 +1,9 @@
 using ComponentHub.Domain.Core;
+using ComponentHub.Domain.Core.Interfaces;
 using ComponentHub.Domain.Core.Primitives.Results;
+using ComponentHub.Domain.Core.Validation;
 using ComponentHub.Domain.Features.Users;
+using FluentValidation;
 using StronglyTypedIds;
 
 namespace ComponentHub.Domain.Features.Components;
@@ -8,7 +11,7 @@ namespace ComponentHub.Domain.Features.Components;
 /// <summary>
 /// All the data surrounding an component page
 /// </summary>
-public class ComponentEntry: AggregateRoot<ComponentEntryId>
+public class ComponentEntry: AggregateRoot<ComponentEntryId>, IHasOwner
 {
 
     [Obsolete("EFCore Constructor")]
@@ -51,7 +54,12 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
 
     public static ResultValidation<ComponentEntry> TryCreate(ComponentEntryId id, string name, string description, Component component, ApplicationUser owner)
     {
-        return new ComponentEntry(id, name, description, component, owner);
+        
+        var newComponent = new ComponentEntry(id, name, description, component, owner);
+        var validator = new Validator();
+        var validationResult = validator.Validate(newComponent);
+        
+        return validationResult.IsValid ? newComponent : validationResult.Errors;
     }
     
     public static ResultValidation<ComponentEntry> TryCreate(
@@ -68,7 +76,11 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
             return component.Error;
         }
 
-        return new ComponentEntry(newEntryId, name, description, component.ResultObject, owner);
+        var newComponent = new ComponentEntry(newEntryId, name, description, component.ResultObject, owner);
+        var validator = new Validator();
+        var validationResult = validator.Validate(newComponent);
+        
+        return validationResult.IsValid ? newComponent : validationResult.Errors;
     }
 
     public ResultValidation<ComponentEntry> UpdateCurrentComponent(Component newComponent)
@@ -89,8 +101,26 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>
     {
         UpdatedAt = DateTime.Now;
     }
-}
+    
+    
+    
+    public class Validator : MudCompatibleAbstractValidator<ComponentEntry>
+    {
+        public const int MaxDescriptionLength = 2000;
+        
+        public Validator()
+        {
+            RuleFor(entry => entry.Name)
+                .MinimumLength(Component.Validator.MinNameLength)
+                .MaximumLength(Component.Validator.MaxNameLength)
+                .NotEmpty();
 
+            RuleFor(entry => entry.Description)
+                .MaximumLength(MaxDescriptionLength);
+
+        }
+    }
+}
 
 [StronglyTypedId]
 public readonly partial struct ComponentEntryId { }

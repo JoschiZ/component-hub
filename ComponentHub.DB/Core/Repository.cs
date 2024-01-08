@@ -22,12 +22,12 @@ internal class Repository<TItem, TKey> : IRepository<TItem, TKey>
         Context.Attach(item);
     }
 
-    public ValueTask<EntityEntry<TItem>> AddAsync(TItem item, CancellationToken ct)
+    public virtual ValueTask<EntityEntry<TItem>> AddAsync(TItem item, CancellationToken ct)
     {
         return Set.AddAsync(item, ct);
     }
 
-    public Task<int> RemoveByIdAsync(TKey id, CancellationToken ct)
+    public virtual Task<int> RemoveByIdAsync(TKey id, CancellationToken ct)
     {
         return Set.Where(item => item.Id.Equals(id)).ExecuteDeleteAsync(cancellationToken: ct);
     }

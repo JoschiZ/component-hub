@@ -15,11 +15,38 @@
     </MudCardHeader>
     <MudCardContent>
         <MudForm @ref="@_form" Model="_requestModel">
-            <MudTextField Label="Name" Required="true" @bind-Value="_requestModel.Name"/>
-            <MudTextField Variant="Variant.Outlined" AutoGrow Lines="3" Label="Description" Required="true" @bind-Value="_requestModel.Description"/>
-            <MudTextField Variant="Variant.Outlined" AutoGrow Lines="3" Label="Source Code" Required="true" @bind-Value="_requestModel.SourceCode"/>
-            <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
-            <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
+            <MudTextField 
+                Label="Name" 
+                Required="true" 
+                @bind-Value="_requestModel.Name"
+                MaxLength="Component.Validator.MaxNameLength"
+                Counter="Component.Validator.MaxNameLength"
+                Immediate/>
+            <MudTextField 
+                Variant="Variant.Outlined"
+                AutoGrow Lines="3" 
+                Label="Description" 
+                Required="true" 
+                @bind-Value="_requestModel.Description"
+                MaxLength="ComponentEntry.Validator.MaxDescriptionLength"
+                Counter="ComponentEntry.Validator.MaxDescriptionLength"
+                Immediate/>
+            <MudTextField 
+                Variant="Variant.Outlined"
+                AutoGrow Lines="3"
+                Label="Source Code" 
+                Required="true"
+                @bind-Value="_requestModel.SourceCode"
+                MaxLength="ComponentSource.Validator.MaxSourceLength"
+                Counter="ComponentSource.Validator.MaxSourceLength"
+                Immediate/>
+            <MudStack Row>
+                <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
+                <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
+                <MudTooltip Text="You can use Shift + Mousewheel to adjust the values">
+                    <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.HelpOutline"/>
+                </MudTooltip>
+            </MudStack>
         </MudForm>    
     </MudCardContent>
     <MudCardActions>

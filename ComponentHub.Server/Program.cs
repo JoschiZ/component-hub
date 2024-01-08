@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment())
     }
 
     var workingDirectory = Environment.CurrentDirectory;
-    var outputPath = Directory.GetParent(workingDirectory).Parent + "/" + Path.Combine("ComponentHub.Client", "ApiClients", "CSharp");
+    var outputPath = Directory.GetParent(workingDirectory) + "/" + Path.Combine("ComponentHub.Client", "ApiClients", "CSharp");
     Console.WriteLine("Outputting Kiota Client To: " + outputPath);
     //spits out generated client files to disk if app is run with '--generateclients true' commandline argument
     await app.GenerateApiClientsAndExitAsync(
