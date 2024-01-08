@@ -1,18 +1,23 @@
 using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
+using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Core.Extensions;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ProblemDetails = Microsoft.AspNetCore.Mvc.ProblemDetails;
 
 namespace ComponentHub.Server.Features.Users;
 
-internal sealed class DeleteAccountEndpoint: EndpointWithoutRequest<Results<Ok<AccountDeletionResponse>, UnauthorizedHttpResult>>
+internal sealed class DeleteAccountEndpoint: EndpointWithoutRequest<Results<Ok<AccountDeletionResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
 {
     private readonly IDbContextFactory<ComponentHubContext> _unitOfWorkFactory;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public DeleteAccountEndpoint(IDbContextFactory<ComponentHubContext> unitOfWorkFactory)
+    public DeleteAccountEndpoint(IDbContextFactory<ComponentHubContext> unitOfWorkFactory, UserManager<ApplicationUser> userManager)
     {
         _unitOfWorkFactory = unitOfWorkFactory;
+        _userManager = userManager;
     }
 
     public override void Configure()
@@ -20,34 +25,29 @@ internal sealed class DeleteAccountEndpoint: EndpointWithoutRequest<Results<Ok<A
         Delete(Endpoints.Users.Delete);
     }
 
-    public override async Task<Results<Ok<AccountDeletionResponse>, UnauthorizedHttpResult>> ExecuteAsync(CancellationToken ct)
+    public override async Task<Results<Ok<AccountDeletionResponse>, UnauthorizedHttpResult, ProblemHttpResult>> ExecuteAsync(CancellationToken ct)
     {
-        var idResult = User.GetUserId();
-
-        if (idResult.IsError)
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
         {
             return TypedResults.Unauthorized();
         }
-        
-        
-        await using var context = await _unitOfWorkFactory.CreateDbContextAsync(ct);
 
-        var deletion = await context.Users
-            .Where(user => user.Id == idResult.ResultObject)
-            .Take(1)
-            .ExecuteDeleteAsync(ct);
+        var result = await _userManager.DeleteAsync(user);
 
-        if (deletion > 0)
+        if (result.Succeeded)
         {
             return TypedResults.Ok(AccountDeletionResponse.Deleted);
         }
 
-        return TypedResults.Ok(AccountDeletionResponse.NotDeleted);
+        return TypedResults.Problem(new ProblemDetails()
+        {
+            Detail = string.Join("; ", result.Errors.Select(error => error.Code))
+        });
     }
 }
 
 internal sealed record AccountDeletionResponse(bool IsDeleted)
 {
     public static readonly AccountDeletionResponse Deleted = new AccountDeletionResponse(true);
-    public static readonly AccountDeletionResponse NotDeleted = new AccountDeletionResponse(false);
 };
