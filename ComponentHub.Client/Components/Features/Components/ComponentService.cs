@@ -48,23 +48,37 @@ internal sealed class ComponentService
         return response?.Components ?? [];
     }
 
-    public async Task<List<ComponentEntryDto>> GetByUser(string userName, int page = 0, int pageSize = 20,
+    public async Task<(List<ComponentEntryDto> data, int overallCount)> GetByUser(string userName, int page = 0, int pageSize = 20,
         CancellationToken ct = default)
     {
         try
         {
-            return await _client.Components[userName].GetAsync((config) =>
+            var data = await _client.Components[userName].GetAsync((config) =>
             {
                 config.QueryParameters.Page = page;
                 config.QueryParameters.PageSize = pageSize;
-            }, ct) ?? [];
+            }, ct);
+
+            if (data is null)
+            {
+                return new ValueTuple<List<ComponentEntryDto>, int>([], 0);
+            }
+
+            data.Components ??= [];
+            
+            if (data.Pagination?.TotalItems is null)
+            {
+                return (data.Components, data.Components.Count);
+            }
+
+            return (data.Components, data.Pagination.TotalItems.Value);
         }
         catch (ApiException e)
         {
             _errorHelper.DisplayError(e);
         }
 
-        return [];
+        return new ValueTuple<List<ComponentEntryDto>, int>([], 0);
     }
 
     public async Task Delete(string componentEntryId)

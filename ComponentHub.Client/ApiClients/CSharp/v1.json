@@ -308,7 +308,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 20
+              "default": 10
             }
           }
         ],
@@ -318,10 +318,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ComponentEntryDto"
-                  }
+                  "$ref": "#/components/schemas/GetComponentsByUserEndpoint_ResponseDto"
                 }
               }
             }
@@ -774,7 +771,40 @@
         "type": "object",
         "additionalProperties": false
       },
-      "GetComponentsByUserRequest": {
+      "GetComponentsByUserEndpoint_ResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "components": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComponentEntryDto"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/ResponsePagination"
+          }
+        }
+      },
+      "ResponsePagination": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetComponentsByUserEndpoint_Request": {
         "type": "object",
         "additionalProperties": false
       },

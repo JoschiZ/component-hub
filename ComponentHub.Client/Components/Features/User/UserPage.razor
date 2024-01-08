@@ -44,9 +44,10 @@
         </MudCardHeader>
         <MudCardContent>
             <MudDataGrid 
-                @ref="@_componentsGrid"
-                Items="_components" 
-                Loading="@(_components is null)">
+                T="ComponentEntryDto"
+                @bind-ref="@_tableRef"
+                ServerData="@UpdateGridData"
+                QuickFilter="@(arg => !(arg.Id is null || _isDeleted.Contains(arg.Id)))">
                 <Columns>
                     <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
                     <PropertyColumn Property="arg => arg.Name"/>
@@ -76,24 +77,36 @@
                 </PagerContent>
             </MudDataGrid>
         </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Href="@Routes.Components.Upload">NEW COMPONENT</MudButton>
+        </MudCardActions>
     </MudCard>
 }
 
 @code {
-    private List<ComponentEntryDto>? _components;
     private GetDetailedUserInfoResponse? _userInfo;
     private string _newUserName = "";
-    private MudDataGrid<ComponentEntryDto>? _componentsGrid;
-
+    private readonly HashSet<string> _isDeleted = [];
+    private MudDataGrid<ComponentEntryDto> _tableRef;
 
     protected override async Task OnInitializedAsync()
     {
         _userInfo = await UserService.GetDetailedUserInfo();
-        if (_userInfo.Name is null)
+    }
+
+    private async Task<GridData<ComponentEntryDto>> UpdateGridData(GridState<ComponentEntryDto> state)
+    {
+        if (_userInfo?.Name is null)
         {
-            return;
+            return new GridData<ComponentEntryDto>();
         }
-        _components = await ComponentService.GetByUser(_userInfo.Name, page: _componentsGrid?.CurrentPage ?? 0, _componentsGrid?.RowsPerPage ?? 10, ct:CancellationService.Token);
+
+        var data = await ComponentService.GetByUser(_userInfo.Name, page: state.Page, pageSize: state.PageSize, CancellationService.Token);
+        return new GridData<ComponentEntryDto>()
+        {
+            Items = data.data,
+            TotalItems = data.overallCount
+        };
     }
 
     private async Task DeleteComponent(ComponentEntryDto? componentEntryDto)
@@ -114,7 +127,7 @@
             return;
         }
         await ComponentService.Delete(componentEntryDto.Id).ConfigureAwait(false);
-        _components?.Remove(componentEntryDto);
+        _isDeleted.Add(componentEntryDto.Id);
         Snackbar.Add("Component Deleted Successfully", Severity.Success);
     }
 

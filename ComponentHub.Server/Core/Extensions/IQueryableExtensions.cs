@@ -51,4 +51,12 @@ internal static class QueryableExtensions
 
         return query.Where(owner => owner.Owner.Id == userId);
     }
+    
+    
+    
+    [Pure]
+    public static IQueryable<T> Paginate<T>(this IQueryable<T> query, IPaginatedRequest pager)
+    {
+        return query.Skip(pager.Page * pager.PageSize).Take(pager.PageSize);
+    }
 }

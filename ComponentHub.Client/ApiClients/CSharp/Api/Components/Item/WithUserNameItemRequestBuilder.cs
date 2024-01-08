@@ -31,14 +31,13 @@ namespace ComponentHub.ApiClients.Api.Components.Item {
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<List<ComponentEntryDto>?> GetAsync(Action<RequestConfiguration<WithUserNameItemRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default) {
+        public async Task<GetComponentsByUserEndpoint_ResponseDto?> GetAsync(Action<RequestConfiguration<WithUserNameItemRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default) {
 #nullable restore
 #else
-        public async Task<List<ComponentEntryDto>> GetAsync(Action<RequestConfiguration<WithUserNameItemRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default) {
+        public async Task<GetComponentsByUserEndpoint_ResponseDto> GetAsync(Action<RequestConfiguration<WithUserNameItemRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default) {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            var collectionResult = await RequestAdapter.SendCollectionAsync<ComponentEntryDto>(requestInfo, ComponentEntryDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
-            return collectionResult?.ToList();
+            return await RequestAdapter.SendAsync<GetComponentsByUserEndpoint_ResponseDto>(requestInfo, GetComponentsByUserEndpoint_ResponseDto.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
