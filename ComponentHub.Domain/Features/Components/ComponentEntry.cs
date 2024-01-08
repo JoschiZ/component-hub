@@ -4,6 +4,7 @@ using ComponentHub.Domain.Core.Primitives.Results;
 using ComponentHub.Domain.Core.Validation;
 using ComponentHub.Domain.Features.Users;
 using FluentValidation;
+using FluentValidation.Results;
 using StronglyTypedIds;
 
 namespace ComponentHub.Domain.Features.Components;
@@ -27,7 +28,7 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>, IHasOwner
         ComponentHistory = [initialComponent];
     }
 
-    public string Name { get; private init; }
+    public string Name { get; private set; }
     public string Description { get; private init; }
     public DateTimeOffset CreatedAt { get; private set; } = DateTime.Now;
     public DateTimeOffset UpdatedAt { get; private set; } = DateTime.Now;
@@ -93,6 +94,7 @@ public class ComponentEntry: AggregateRoot<ComponentEntryId>, IHasOwner
         }
         
         Updated();
+        Name = newComponent.Name;
         ComponentHistory.Add(newComponent);
         return this;
     }

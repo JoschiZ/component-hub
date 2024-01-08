@@ -5,6 +5,7 @@ using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OneOf;
 
 namespace ComponentHub.DB.Core;

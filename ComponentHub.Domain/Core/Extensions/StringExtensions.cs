@@ -9,6 +9,11 @@ public static class StringExtensions
     /// <returns>The normalized string.</returns>
     public static string NormalizeString(this string s)
     {
-        return s.Trim().Replace("\n", "").Replace("\t", "").Replace("\r", "").Replace(" ", "");
+        return s
+            .Trim()
+            .Replace("\n", "")
+            .Replace("\t", "")
+            .Replace("\r", "")
+            .Replace(" ", "");
     }
 }
