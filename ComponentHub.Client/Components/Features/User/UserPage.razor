@@ -14,15 +14,6 @@
 @inject CancellationService CancellationService 
 @inject NavigationManager NavigationManager
 
-
-<section>
-    User Details
-    
-    Download User Info
-    
-    Delete Account
-</section>
-
 @if (_userInfo is not null)
 {
     <MudCard>
@@ -38,10 +29,12 @@
                     Validation="@((string name) => ApplicationUser.ValidationConstants.IsAllowedUserName(name))"
                     MaxLength="ApplicationUser.ValidationConstants.MaxUserNameLength"
                     Immediate
-                    />
+                />
             </MudPaper>
-            <MudButton>Download Userdata</MudButton>
-            <MudButton Color="Color.Warning">Delete Account</MudButton>
+            <MudTooltip Text="This will download all the information we store about you. This does not include your components or comments.">
+                <MudButton Variant="Variant.Filled" Color="Color.Info">Download Userdata</MudButton>
+            </MudTooltip>
+            <MudButton OnClick="@DeleteAccount" Variant="Variant.Filled" Color="Color.Warning">Delete Account</MudButton>
         </MudCardContent>
     </MudCard>
 
@@ -51,6 +44,7 @@
         </MudCardHeader>
         <MudCardContent>
             <MudDataGrid 
+                @ref="@_componentsGrid"
                 Items="_components" 
                 Loading="@(_components is null)">
                 <Columns>
@@ -89,8 +83,8 @@
     private List<ComponentEntryDto>? _components;
     private GetDetailedUserInfoResponse? _userInfo;
     private string _newUserName = "";
+    private MudDataGrid<ComponentEntryDto>? _componentsGrid;
 
-    
 
     protected override async Task OnInitializedAsync()
     {
@@ -99,7 +93,7 @@
         {
             return;
         }
-        _components = await ComponentService.GetByUser(_userInfo.Name, CancellationService.Token);
+        _components = await ComponentService.GetByUser(_userInfo.Name, page: _componentsGrid?.CurrentPage ?? 0, _componentsGrid?.RowsPerPage ?? 10, ct:CancellationService.Token);
     }
 
     private async Task DeleteComponent(ComponentEntryDto? componentEntryDto)
@@ -120,6 +114,7 @@
             return;
         }
         await ComponentService.Delete(componentEntryDto.Id).ConfigureAwait(false);
+        _components?.Remove(componentEntryDto);
         Snackbar.Add("Component Deleted Successfully", Severity.Success);
     }
 
@@ -144,7 +139,4 @@
         Snackbar.Add("Account Deleted", Severity.Success);
         NavigationManager.NavigateTo("/");
     }
-
-
-
 }

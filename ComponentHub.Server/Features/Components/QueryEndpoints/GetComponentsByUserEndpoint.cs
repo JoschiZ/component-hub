@@ -26,6 +26,7 @@ internal sealed class
         await using var context = await _contextFactory.CreateDbContextAsync(ct);
         
         var found = await context.Components
+            .Include(entry => entry.Owner)
             .Where(entry => entry.Owner.UserName == req.UserName)
             .OrderBy(entry => entry.Name)
             .Skip(req.Page * req.PageSize)
@@ -37,6 +38,6 @@ internal sealed class
     }
 }
 
-internal sealed record GetComponentsByUserRequest(string UserName, int Page = 0, int PageSize = 20);
+internal sealed record GetComponentsByUserRequest(string UserName, int Page = 0, int PageSize = 10);
 
 internal sealed record GetComponentsByUserResponse(ComponentEntryDto[] Components);

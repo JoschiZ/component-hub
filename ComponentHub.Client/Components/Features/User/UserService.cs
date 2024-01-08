@@ -10,15 +10,15 @@ internal sealed class UserService
 {
     private readonly ComponentHubClient _client;
     private readonly NavigationManager _navigationManager;
-    private readonly IdentityAuthenticationStateProvider _authenticationState;
     private readonly ErrorHelper _errorHelper;
+    private readonly AuthApiClient _authApiClient;
 
-    public UserService(ComponentHubClient client, ErrorHelper errorHelper, NavigationManager navigationManager, IdentityAuthenticationStateProvider authenticationState)
+    public UserService(ComponentHubClient client, ErrorHelper errorHelper, NavigationManager navigationManager, AuthApiClient authApiClient)
     {
         _client = client;
         _errorHelper = errorHelper;
         _navigationManager = navigationManager;
-        _authenticationState = authenticationState;
+        _authApiClient = authApiClient;
     }
 
     public async Task<GetDetailedUserInfoResponse> GetDetailedUserInfo()
@@ -37,7 +37,7 @@ internal sealed class UserService
     public async Task<AccountDeletionResponse?> DeleteAccount(CancellationToken cancellationToken)
     {
         var response = await _client.User.DeletePath.DeleteAsync(null, cancellationToken);
-        _authenticationState.AuthStateHasChanged();
+        await _authApiClient.Logout();
         return response;
     }
 }

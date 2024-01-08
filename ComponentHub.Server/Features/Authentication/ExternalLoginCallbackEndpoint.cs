@@ -35,7 +35,9 @@ internal sealed class ExternalLoginCallbackEndpoint: Endpoint<ExternalLoginCallb
 
         if (result.Succeeded)
         {
-            return TypedResults.Redirect("~/"+req.ReturnUrl);
+            var returnUrl = req.ReturnUrl == "/" ? req.ReturnUrl : "~/" + req.ReturnUrl;
+            
+            return TypedResults.Redirect(returnUrl);
         }
 
         return TypedResults.Redirect("/Authentication/Register");

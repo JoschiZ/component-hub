@@ -20,7 +20,7 @@ public sealed class ApplicationUser: IdentityUser<UserId>, IAggregateRoot<UserId
 
         public static bool IsAllowedUserName(string name)
         {
-            return name.AsSpan().ContainsAnyExcept(AllowedCharactersSearch);
+            return !name.AsSpan().ContainsAnyExcept(AllowedCharactersSearch);
         }
     }
 }

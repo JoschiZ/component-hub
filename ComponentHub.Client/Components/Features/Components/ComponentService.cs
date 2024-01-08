@@ -39,20 +39,6 @@ internal sealed class ComponentService
         return default;
     }
 
-    public async Task<List<ComponentEntryDto>> GetByUser(string userName, CancellationToken ct)
-    {
-        try
-        {
-            return await _client.Components[userName].GetAsync(null, ct) ?? [];
-        }
-        catch (ApiException e)
-        {
-            _errorHelper.DisplayError(e);
-        }
-
-        return [];
-    }
-
     public async Task<List<ComponentEntryDto>> QueryComponents()
     {
         var response = await _client.Components.GetAsync(config =>
@@ -60,6 +46,25 @@ internal sealed class ComponentService
             config.QueryParameters.SortDirectionAsSortDirection = SortDirection.Ascending;
         });
         return response?.Components ?? [];
+    }
+
+    public async Task<List<ComponentEntryDto>> GetByUser(string userName, int page = 0, int pageSize = 20,
+        CancellationToken ct = default)
+    {
+        try
+        {
+            return await _client.Components[userName].GetAsync((config) =>
+            {
+                config.QueryParameters.Page = page;
+                config.QueryParameters.PageSize = pageSize;
+            }, ct) ?? [];
+        }
+        catch (ApiException e)
+        {
+            _errorHelper.DisplayError(e);
+        }
+
+        return [];
     }
 
     public async Task Delete(string componentEntryId)
