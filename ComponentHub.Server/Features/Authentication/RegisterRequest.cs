@@ -20,13 +20,6 @@ public class RegisterRequestValidator : MudCompatibleAbstractValidator<RegisterR
 {
     public RegisterRequestValidator()
     {
-        RuleFor(request => request.UserName)
-            .NotEmpty()
-            .MinimumLength(ApplicationUser.ValidationConstants.MinUserNameLength)
-            .MaximumLength(ApplicationUser.ValidationConstants.MaxUserNameLength)
-            .Must(ApplicationUser.ValidationConstants.IsAllowedUserName)
-            .WithMessage("A username may only contain the following characters: " + ApplicationUser.ValidationConstants.AllowedCharacters)
-            .WithName("UsernameCharacterValidation")
-            .WithErrorCode("UsernameCharactersInvalid");
+        RuleFor(request => request.UserName).SetValidator(ApplicationUser.Validation.UsernameValidator);
     }
 }

@@ -39,6 +39,8 @@ public static class Endpoints
         private const string UsersBasePath = BasePath + "users/";
         public const string GetDetailedInfo = UsersBasePath + "detailedInfo";
         public const string Delete = UsersBasePath + "delete";
+        public const string ChangeUsername = UsersBasePath + "changeName";
+        public const string DownloadUserdata = UsersBasePath + "download";
     }
     
     

@@ -14,12 +14,16 @@
             <MudTextM3 Typo="TypoM3.Display" Size="Size.Medium" Class="ml-3">ComponentHub</MudTextM3>
         </a>
         <MudSpacer/>
-        <AuthorizeView>
-            <Authorized>
-                <MudButton Href="@Routes.Users.PrivateProfile" Variant="Variant.Filled" Color="Color.Info">PROFILE</MudButton>
-            </Authorized>
-        </AuthorizeView>
-        <LogoutLogin/>
+        <MudStack Row Spacing="2">
+            <AuthorizeView>
+                <Authorized>
+                    <MudButton Href="@Routes.Components.Upload" Variant="Variant.Filled" Color="Color.Primary">Create Component</MudButton>
+                    <MudButton Href="@Routes.Users.PrivateProfile" Variant="Variant.Filled" Color="Color.Info">PROFILE</MudButton>
+                </Authorized>
+            </AuthorizeView>
+            <LogoutLogin/>
+        </MudStack>
+
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Style="padding-top: 12px">

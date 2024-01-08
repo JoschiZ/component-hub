@@ -1,5 +1,6 @@
 using ComponentHub.DB;
 using ComponentHub.Domain.Features.Users;
+using ComponentHub.Server.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using OpenIddict.Abstractions;
@@ -15,19 +16,22 @@ internal static class AuthenticationExtensions
 
         services.AddAuthentication();
         services.AddAuthorization();
+
+        builder.Services.AddOptions<AuthenticationSettings>()
+            .Bind(builder.Configuration.GetSection(AuthenticationSettings.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         
-        var configurationSection = builder.Configuration.GetSection("Authentication:BattleNet");
-        var secret = configurationSection["ClientSecret"];
-        var clientId = configurationSection["ClientId"];
-        if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(clientId))
-        {
-            throw new InvalidConfigurationException("ClientId or ClientSecret is missing! Check your config.");
-        }
+        var config = new AuthenticationSettings();
+        builder.Configuration.Bind(AuthenticationSettings.SectionName, config);
+        
+        var secret = config.BattleNet.ClientSecret;
+        var clientId = config.BattleNet.ClientId;
 
         services
             .AddIdentity<ApplicationUser, IdentityRole<UserId>>(options =>
             {
-                options.User.AllowedUserNameCharacters = ApplicationUser.ValidationConstants.AllowedCharacters;
+                options.User.AllowedUserNameCharacters = ApplicationUser.Validation.AllowedCharacters;
                 options.User.RequireUniqueEmail = false;
             })
             .AddEntityFrameworkStores()

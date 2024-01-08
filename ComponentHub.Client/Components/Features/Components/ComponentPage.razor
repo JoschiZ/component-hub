@@ -27,6 +27,7 @@
             <MudPaper>
                 <MudTextM3 GutterBottom="true" Typo="TypoM3.Title">Description</MudTextM3>
                 <MudTextField
+                    Variant="Variant.Filled"
                     T="string"
                     ReadOnly
                     Lines="5"
@@ -67,7 +68,7 @@
             }
         </MudCardContent>
         <MudCardActions>
-            <MudButton Variant="Variant.Filled" OnClick="@ShowExportOverlay">Export Component</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="@ShowExportOverlay" FullWidth>Export Component</MudButton>
         </MudCardActions>
     </MudCard>
     

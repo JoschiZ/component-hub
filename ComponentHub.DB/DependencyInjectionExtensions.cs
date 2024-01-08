@@ -1,5 +1,7 @@
+using ComponentHub.DB.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ComponentHub.DB;
@@ -18,14 +20,23 @@ public static class DependencyInjectionExtensions
             .UseEntityFrameworkCore()
             .UseDbContext<ComponentHubContext>();
     }
-
-    public static IServiceCollection AddEfCore(this IServiceCollection services, Action<DbContextOptionsBuilder>? config = null)
+    
+    public static IServiceCollection AddEfCore(this IServiceCollection services, ConfigurationManager configurationManager, Action<DbContextOptionsBuilder>? additionalDbConfig = null)
     {
-        return services.AddDbContextFactory<ComponentHubContext>(builder =>
+        services.AddOptions<DatabaseSettings>()
+            .Bind(configurationManager.GetSection(DatabaseSettings.Section))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        
+        var config = new DatabaseSettings();
+        configurationManager.Bind(DatabaseSettings.Section, config);
+
+        var connectionString = $"Server={config.MySql.Server}; User ID={config.MySql.Username}; Password={config.MySql.Password}; Database={config.MySql.Database}";
+        return services.AddDbContextFactory<ComponentHubContext>(contextOptionsBuilder =>
         {
-            builder.UseSqlite("Filename=app.db");
-            builder.UseOpenIddict();
-            config?.Invoke(builder);
+            contextOptionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            contextOptionsBuilder.UseOpenIddict();
+            additionalDbConfig?.Invoke(contextOptionsBuilder);
         });
     }
 }
