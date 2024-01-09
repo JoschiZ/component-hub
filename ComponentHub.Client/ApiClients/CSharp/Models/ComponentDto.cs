@@ -22,14 +22,6 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public string Id { get; set; }
 #endif
-        /// <summary>The name property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Name { get; set; }
-#nullable restore
-#else
-        public string Name { get; set; }
-#endif
         /// <summary>The version property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -53,7 +45,6 @@ namespace ComponentHub.ApiClients.Models {
             return new Dictionary<string, Action<IParseNode>> {
                 {"componentSource", n => { ComponentSource = n.GetStringValue(); } },
                 {"id", n => { Id = n.GetStringValue(); } },
-                {"name", n => { Name = n.GetStringValue(); } },
                 {"version", n => { Version = n.GetStringValue(); } },
             };
         }
@@ -65,7 +56,6 @@ namespace ComponentHub.ApiClients.Models {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteStringValue("componentSource", ComponentSource);
             writer.WriteStringValue("id", Id);
-            writer.WriteStringValue("name", Name);
             writer.WriteStringValue("version", Version);
         }
     }

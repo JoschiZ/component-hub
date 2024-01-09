@@ -9,16 +9,16 @@
 @inject IJsApiService ClipBoardService
 @inject ISnackbar SnackBar
 
-@if (_getResponse?.ComponentEntry is not null && _getResponse.CurrentComponent is not null)
+@if (_getResponse?.ComponentPage is not null && _getResponse.CurrentComponent is not null)
 {
     <MudCard>
         <MudCardHeader>
             <MudStack>
-                <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">@_getResponse.ComponentEntry.Name</MudTextM3>
+                <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">@_getResponse.ComponentPage.Name</MudTextM3>
                 <MudStack Row Justify="Justify.Center" Spacing="4">
-                    <UserDisplay UserName="@_getResponse.ComponentEntry.OwnerName"/>
-                    <MudTextM3>Created: <DateDisplay DateTime="_getResponse.ComponentEntry.CreatedAt"/></MudTextM3>
-                    <MudTextM3>Updated: <DateDisplay DateTime="_getResponse.ComponentEntry.UpdatedAt"/></MudTextM3>
+                    <UserDisplay UserName="@_getResponse.ComponentPage.OwnerName"/>
+                    <MudTextM3>Created: <DateDisplay DateTime="_getResponse.ComponentPage.CreatedAt"/></MudTextM3>
+                    <MudTextM3>Updated: <DateDisplay DateTime="_getResponse.ComponentPage.UpdatedAt"/></MudTextM3>
                 </MudStack>
             </MudStack>
             <MudSpacer/>
@@ -33,7 +33,7 @@
                     Lines="5"
                     AutoGrow
                     MaxLines="30"
-                    Text="@_getResponse.ComponentEntry.Description"
+                    Text="@_getResponse.ComponentPage.Description"
                     DisableUnderLine/>
             </MudPaper>
             @if (_componentSource is not null)
@@ -126,7 +126,7 @@ else
             
             _getResponse = new GetComponentResponse()
             {
-                ComponentEntry = shared?.Entry, 
+                ComponentPage = shared?.Page, 
                 CurrentComponent = shared?.Component
             };
         }

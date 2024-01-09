@@ -46,8 +46,8 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return new ProblemDetails(componentSource.Error);
         }
 
-        var entryId = ComponentEntryId.New();
-        var componentResult = Component.TryCreate(componentSource.ResultObject, req.Name, entryId);
+        var entryId = ComponentPageId.New();
+        var componentResult = Component.TryCreate(componentSource.ResultObject, entryId);
 
         if (componentResult.IsError)
         {
@@ -56,7 +56,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
 
         var component = componentResult.ResultObject;
         
-        var componentEntry = ComponentEntry.TryCreate(entryId, req.Name, req.Description, componentResult.ResultObject, user);
+        var componentEntry = ComponentPage.TryCreate(entryId, req.Name, req.Description, componentResult.ResultObject, user);
 
 
         if (componentEntry.IsError)
@@ -73,7 +73,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             await context.SaveChangesAsync(ct);
             
             return TypedResults.Created(
-                new Uri(BaseURL + Endpoints.Components.FormatGet(userName, component.Name)), 
+                new Uri(BaseURL + Endpoints.Components.FormatGet(userName, componentEntry.ResultObject.Name)), 
                 new CreateComponentResponse(componentEntry.ResultObject.ToDto(), componentResult.ResultObject.ToDto()));
         }
         catch (DbUpdateException e)
@@ -83,4 +83,4 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
     }
 }
 
-internal record CreateComponentResponse(ComponentEntryDto Entry, ComponentDto Component);
+internal record CreateComponentResponse(ComponentPageDto Page, ComponentDto Component);

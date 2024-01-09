@@ -49,4 +49,4 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
 
 internal sealed record GetComponentRequest(string UserName, string ComponentName);
 
-internal sealed record GetComponentResponse(ComponentEntryDto ComponentEntry, ComponentDto CurrentComponent);
+internal sealed record GetComponentResponse(ComponentPageDto ComponentPage, ComponentDto CurrentComponent);

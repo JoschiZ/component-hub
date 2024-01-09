@@ -9,10 +9,10 @@ namespace ComponentHub.ApiClients.Models {
         /// <summary>The components property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<ComponentEntryDto>? Components { get; set; }
+        public List<ComponentPageDto>? Components { get; set; }
 #nullable restore
 #else
-        public List<ComponentEntryDto> Components { get; set; }
+        public List<ComponentPageDto> Components { get; set; }
 #endif
         /// <summary>The pagination property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -35,7 +35,7 @@ namespace ComponentHub.ApiClients.Models {
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
-                {"components", n => { Components = n.GetCollectionOfObjectValues<ComponentEntryDto>(ComponentEntryDto.CreateFromDiscriminatorValue)?.ToList(); } },
+                {"components", n => { Components = n.GetCollectionOfObjectValues<ComponentPageDto>(ComponentPageDto.CreateFromDiscriminatorValue)?.ToList(); } },
                 {"pagination", n => { Pagination = n.GetObjectValue<ResponsePagination>(ResponsePagination.CreateFromDiscriminatorValue); } },
             };
         }
@@ -45,7 +45,7 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<ComponentEntryDto>("components", Components);
+            writer.WriteCollectionOfObjectValues<ComponentPageDto>("components", Components);
             writer.WriteObjectValue<ResponsePagination>("pagination", Pagination);
         }
     }

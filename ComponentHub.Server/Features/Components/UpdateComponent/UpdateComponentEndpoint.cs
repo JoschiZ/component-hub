@@ -41,7 +41,7 @@ internal sealed class
         await using var context = await _contextFactory.CreateDbContextAsync(ct);
         var updateResult = await UpdateComponent(
                 new UserId(Guid.Parse(userId)),
-                req.EntryId, 
+                req.PageId, 
                 req.ComponentId,
                 req.Name, 
                 req.SourceCode, 
@@ -63,9 +63,9 @@ internal sealed class
     }
 
 
-    private static async Task<OneOf<ComponentEntry, Error, List<ValidationFailure>>> UpdateComponent(
+    private static async Task<OneOf<ComponentPage, Error, List<ValidationFailure>>> UpdateComponent(
         UserId userId,
-        ComponentEntryId reqEntryId,
+        ComponentPageId reqPageId,
         ComponentId reqComponentId,
         string reqName,
         string reqSourceCode,
@@ -77,7 +77,7 @@ internal sealed class
     {
         var root = await context.Components
             .Where(entry => entry.Owner.Id == userId)
-            .FirstOrDefaultAsync(entry => entry.Id == reqEntryId, cancellationToken: ct);
+            .FirstOrDefaultAsync(entry => entry.Id == reqPageId, cancellationToken: ct);
 
         if (root is null)
         {
@@ -95,7 +95,7 @@ internal sealed class
 
         var updatedSource = updatedSourceResult.ResultObject;
 
-        var updatedComponentResult = Component.TryCreate(updatedSource, reqName, root.Id, root);
+        var updatedComponentResult = Component.TryCreate(updatedSource, root.Id, root);
 
         if (updatedComponentResult.IsError)
         {

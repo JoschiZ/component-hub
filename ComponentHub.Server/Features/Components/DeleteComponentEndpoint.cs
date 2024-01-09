@@ -37,4 +37,4 @@ internal sealed class DeleteComponentEndpoint : Endpoint<DeleteComponentRequest,
     }
 }
 
-public record DeleteComponentRequest(ComponentEntryId ComponentId);
+public record DeleteComponentRequest(ComponentPageId ComponentId);

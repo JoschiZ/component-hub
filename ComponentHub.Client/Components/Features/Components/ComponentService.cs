@@ -39,7 +39,7 @@ internal sealed class ComponentService
         return default;
     }
 
-    public async Task<List<ComponentEntryDto>> QueryComponents()
+    public async Task<List<ComponentPageDto>> QueryComponents()
     {
         var response = await _client.Components.GetAsync(config =>
         {
@@ -48,7 +48,7 @@ internal sealed class ComponentService
         return response?.Components ?? [];
     }
 
-    public async Task<(List<ComponentEntryDto> data, int overallCount)> GetByUser(string userName, int page = 0, int pageSize = 20,
+    public async Task<(List<ComponentPageDto> data, int overallCount)> GetByUser(string userName, int page = 0, int pageSize = 20,
         CancellationToken ct = default)
     {
         try
@@ -61,7 +61,7 @@ internal sealed class ComponentService
 
             if (data is null)
             {
-                return new ValueTuple<List<ComponentEntryDto>, int>([], 0);
+                return new ValueTuple<List<ComponentPageDto>, int>([], 0);
             }
 
             data.Components ??= [];
@@ -78,7 +78,7 @@ internal sealed class ComponentService
             _errorHelper.DisplayError(e);
         }
 
-        return new ValueTuple<List<ComponentEntryDto>, int>([], 0);
+        return new ValueTuple<List<ComponentPageDto>, int>([], 0);
     }
 
     public async Task Delete(string componentEntryId)

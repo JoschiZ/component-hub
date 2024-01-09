@@ -52,6 +52,6 @@ internal sealed class
 
     }
 
-    internal sealed record ResponseDto(ComponentEntryDto[] Components, ResponsePagination Pagination): IPaginatedResponse;
+    internal sealed record ResponseDto(ComponentPageDto[] Components, ResponsePagination Pagination): IPaginatedResponse;
 }
 

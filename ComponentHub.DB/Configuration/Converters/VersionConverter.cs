@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ComponentHub.DB;
+namespace ComponentHub.DB.Configuration.Converters;
 
 internal sealed class VersionConverter: ValueConverter<Version, string>
 {

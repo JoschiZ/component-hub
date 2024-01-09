@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
-    public class ComponentEntryDto : IParsable {
+    public class ComponentPageDto : IParsable {
         /// <summary>The createdAt property</summary>
         public DateTimeOffset? CreatedAt { get; set; }
         /// <summary>The description property</summary>
@@ -46,9 +46,9 @@ namespace ComponentHub.ApiClients.Models {
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static ComponentEntryDto CreateFromDiscriminatorValue(IParseNode parseNode) {
+        public static ComponentPageDto CreateFromDiscriminatorValue(IParseNode parseNode) {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new ComponentEntryDto();
+            return new ComponentPageDto();
         }
         /// <summary>
         /// The deserialization information for the current model

@@ -14,13 +14,13 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public ComponentDto Component { get; set; }
 #endif
-        /// <summary>The entry property</summary>
+        /// <summary>The page property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public ComponentEntryDto? Entry { get; set; }
+        public ComponentPageDto? Page { get; set; }
 #nullable restore
 #else
-        public ComponentEntryDto Entry { get; set; }
+        public ComponentPageDto Page { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
@@ -36,7 +36,7 @@ namespace ComponentHub.ApiClients.Models {
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
                 {"component", n => { Component = n.GetObjectValue<ComponentDto>(ComponentDto.CreateFromDiscriminatorValue); } },
-                {"entry", n => { Entry = n.GetObjectValue<ComponentEntryDto>(ComponentEntryDto.CreateFromDiscriminatorValue); } },
+                {"page", n => { Page = n.GetObjectValue<ComponentPageDto>(ComponentPageDto.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -46,7 +46,7 @@ namespace ComponentHub.ApiClients.Models {
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteObjectValue<ComponentDto>("component", Component);
-            writer.WriteObjectValue<ComponentEntryDto>("entry", Entry);
+            writer.WriteObjectValue<ComponentPageDto>("page", Page);
         }
     }
 }

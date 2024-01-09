@@ -1,3 +1,4 @@
+using ComponentHub.DB.Configuration.Converters;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,7 @@ namespace ComponentHub.DB;
 
 public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, IdentityRole<UserId>, UserId>
 {
-    public DbSet<ComponentEntry> Components { get; set; } = default!;
+    public DbSet<ComponentPage> Components { get; set; } = default!;
 
     public ComponentHubContext(DbContextOptions<ComponentHubContext> options) : base(options) { }
 
@@ -22,10 +23,11 @@ public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, Iden
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.Properties<UserId>().HaveConversion<UserId.EfCoreValueConverter>();
-        configurationBuilder.Properties<ComponentEntryId>().HaveConversion<ComponentEntryId.EfCoreValueConverter>();
+        configurationBuilder.Properties<ComponentPageId>().HaveConversion<ComponentPageId.EfCoreValueConverter>();
         configurationBuilder.Properties<ComponentId>().HaveConversion<ComponentId.EfCoreValueConverter>();
         configurationBuilder.Properties<CommentId>().HaveConversion<CommentId.EfCoreValueConverter>();
         configurationBuilder.Properties<Version>().HaveConversion<VersionConverter>();
+        configurationBuilder.Properties<ComponentSource>().HaveConversion<ComponentSourceConverter>();
         
         base.ConfigureConventions(configurationBuilder);
     }

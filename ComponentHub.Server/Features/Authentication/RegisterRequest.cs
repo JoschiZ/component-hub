@@ -11,7 +11,7 @@ namespace ComponentHub.Server.Features.Authentication;
 /// Should be a record for immutability, but can't because it's recycled as a Blazor WASM Form Model
 /// </remarks>
 /// <param name="UserName"></param>
-public class RegisterRequest()
+public class RegisterRequest
 {
     public string UserName { get; set; } = "";
 };

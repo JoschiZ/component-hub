@@ -28,8 +28,8 @@
                 Label="Description" 
                 Required="true" 
                 @bind-Value="_requestModel.Description"
-                MaxLength="ComponentEntry.Validator.MaxDescriptionLength"
-                Counter="ComponentEntry.Validator.MaxDescriptionLength"
+                MaxLength="Domain.Features.Components.ComponentPage.Validator.MaxDescriptionLength"
+                Counter="Domain.Features.Components.ComponentPage.Validator.MaxDescriptionLength"
                 Immediate/>
             <MudTextField 
                 Variant="Variant.Outlined"
@@ -106,7 +106,7 @@
         {
             Snackbar.Add("Component Created", Severity.Success);
             var shareId = Share.AddItemToStorage(response);
-            var redirectRoute = Routes.Components.GetComponentPage(response.Entry?.OwnerName ?? "", response.Entry?.Name ?? "");
+            var redirectRoute = Routes.Components.GetComponentPage(response.Page?.OwnerName ?? "", response.Page?.Name ?? "");
             RedirectHelper.Redirect(redirectRoute, new Dictionary<string, string?>(){{"shareId", shareId}});
             return;
         }

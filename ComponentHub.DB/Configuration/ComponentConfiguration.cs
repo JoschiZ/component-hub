@@ -9,9 +9,5 @@ internal sealed class ComponentConfiguration: IEntityTypeConfiguration<Component
     public void Configure(EntityTypeBuilder<Component> builder)
     {
         builder.HasKey(component => component.Id);
-
-        builder.Property<ComponentSource>(component => component.Source).HasConversion(
-            source => ComponentSource.EncodeExportString(source),
-            s => ComponentSource.DecodeExportString(s).ResultObject!);
     }
 }

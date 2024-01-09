@@ -266,11 +266,10 @@ namespace ComponentHub.DB.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
                     OwnerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
@@ -320,19 +319,43 @@ namespace ComponentHub.DB.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ArchivedComponent",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ArchivedAt = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: false),
+                    ComponentPageId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Component_ComponentPageId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Component_Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Component_Source = table.Column<string>(type: "longtext", nullable: false),
+                    Component_Version = table.Column<string>(type: "longtext", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArchivedComponent", x => new { x.Id, x.ArchivedAt });
+                    table.ForeignKey(
+                        name: "FK_ArchivedComponent_Components_ComponentPageId",
+                        column: x => x.ComponentPageId,
+                        principalTable: "Components",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Comment",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     OwnerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ComponentEntryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    ComponentPageId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_Components_ComponentEntryId",
-                        column: x => x.ComponentEntryId,
+                        name: "FK_Comment_Components_ComponentPageId",
+                        column: x => x.ComponentPageId,
                         principalTable: "Components",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -344,20 +367,18 @@ namespace ComponentHub.DB.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Source = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Version = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ComponentEntryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    ComponentPageId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Component", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Component_Components_ComponentEntryId",
-                        column: x => x.ComponentEntryId,
+                        name: "FK_Component_Components_ComponentPageId",
+                        column: x => x.ComponentPageId,
                         principalTable: "Components",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -409,6 +430,11 @@ namespace ComponentHub.DB.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ArchivedComponent_ComponentPageId",
+                table: "ArchivedComponent",
+                column: "ComponentPageId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -452,19 +478,21 @@ namespace ComponentHub.DB.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_ComponentEntryId",
+                name: "IX_Comment_ComponentPageId",
                 table: "Comment",
-                column: "ComponentEntryId");
+                column: "ComponentPageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Component_ComponentEntryId",
+                name: "IX_Component_ComponentPageId",
                 table: "Component",
-                column: "ComponentEntryId");
+                column: "ComponentPageId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Components_OwnerId",
+                name: "IX_Components_OwnerId_Name",
                 table: "Components",
-                column: "OwnerId");
+                columns: new[] { "OwnerId", "Name" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
@@ -503,6 +531,9 @@ namespace ComponentHub.DB.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ArchivedComponent");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

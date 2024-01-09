@@ -14,8 +14,8 @@ public class Comment : Entity<CommentId>
     public UserId OwnerId { get; init; }
     public ApplicationUser? Owner { get; }
     
-    public ComponentEntryId ComponentEntryId { get; init; }
-    public ComponentEntry ComponentEntry { get; } 
+    public ComponentPageId ComponentPageId { get; init; }
+    public ComponentPage ComponentPage { get; } 
 }
 
 [StronglyTypedId]

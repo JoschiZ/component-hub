@@ -14,30 +14,27 @@ namespace ComponentHub.Domain.Features.Components;
 /// <summary>
 /// The Database Entity representing a Warcraftlogs Component.
 /// </summary>
-public sealed class Component: Entity<ComponentId>, IComparable<Component>
+public class Component: Entity<ComponentId>, IComparable<Component>
 {
-    private Component(ComponentId id): base(id) { }
-    public string Name { get; private init; }
+    protected Component(ComponentId id): base(id) { }
     public ComponentSource Source { get; private init; }
     public Version Version { get; private init; }
 
-    public required ComponentEntryId ComponentEntryId { get; init; }
-    public ComponentEntry? ComponentEntry { get; private set; }
+    public required ComponentPageId ComponentPageId { get; init; }
+    public ComponentPage? ComponentPage { get; private set; }
 
     public static ResultValidation<Component> TryCreate(
         ComponentSource source,
-        string name,
-        ComponentEntryId componentEntryId,
-        ComponentEntry? componentEntry = null,
+        ComponentPageId componentPageId,
+        ComponentPage? componentEntry = null,
         Version? version = null)
     {
         var newComponent = new Component(ComponentId.New())
         {
             Source = source,
-            Name = name,
             Version = version ?? new Version(1, 0),
-            ComponentEntryId = componentEntryId,
-            ComponentEntry = componentEntry
+            ComponentPageId = componentPageId,
+            ComponentPage = componentEntry
         };
 
         var validator = new Validator();
@@ -45,10 +42,6 @@ public sealed class Component: Entity<ComponentId>, IComparable<Component>
 
         return validation.IsValid ? newComponent : validation.Errors;
     }
-
-    
-
-
     
     public class Validator: AbstractValidator<Component>
     {
@@ -56,7 +49,6 @@ public sealed class Component: Entity<ComponentId>, IComparable<Component>
         public const int MinNameLength = 4;
         public Validator()
         {
-            RuleFor(component => component.Name).MaximumLength(MaxNameLength).MinimumLength(MinNameLength);
             RuleFor(component => component.Source).SetValidator(new ComponentSource.Validator());
         }
     }

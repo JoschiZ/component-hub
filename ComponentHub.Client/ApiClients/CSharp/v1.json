@@ -780,7 +780,7 @@
             "type": "string",
             "format": "guid"
           },
-          "entryId": {
+          "pageId": {
             "type": "string"
           }
         }
@@ -789,15 +789,15 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "componentEntry": {
-            "$ref": "#/components/schemas/ComponentEntryDto"
+          "componentPage": {
+            "$ref": "#/components/schemas/ComponentPageDto"
           },
           "currentComponent": {
             "$ref": "#/components/schemas/ComponentDto"
           }
         }
       },
-      "ComponentEntryDto": {
+      "ComponentPageDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -830,9 +830,6 @@
           "id": {
             "type": "string"
           },
-          "name": {
-            "type": "string"
-          },
           "componentSource": {
             "type": "string"
           },
@@ -852,7 +849,7 @@
           "components": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ComponentEntryDto"
+              "$ref": "#/components/schemas/ComponentPageDto"
             }
           },
           "pagination": {
@@ -889,7 +886,7 @@
           "components": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ComponentEntryDto"
+              "$ref": "#/components/schemas/ComponentPageDto"
             }
           }
         }
@@ -930,8 +927,8 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "entry": {
-            "$ref": "#/components/schemas/ComponentEntryDto"
+          "page": {
+            "$ref": "#/components/schemas/ComponentPageDto"
           },
           "component": {
             "$ref": "#/components/schemas/ComponentDto"
@@ -1086,15 +1083,9 @@
       "RegisterRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "userName"
-        ],
         "properties": {
           "userName": {
-            "type": "string",
-            "maxLength": 24,
-            "minLength": 1,
-            "nullable": false
+            "type": "string"
           }
         }
       }

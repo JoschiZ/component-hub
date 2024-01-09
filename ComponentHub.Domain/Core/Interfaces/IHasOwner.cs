@@ -4,5 +4,6 @@ namespace ComponentHub.Domain.Core.Interfaces;
 
 public interface IHasOwner
 {
-    public ApplicationUser Owner { get; }
+    public UserId OwnerId { get; }
+    public ApplicationUser? Owner { get; }
 }

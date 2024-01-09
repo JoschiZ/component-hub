@@ -1,11 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
 using ComponentHub.Domain.Features.Components;
 using Riok.Mapperly.Abstractions;
 
 
 namespace ComponentHub.Server.Features.Components;
 
-internal record ComponentEntryDto(
-    ComponentEntryId Id,
+internal record ComponentPageDto(
+    ComponentPageId Id,
     string Name,
     string Description,
     string OwnerName,
@@ -13,25 +14,15 @@ internal record ComponentEntryDto(
     DateTimeOffset UpdatedAt
 );
 
-/// <summary>
-/// A Minimal DTO that only carries essential information
-/// </summary>
-/// <param name="Name"></param>
-/// <param name="OwnerName"></param>
-/// <param name="Id"></param>
-internal record ComponentEntryMinimalDto(string Name, string OwnerName, ComponentEntryId Id);
-
 
 
 [Mapper]
+[SuppressMessage("ReSharper", "RedundantVerbatimPrefix")]
 internal static partial class ComponentEntryMapper
 {
-    [MapProperty(nameof(@ComponentEntry.Owner.UserName), nameof(ComponentEntryDto.OwnerName))]
-    public static partial ComponentEntryDto ToDto(this ComponentEntry entry);
+    [MapProperty(nameof(@ComponentPage.Owner.UserName), nameof(ComponentPageDto.OwnerName))]
+    public static partial ComponentPageDto ToDto(this ComponentPage page);
     
-    public static partial IQueryable<ComponentEntryDto> ProjectToDto(this IQueryable<ComponentEntry> entry);
-    
-    [MapProperty(nameof(@ComponentEntry.Owner.UserName), nameof(ComponentEntryMinimalDto.OwnerName))]
-    public static partial ComponentEntryMinimalDto ToMinimalDto(this ComponentEntry entry);
+    public static partial IQueryable<ComponentPageDto> ProjectToDto(this IQueryable<ComponentPage> entry);
 }
 

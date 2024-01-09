@@ -22,5 +22,5 @@ public sealed class UpdateComponentRequest
     /// </summary>
     public Guid WclComponentId { get; set; } = Guid.NewGuid();
 
-    public ComponentEntryId EntryId { get; set; }
+    public ComponentPageId PageId { get; set; }
 }

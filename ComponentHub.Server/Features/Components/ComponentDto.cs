@@ -5,7 +5,6 @@ namespace ComponentHub.Server.Features.Components;
 
 internal record ComponentDto(
     ComponentId Id,
-    string Name,
     string ComponentSource,
     Version Version);
     
@@ -13,6 +12,7 @@ internal record ComponentDto(
 internal static partial class ComponentDtoMapper
 {
     [MapProperty(nameof(Component.Source), nameof(ComponentDto.ComponentSource))]
+    [MapProperty(nameof(Component.Id), nameof(ComponentDto.Id))]
     public static partial ComponentDto ToDto(this Component component);
 
     private static string ComponentSourceToCompressed(ComponentSource componentSource)

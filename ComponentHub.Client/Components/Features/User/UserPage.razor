@@ -59,7 +59,7 @@
         </MudCardHeader>
         <MudCardContent>
             <MudDataGrid 
-                T="ComponentEntryDto"
+                T="ComponentPageDto"
                 @bind-ref="@_tableRef"
                 ServerData="@UpdateGridData"
                 QuickFilter="@(arg => !(arg.Id is null || _isDeleted.Contains(arg.Id)))">
@@ -101,7 +101,7 @@
     private GetDetailedUserInfoResponse? _userInfo;
     private string _newUserName = "";
     private readonly HashSet<string> _isDeleted = [];
-    private MudDataGrid<ComponentEntryDto>? _tableRef;
+    private MudDataGrid<ComponentPageDto>? _tableRef;
     private bool _changeUsernameFormIsValid;
     private MudForm? _changeUsernameForm;
     protected override async Task OnInitializedAsync()
@@ -109,22 +109,22 @@
         _userInfo = await UserService.GetDetailedUserInfo();
     }
 
-    private async Task<GridData<ComponentEntryDto>> UpdateGridData(GridState<ComponentEntryDto> state)
+    private async Task<GridData<ComponentPageDto>> UpdateGridData(GridState<ComponentPageDto> state)
     {
         if (_userInfo?.Name is null)
         {
-            return new GridData<ComponentEntryDto>();
+            return new GridData<ComponentPageDto>();
         }
 
         var data = await ComponentService.GetByUser(_userInfo.Name, page: state.Page, pageSize: state.PageSize, CancellationService.Token);
-        return new GridData<ComponentEntryDto>()
+        return new GridData<ComponentPageDto>()
         {
             Items = data.data,
             TotalItems = data.overallCount
         };
     }
 
-    private async Task DeleteComponent(ComponentEntryDto? componentEntryDto)
+    private async Task DeleteComponent(ComponentPageDto? componentEntryDto)
     {
         var dialogParams = ConfirmationDialog.CreateParameters("Are you sure? This CANNOT be undone?");
         var dialog = await DialogService.ShowAsync<ConfirmationDialog>($"Delete {componentEntryDto?.Name}?", dialogParams);

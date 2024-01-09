@@ -52,7 +52,7 @@ internal sealed record QueryComponentsEndpointRequest(
     int Page = 0,
     int PageSize = 10);
 
-internal sealed record QueryComponentsEndpointResponse(ComponentEntryDto[] Components);
+internal sealed record QueryComponentsEndpointResponse(ComponentPageDto[] Components);
 
 internal sealed class QueryComponentsEndpointRequestValidator: Validator<QueryComponentsEndpointRequest>
 {
@@ -65,7 +65,7 @@ internal sealed class QueryComponentsEndpointRequestValidator: Validator<QueryCo
 
 internal sealed record ComponentsSortAction(SortDirection SortDirection, SortingMethod Method)
 {
-    public Func<IQueryable<ComponentEntry>, IOrderedQueryable<ComponentEntry>> GetOrderMethod()
+    public Func<IQueryable<ComponentPage>, IOrderedQueryable<ComponentPage>> GetOrderMethod()
     {
         return Method switch
         {

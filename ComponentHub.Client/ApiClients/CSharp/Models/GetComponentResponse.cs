@@ -6,13 +6,13 @@ using System.Linq;
 using System;
 namespace ComponentHub.ApiClients.Models {
     public class GetComponentResponse : IParsable {
-        /// <summary>The componentEntry property</summary>
+        /// <summary>The componentPage property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public ComponentEntryDto? ComponentEntry { get; set; }
+        public ComponentPageDto? ComponentPage { get; set; }
 #nullable restore
 #else
-        public ComponentEntryDto ComponentEntry { get; set; }
+        public ComponentPageDto ComponentPage { get; set; }
 #endif
         /// <summary>The currentComponent property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -35,7 +35,7 @@ namespace ComponentHub.ApiClients.Models {
         /// </summary>
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
-                {"componentEntry", n => { ComponentEntry = n.GetObjectValue<ComponentEntryDto>(ComponentEntryDto.CreateFromDiscriminatorValue); } },
+                {"componentPage", n => { ComponentPage = n.GetObjectValue<ComponentPageDto>(ComponentPageDto.CreateFromDiscriminatorValue); } },
                 {"currentComponent", n => { CurrentComponent = n.GetObjectValue<ComponentDto>(ComponentDto.CreateFromDiscriminatorValue); } },
             };
         }
@@ -45,7 +45,7 @@ namespace ComponentHub.ApiClients.Models {
         /// <param name="writer">Serialization writer to use to serialize this model</param>
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteObjectValue<ComponentEntryDto>("componentEntry", ComponentEntry);
+            writer.WriteObjectValue<ComponentPageDto>("componentPage", ComponentPage);
             writer.WriteObjectValue<ComponentDto>("currentComponent", CurrentComponent);
         }
     }
