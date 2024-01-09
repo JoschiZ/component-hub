@@ -48,24 +48,7 @@ public sealed class Component: Entity<ComponentId>, IComparable<Component>
 
     
 
-    public static string EncodeExportString(ComponentSource source)
-    {
-        var jsonObject = JsonSerializer.Serialize(source);
-        return LZString.CompressToBase64(jsonObject);
-    }
 
-    public static ResultError<ComponentSource> DecodeExportString(string encodedString)
-    {
-        var decodedJsonObject = LZString.DecompressFromBase64(encodedString);
-        if (decodedJsonObject is null)
-        {
-            return Error.InvalidExportString;
-        }
-
-        var sourceObject = JsonSerializer.Deserialize<ComponentSource>(decodedJsonObject);
-
-        return sourceObject is not null ? sourceObject : Error.InvalidExportString;
-    }
     
     public class Validator: AbstractValidator<Component>
     {

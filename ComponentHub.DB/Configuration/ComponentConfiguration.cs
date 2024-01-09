@@ -11,7 +11,7 @@ internal sealed class ComponentConfiguration: IEntityTypeConfiguration<Component
         builder.HasKey(component => component.Id);
 
         builder.Property<ComponentSource>(component => component.Source).HasConversion(
-            source => Component.EncodeExportString(source),
-            s => Component.DecodeExportString(s).ResultObject!);
+            source => ComponentSource.EncodeExportString(source),
+            s => ComponentSource.DecodeExportString(s).ResultObject!);
     }
 }

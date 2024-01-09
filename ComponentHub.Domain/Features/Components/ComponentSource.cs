@@ -1,8 +1,10 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using ComponentHub.Domain.Core.Extensions;
 using ComponentHub.Domain.Core.Primitives.Results;
 using ComponentHub.Domain.Core.Validation;
 using FluentValidation;
+using LZStringCSharp;
 
 
 namespace ComponentHub.Domain.Features.Components;
@@ -50,6 +52,25 @@ public sealed record ComponentSource
         }
 
         return newSourceObject;
+    }
+    
+    public static string EncodeExportString(ComponentSource source)
+    {
+        var jsonObject = JsonSerializer.Serialize(source);
+        return LZString.CompressToBase64(jsonObject);
+    }
+
+    public static ResultError<ComponentSource> DecodeExportString(string encodedString)
+    {
+        var decodedJsonObject = LZString.DecompressFromBase64(encodedString);
+        if (decodedJsonObject is null)
+        {
+            return Error.InvalidExportString;
+        }
+
+        var sourceObject = JsonSerializer.Deserialize<ComponentSource>(decodedJsonObject);
+
+        return sourceObject is not null ? sourceObject : Error.InvalidExportString;
     }
 
     public ResultValidation<ComponentSource> TryGetUpdatedSource(

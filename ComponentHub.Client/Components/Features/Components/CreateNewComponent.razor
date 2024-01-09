@@ -115,7 +115,7 @@
     }
     private Task FillFromImportString()
     {
-        var componentResult = Component.DecodeExportString(_importString);
+        var componentResult = ComponentSource.DecodeExportString(_importString);
 
         if (componentResult.IsError)
         {

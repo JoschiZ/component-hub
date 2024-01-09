@@ -17,6 +17,6 @@ internal static partial class ComponentDtoMapper
 
     private static string ComponentSourceToCompressed(ComponentSource componentSource)
     {
-        return Component.EncodeExportString(componentSource);
+        return ComponentSource.EncodeExportString(componentSource);
     }
 }
