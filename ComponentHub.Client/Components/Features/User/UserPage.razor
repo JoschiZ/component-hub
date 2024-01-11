@@ -3,10 +3,10 @@
 @using ComponentHub.Client.Components.Features.Components
 @using ComponentHub.Client.Core
 @using ComponentHub.Domain.Features.Users
-@using Microsoft.AspNetCore.Authorization
 
 @attribute [Route(Routes.Users.PrivateProfile)]
-@attribute [Authorize]
+@attribute [Route(Routes.Users.PublicProfile)]
+
 @inject UserService UserService
 @inject ComponentService ComponentService
 @inject ISnackbar Snackbar
@@ -14,45 +14,48 @@
 @inject CancellationService CancellationService 
 @inject NavigationManager NavigationManager
 
-@if (_userInfo is not null)
+@if (UserName is not null)
 {
-    <MudCard Style="margin-bottom: 1rem">
-        <MudCardHeader>
-            <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">Hello @(_userInfo.Name)!</MudTextM3>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudPaper Elevation="0" Style="margin-bottom: 0.5rem">
-                <MudForm @ref="@_changeUsernameForm" @bind-IsValid="@_changeUsernameFormIsValid">
-                    <MudStack Row Spacing="5" AlignItems="AlignItems.Baseline" Justify="Justify.FlexEnd">
-                        <MudTextField
-                            T="string"
-                            Margin="Margin.Dense"
-                            @bind-Value="@_newUserName"
-                            Validation="@ApplicationUser.Validation.UsernameValidator.Validation"
-                            MaxLength="ApplicationUser.Validation.MaxUserNameLength"
-                            DisableUnderLine
-                            Immediate
-                            Variant="Variant.Outlined"/>
-                        <MudButton
-                            Variant="Variant.Filled"
-                            Disabled="@(!_changeUsernameFormIsValid)"
-                            OnClick="@ChangeUsername"
-                            DisableElevation>
-                            Change Username
-                        </MudButton>
+    <MudPaper Outlined Style="margin-bottom: 1rem">
+        <MudTextM3 Typo="TypoM3.Headline" Color="Color.Primary">Hello @(UserName)</MudTextM3>
+    </MudPaper>
+    
+    
+    <BelongsToCurrentUserView Name="@UserName">
+            <MudCard Style="margin-bottom: 1rem">
+                <MudCardContent>
+                    <MudPaper Elevation="0" Style="margin-bottom: 0.5rem">
+                        <MudForm @ref="@_changeUsernameForm" @bind-IsValid="@_changeUsernameFormIsValid">
+                            <MudStack Row Spacing="5" AlignItems="AlignItems.Baseline" Justify="Justify.FlexEnd">
+                                <MudTextField
+                                    T="string"
+                                    Margin="Margin.Dense"
+                                    @bind-Value="@_newUserName"
+                                    Validation="@ApplicationUser.Validation.UsernameValidator.Validation"
+                                    MaxLength="ApplicationUser.Validation.MaxUserNameLength"
+                                    DisableUnderLine
+                                    Immediate
+                                    Variant="Variant.Outlined"/>
+                                <MudButton
+                                    Variant="Variant.Filled"
+                                    Disabled="@(!_changeUsernameFormIsValid)"
+                                    OnClick="@ChangeUsername"
+                                    DisableElevation>
+                                    Change Username
+                                </MudButton>
+                            </MudStack>
+                        </MudForm>
+        
+                    </MudPaper>
+                    <MudStack Row Spacing="5" Justify="Justify.FlexEnd">
+                        <MudTooltip Text="This will download all the information we store about you. This does not include your components or comments.">
+                            <MudButton Variant="Variant.Filled" Color="Color.Info" Href="@Endpoints.Users.DownloadUserdata">Download Userdata</MudButton>
+                        </MudTooltip>
+                        <MudButton OnClick="@DeleteAccount" Variant="Variant.Filled" Color="Color.Warning">Delete Account</MudButton>
                     </MudStack>
-                </MudForm>
-
-            </MudPaper>
-            <MudStack Row Spacing="5" Justify="Justify.FlexEnd">
-                <MudTooltip Text="This will download all the information we store about you. This does not include your components or comments.">
-                    <MudButton Variant="Variant.Filled" Color="Color.Info" Href="@Endpoints.Users.DownloadUserdata">Download Userdata</MudButton>
-                </MudTooltip>
-                <MudButton OnClick="@DeleteAccount" Variant="Variant.Filled" Color="Color.Warning">Delete Account</MudButton>
-            </MudStack>
-        </MudCardContent>
-    </MudCard>
-
+                </MudCardContent>
+            </MudCard>
+    </BelongsToCurrentUserView>
     <MudCard>
         <MudCardHeader>
             <MudTextM3 Typo="TypoM3.Title">Your Components</MudTextM3>
@@ -67,21 +70,23 @@
                     <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
                     <TemplateColumn>
                         <CellTemplate>
-                            @if (context.Item?.Name is not null && _userInfo.Name is not null)
+                            @if (context.Item?.Name is not null)
                             {
-                                <MudLink Href="@Routes.Components.GetComponentPage(_userInfo.Name, context.Item.Name)">@context.Item.Name</MudLink>
+                                <MudLink Href="@Routes.Components.GetComponentPage(UserName, context.Item.Name)">@context.Item.Name</MudLink>
                             }
                         </CellTemplate>
                     </TemplateColumn>
                     <PropertyColumn Property="arg => arg.CreatedAt"/>
                     <PropertyColumn Property="arg => arg.UpdatedAt"/>
-                    <TemplateColumn>
-                        <CellTemplate>
-                            <MudButton OnClick="@(() => DeleteComponent(context.Item))" Variant="Variant.Filled" Color="Color.Warning">
-                                DELETE
-                            </MudButton>
-                        </CellTemplate>
-                    </TemplateColumn>
+                    <BelongsToCurrentUserView Name="@UserName">
+                        <TemplateColumn>
+                            <CellTemplate>
+                                <MudButton OnClick="@(() => DeleteComponent(context.Item))" Variant="Variant.Filled" Color="Color.Warning">
+                                    DELETE
+                                </MudButton>
+                            </CellTemplate>
+                        </TemplateColumn>
+                    </BelongsToCurrentUserView>
                 </Columns>
                 <ChildRowContent>
                     @context.Item.Description
@@ -98,25 +103,40 @@
 }
 
 @code {
-    private GetDetailedUserInfoResponse? _userInfo;
     private string _newUserName = "";
     private readonly HashSet<string> _isDeleted = [];
     private MudDataGrid<ComponentPageDto>? _tableRef;
     private bool _changeUsernameFormIsValid;
     private MudForm? _changeUsernameForm;
-    protected override async Task OnInitializedAsync()
+    
+    [Parameter]
+    public string? UserName { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
-        _userInfo = await UserService.GetDetailedUserInfo();
+        if (UserName is null)
+        {
+            var userInfo = await UserService.GetDetailedUserInfo();
+            UserName = userInfo.Name;
+            return;
+        }
+
+        var userSearch = await UserService.Query(UserName, 0, 1);
+        if (userSearch.Count == 0)
+        {
+            NavigationManager.NavigateTo(Routes.General.NotFound);
+            return;
+        }
     }
 
     private async Task<GridData<ComponentPageDto>> UpdateGridData(GridState<ComponentPageDto> state)
     {
-        if (_userInfo?.Name is null)
+        if (UserName is null)
         {
             return new GridData<ComponentPageDto>();
         }
 
-        var data = await ComponentService.GetByUser(_userInfo.Name, page: state.Page, pageSize: state.PageSize, CancellationService.Token);
+        var data = await ComponentService.GetByUser(UserName, page: state.Page, pageSize: state.PageSize, CancellationService.Token);
         return new GridData<ComponentPageDto>()
         {
             Items = data.data,
@@ -176,7 +196,7 @@
             return;
         }
         
-        var result = await ConfirmationDialog.Show(DialogService, $"Do you really want to change your name from {_userInfo?.Name} to {_newUserName}?", "Change name");
+        var result = await ConfirmationDialog.Show(DialogService, $"Do you really want to change your name from {UserName} to {_newUserName}?", "Change name");
         if (result.Canceled)
         {
             Snackbar.Add("Username not changed", Severity.Info);
@@ -187,6 +207,8 @@
 
         if (change)
         {
+            var userInfo = await UserService.GetDetailedUserInfo();
+            UserName = userInfo.Name;
             Snackbar.Add($"Username changed to {_newUserName}", Severity.Success);
         }
     }

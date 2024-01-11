@@ -122,6 +122,54 @@
         ]
       }
     },
+    "/api/users/search": {
+      "get": {
+        "tags": [
+          "Api"
+        ],
+        "operationId": "ComponentHubServerFeaturesUsersSearchUsers",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchUsers_ResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/RandomTestingEndpoint": {
       "get": {
         "tags": [
@@ -715,6 +763,52 @@
           }
         }
       },
+      "SearchUsers_ResponseDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "publicUserInfos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicUserDto"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/ResponsePagination"
+          }
+        }
+      },
+      "PublicUserDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userName": {
+            "type": "string"
+          }
+        }
+      },
+      "ResponsePagination": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currentPage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItems": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SearchUsers_Request": {
+        "type": "object",
+        "additionalProperties": false
+      },
       "RandomTestingRequest": {
         "type": "object",
         "additionalProperties": false
@@ -854,24 +948,6 @@
           },
           "pagination": {
             "$ref": "#/components/schemas/ResponsePagination"
-          }
-        }
-      },
-      "ResponsePagination": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "currentPage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalItems": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },

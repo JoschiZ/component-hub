@@ -41,6 +41,7 @@ public static class Endpoints
         public const string Delete = UsersBasePath + "delete";
         public const string ChangeUsername = UsersBasePath + "changeName";
         public const string DownloadUserdata = UsersBasePath + "download";
+        public const string Search = UsersBasePath + "search";
     }
     
     

@@ -24,46 +24,45 @@
             <MudSpacer/>
         </MudCardHeader>
         <MudCardContent>
-            <MudPaper>
+            <MudPaper Elevation="0" Style="margin-bottom: 1rem">
                 <MudTextM3 GutterBottom="true" Typo="TypoM3.Title">Description</MudTextM3>
                 <MudTextField
                     Variant="Variant.Filled"
                     T="string"
                     ReadOnly
                     Lines="5"
-                    AutoGrow
                     MaxLines="30"
+                    AutoGrow
                     Text="@_getResponse.ComponentPage.Description"
                     DisableUnderLine/>
             </MudPaper>
             @if (_componentSource is not null)
             {
-                <MudPaper Outlined>
-                    <MudExpansionPanel>
-                        <TitleContent>
-                            <MudTextM3 Typo="TypoM3.Title">Source</MudTextM3>
-                        </TitleContent>
-                        <ChildContent>
-                            <MudCard>
-                                <MudCardContent>
-                                    <MudTextField
-                                        Variant="Variant.Filled"
-                                        ReadOnly
-                                        Text="@_componentSource.Source.Script"
-                                        Lines="5"
-                                        AutoGrow
-                                        T="string"
-                                        DisableUnderLine/>
-                                    <MudStack Spacing="4" Row>
-                                        <MudTextM3>Height: @_componentSource.Height</MudTextM3>
-                                        <MudTextM3>Width: @_componentSource.Width</MudTextM3>
-                                        <MudSpacer/>
-                                        <MudTextM3 Align="Align.Right" Typo="TypoM3.Label" Color="Color.Surface">ID: @_componentSource.WclComponentId</MudTextM3>
-                                    </MudStack>
-                                </MudCardContent>
-                            </MudCard>
-                        </ChildContent>
-                    </MudExpansionPanel>
+                <MudPaper Elevation="0">
+                    <MudExpansionPanels Dense Elevation="0">
+                        <MudExpansionPanel>
+                            <TitleContent>
+                                <MudTextM3 Typo="TypoM3.Title">Source</MudTextM3>
+                            </TitleContent>
+                            <ChildContent>
+                                <MudStack Spacing="4" Row>
+                                    <MudTextM3>Height: @_componentSource.Height</MudTextM3>
+                                    <MudTextM3>Width: @_componentSource.Width</MudTextM3>
+                                    <MudSpacer/>
+                                    <MudTextM3 Align="Align.Right" Typo="TypoM3.Label" Color="Color.Surface" Style="opacity: 0.3">ID: @_componentSource.WclComponentId</MudTextM3>
+                                </MudStack>
+                                <MudTextField
+                                    Variant="Variant.Filled"
+                                    ReadOnly
+                                    Text="@_componentSource.Source.Script"
+                                    Lines="5"
+                                    MaxLines="30"
+                                    AutoGrow
+                                    T="string"
+                                    DisableUnderLine/>
+                            </ChildContent>
+                        </MudExpansionPanel>
+                    </MudExpansionPanels>
                 </MudPaper>    
             }
         </MudCardContent>

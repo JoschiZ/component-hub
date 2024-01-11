@@ -1,3 +1,4 @@
+using ComponentHub.ApiClients.Api.Users.Search;
 using ComponentHub.ApiClients.Models;
 using ComponentHub.Client.ApiClients;
 using ComponentHub.Client.Components.Features.Auth;
@@ -56,6 +57,29 @@ internal sealed class UserService
         {
             _errorHelper.DisplayError(e);
             return false;
+        }
+    }
+
+    public async Task<List<PublicUserDto>> Query(string? userName, int? page, int? pageSize)
+    {
+        try
+        {
+            var response = await _client.User.Search.GetAsync((configuration =>
+            {
+                configuration.QueryParameters = new SearchRequestBuilder.SearchRequestBuilderGetQueryParameters()
+                {
+                    PageSize = pageSize,
+                    Page = page,
+                    UserName = userName
+                };
+            }));
+
+            return response?.PublicUserInfos ?? [];
+        }
+        catch (ApiException e)
+        {
+            _errorHelper.DisplayError(e);
+            return [];
         }
     }
 }

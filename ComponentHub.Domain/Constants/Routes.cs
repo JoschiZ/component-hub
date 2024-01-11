@@ -14,8 +14,9 @@ public static class Routes
     public static class Users
     {
         public const string PrivateProfile = "/profile";
-        public const string PublicProfile = "/{UserName}";
+        public const string PublicProfile = "users/{UserName}";
 
+        [Pure]
         public static string GetPublicProfile(string userName)
         {
             return PublicProfile.Replace("{UserName}", userName);
@@ -27,6 +28,7 @@ public static class Routes
         public const string Upload = "/CreateNewComponent";
         
         public const string ComponentPage = "/{userName}/{componentName}";
+        
         [Pure]
         public static string GetComponentPage(string userName, string componentName)
         {

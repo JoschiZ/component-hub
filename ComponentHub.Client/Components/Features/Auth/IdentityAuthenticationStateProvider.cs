@@ -65,4 +65,14 @@ internal sealed class IdentityAuthenticationStateProvider(
         CurrentUser = null;
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
+
+    public bool IsCurrentUser(string userName)
+    {
+        if (CurrentUser is null)
+        {
+            return false;
+        }
+
+        return CurrentUser.Name == userName;
+    }
 }

@@ -1,0 +1,28 @@
+@using ComponentHub.Client.Components.Features.Auth
+@inject IdentityAuthenticationStateProvider AuthState
+
+<AuthorizeView>
+    <Authorized>
+        @if (_isLoggedInUser)
+        {
+            @ChildContent
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    [Parameter, EditorRequired]
+    public required string Name { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool _isLoggedInUser;
+    
+    
+    protected override void OnParametersSet()
+    {
+        _isLoggedInUser = AuthState.IsCurrentUser(Name);
+    }
+}

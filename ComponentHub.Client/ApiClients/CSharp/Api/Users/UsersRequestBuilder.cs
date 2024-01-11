@@ -3,6 +3,7 @@ using ComponentHub.ApiClients.Api.Users.ChangeName;
 using ComponentHub.ApiClients.Api.Users.Delete;
 using ComponentHub.ApiClients.Api.Users.DetailedInfo;
 using ComponentHub.ApiClients.Api.Users.Download;
+using ComponentHub.ApiClients.Api.Users.Search;
 using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,10 @@ namespace ComponentHub.ApiClients.Api.Users {
         /// <summary>The download property</summary>
         public DownloadRequestBuilder Download { get =>
             new DownloadRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The search property</summary>
+        public SearchRequestBuilder Search { get =>
+            new SearchRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new UsersRequestBuilder and sets the default values.
