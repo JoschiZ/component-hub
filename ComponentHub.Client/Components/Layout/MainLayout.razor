@@ -1,6 +1,10 @@
 ﻿@using MudExtensions.Enums
+@using ComponentHub.Client.Components.Features.Components
+@using ComponentHub.ApiClients.Models
 @inherits LayoutComponentBase
 
+@inject ComponentService ComponentService
+@inject NavigationManager NavigationManager
 
 <MudThemeProvider  @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_theme"/>
 <MudDialogProvider/>
@@ -13,6 +17,22 @@
         <a href="@Routes.General.Home">
             <MudTextM3 Typo="TypoM3.Display" Size="Size.Medium" Class="ml-3">ComponentHub</MudTextM3>
         </a>
+        <MudSpacer/>
+        <MudAutocomplete
+            T="@ComponentPageDto"
+            SearchFuncWithCancel="@SearchComponent"
+            ResetValueOnEmptyText
+            CoerceText
+            ShowProgressIndicator
+            ToStringFunc="@(dto => dto.Name ?? "UNNAMED COMPONENT")"
+            ValueChanged="@OnSearchValueChanged"
+            AdornmentIcon="@Icons.Material.Filled.Search"
+            Variant="Variant.Filled"
+            DisableUnderLine>
+            <NoItemsTemplate>
+                <MudTextM3 Color="Color.Error">No component found</MudTextM3>
+            </NoItemsTemplate>
+        </MudAutocomplete>
         <MudSpacer/>
         <MudStack Row Spacing="2">
             <AuthorizeView>
@@ -47,6 +67,7 @@
         }
     };
     
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -63,4 +84,26 @@
         StateHasChanged();
         return Task.CompletedTask;
     }
+
+    private async Task<IEnumerable<ComponentPageDto>> SearchComponent(string componentName, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(componentName) || componentName.Length < 3)
+        {
+            return Enumerable.Empty<ComponentPageDto>();
+        }
+        
+        var components = await ComponentService.QueryComponents(componentName, pageSize: 10, ct: ct);
+        return components;
+    }
+
+    private void OnSearchValueChanged(ComponentPageDto? componentPageDto)
+    {
+        if (componentPageDto?.Name is null || componentPageDto.OwnerName is null)
+        {
+            return;
+        }
+        
+        NavigationManager.NavigateTo(Routes.Components.GetComponentPage(componentPageDto.OwnerName, componentPageDto.Name));
+    }
+    
 }

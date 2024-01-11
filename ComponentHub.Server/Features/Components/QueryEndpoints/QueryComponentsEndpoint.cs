@@ -1,6 +1,7 @@
 using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
+using ComponentHub.Server.Core;
 using ComponentHub.Server.Core.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -28,31 +29,44 @@ internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpoint
         await using var context = await _contextFactory.CreateDbContextAsync(ct);
 
         var componentsQuery = context.Components
-            .Include(entry => entry.Owner)
-            .Where(entry => entry.Owner.UserName!.Contains(req.UserName) && entry.Name.Contains(req.ComponentName));
+            .AsNoTracking();
+
+        if (req.UserName is not null)
+        {
+            componentsQuery = componentsQuery.Where(page =>
+                page.Owner != null && page.Owner.UserName!.Contains(req.UserName));
+        }
+
+        if (req.ComponentName is not null)
+        {
+            componentsQuery = componentsQuery.Where(page => page.Name.Contains(req.ComponentName));
+        }
+
+        var totalItemCount = await componentsQuery.CountAsync(ct);
+
         var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod)
             .GetOrderMethod();
         var componentsOrderedQuery = orderAction(componentsQuery)
             .ThenBy(entry => entry.Name)
-            .Skip(req.PageSize * req.Page)
-            .Take(req.PageSize)
-            .Select(entry => entry.ToDto());
+            .Paginate(req)
+            .ProjectToDto();
 
         var components = await componentsOrderedQuery.ToArrayAsync(cancellationToken: ct);
             
-        return TypedResults.Ok(new QueryComponentsEndpointResponse(components));
+        return TypedResults.Ok(new QueryComponentsEndpointResponse(components, ResponsePagination.CreateFromRequest(req, totalItemCount)));
     }
 }
 
 internal sealed record QueryComponentsEndpointRequest(
-    string UserName = "",
-    string ComponentName = "",
+    string? UserName,
+    string? ComponentName,
     SortDirection SortDirection = SortDirection.Ascending,
     SortingMethod SortingMethod = SortingMethod.ByName,
     int Page = 0,
-    int PageSize = 10);
+    int PageSize = 10): IPaginatedRequest;
 
-internal sealed record QueryComponentsEndpointResponse(ComponentPageDto[] Components);
+internal sealed record QueryComponentsEndpointResponse(ComponentPageDto[] Components, ResponsePagination Pagination)
+    : IPaginatedResponse;
 
 internal sealed class QueryComponentsEndpointRequestValidator: Validator<QueryComponentsEndpointRequest>
 {

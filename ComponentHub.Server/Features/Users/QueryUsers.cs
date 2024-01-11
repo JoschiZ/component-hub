@@ -2,6 +2,7 @@ using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Users;
 using ComponentHub.Server.Core;
+using ComponentHub.Server.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using PublicUserDto = ComponentHub.Domain.Features.Users.PublicUserDto;
 using ResponsePagination = ComponentHub.Server.Core.ResponsePagination;
@@ -39,7 +40,7 @@ internal sealed class SearchUsers : Endpoint<SearchUsers.Request, SearchUsers.Re
 
         var totalItems = await query.CountAsync(ct);
 
-        var results = await query.ToArrayAsync(ct);
+        var results = await query.Paginate(req).ToArrayAsync(ct);
 
         return new ResponseDto(results, ResponsePagination.CreateFromRequest(req, totalItems));
     }

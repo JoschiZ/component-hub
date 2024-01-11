@@ -39,12 +39,15 @@ internal sealed class ComponentService
         return default;
     }
 
-    public async Task<List<ComponentPageDto>> QueryComponents()
+    public async Task<List<ComponentPageDto>> QueryComponents(string? componentName, int page = 0, int pageSize = 10, CancellationToken ct = default)
     {
         var response = await _client.Components.GetAsync(config =>
         {
             config.QueryParameters.SortDirectionAsSortDirection = SortDirection.Ascending;
-        });
+            config.QueryParameters.ComponentName = componentName;
+            config.QueryParameters.Page = page;
+            config.QueryParameters.PageSize = pageSize;
+        }, ct);
         return response?.Components ?? [];
     }
 
