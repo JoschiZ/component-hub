@@ -34,7 +34,7 @@ public static class DependencyInjectionExtensions
         var connectionString = $"Server={config.MySql.Server}; User ID={config.MySql.Username}; Password={config.MySql.Password}; Database={config.MySql.Database}";
         return services.AddDbContextFactory<ComponentHubContext>(contextOptionsBuilder =>
         {
-            contextOptionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            contextOptionsBuilder.UseNpgsql(connectionString);
             contextOptionsBuilder.UseOpenIddict();
             additionalDbConfig?.Invoke(contextOptionsBuilder);
         });
