@@ -14,13 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 // This loads configs that may be needed for later registrations so it needs to be first!
 builder.AddEnvToConfig();
 
-var config = builder.Configuration;
-
-
-
-
-builder.WebHost.UseUrls("https://localhost:7105", "http://localhost:5240");
-
 builder.AddAuthentication();
 builder.Services.AddAntiforgery();
 builder.Services.AddEfCore(builder.Configuration, optionsBuilder =>

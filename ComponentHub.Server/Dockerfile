@@ -1,15 +1,16 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["ComponentHub/Server/ComponentHub.Server.csproj", "ComponentHub/Server/"]
-COPY ["ComponentHub/Client/ComponentHub.Client.csproj", "ComponentHub/Client/"]
-COPY ["ComponentHub/Shared/ComponentHub.Shared.csproj", "ComponentHub/Shared/"]
-RUN dotnet restore "ComponentHub/Server/ComponentHub.Server.csproj"
+COPY ["ComponentHub/ComponentHub.Server/ComponentHub.Server.csproj", "ComponentHub/Server/"]
+COPY ["ComponentHub/ComponentHub.DB/ComponentHub.DB.csproj", "ComponentHub/DB/"]
+COPY ["ComponentHub/ComponentHub.Domain/ComponentHub.Domain.csproj", "ComponentHub/Domain/"]
+COPY ["ComponentHub/ComponentHub.Client/ComponentHub.Client.csproj", "ComponentHub/Client/"]
+
+RUN dotnet restore "ComponentHub/ComponentHub.Server/ComponentHub.Server.csproj"
 COPY . .
 WORKDIR "/src/ComponentHub/Server"
 RUN dotnet build "ComponentHub.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
