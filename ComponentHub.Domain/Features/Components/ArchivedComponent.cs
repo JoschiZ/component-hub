@@ -18,7 +18,7 @@ public sealed class ArchivedComponent: Entity<ComponentId>
         return new ArchivedComponent(component.Id)
         {
             Component = component,
-            ArchivedAt = DateTimeOffset.Now,
+            ArchivedAt = DateTimeOffset.UtcNow,
             ComponentPageId = component.ComponentPageId,
             ComponentPage = component.ComponentPage
         };

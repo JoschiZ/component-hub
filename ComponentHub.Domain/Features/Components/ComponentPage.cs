@@ -22,8 +22,8 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
 
     public required string Name { get; init; }
     public required string Description { get; init; }
-    public DateTimeOffset CreatedAt { get; } = DateTime.Now;
-    public DateTimeOffset UpdatedAt { get; private set; } = DateTime.Now;
+    public DateTimeOffset CreatedAt { get; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedAt { get; private set; } = DateTimeOffset.UtcNow;
     
     public required UserId OwnerId { get; init; }
     public ApplicationUser? Owner { get; init; }
@@ -69,7 +69,7 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
 
     private void Updated()
     {
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
     
     

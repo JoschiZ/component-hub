@@ -10,7 +10,7 @@ namespace ComponentHub.Domain.Features.Users;
 public sealed class ApplicationUser: IdentityUser<UserId>, IAggregateRoot<UserId>
 { 
     public IEnumerable<ComponentPage> Components { get; } = new List<ComponentPage>();
-    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; init; } = DateTimeOffset.UtcNow;
     
     public static class Validation
     {

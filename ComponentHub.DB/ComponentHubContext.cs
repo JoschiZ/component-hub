@@ -28,6 +28,7 @@ public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, Iden
         configurationBuilder.Properties<CommentId>().HaveConversion<CommentId.EfCoreValueConverter>();
         configurationBuilder.Properties<Version>().HaveConversion<VersionConverter>();
         configurationBuilder.Properties<ComponentSource>().HaveConversion<ComponentSourceConverter>();
+        configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetConverter>();
         
         base.ConfigureConventions(configurationBuilder);
     }
