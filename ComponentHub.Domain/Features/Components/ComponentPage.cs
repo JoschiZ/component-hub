@@ -54,6 +54,12 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
 
     public ResultValidation<ComponentPage> UpdateCurrentComponent(Component newComponent)
     {
+        if (newComponent.Version <= Component.Version)
+        {
+            return new ValidationFailure("Version", "New version should be bigger than the old version",
+                    newComponent.Version);
+        }
+        
         var validator = new Component.Validator();
         var validation = validator.Validate(newComponent);
         if (!validation.IsValid)

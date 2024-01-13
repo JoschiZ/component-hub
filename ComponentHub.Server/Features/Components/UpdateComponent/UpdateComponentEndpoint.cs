@@ -104,8 +104,8 @@ internal sealed class
 
         var updatedComponent = updatedComponentResult.ResultObject;
 
-        root.UpdateCurrentComponent(updatedComponent);
+        var updateResult = root.UpdateCurrentComponent(updatedComponent);
 
-        return root;
+        return updateResult.IsSuccess ? updateResult.ResultObject : updateResult.Error;
     }
 }

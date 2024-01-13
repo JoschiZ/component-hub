@@ -32,4 +32,7 @@ public sealed class ResultValidation<TResult>: Result<TResult, List<ValidationFa
     
     public static implicit operator ResultValidation<TResult>(List<ValidationFailure> errors) => CreateError(errors);
     public static implicit operator ResultValidation<TResult>(TResult result) => CreateSuccess(result);
+
+    public static implicit operator ResultValidation<TResult>(ValidationFailure error) =>
+        new List<ValidationFailure>() { error };
 }
