@@ -16,7 +16,7 @@ internal class RedirectDelegatingHandler: DelegatingHandler
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var response = await base.SendAsync(request, cancellationToken);
-        if ((int)response.StatusCode != 310)
+        if ((int)response.StatusCode != 210)
         {
             return response;
         }
