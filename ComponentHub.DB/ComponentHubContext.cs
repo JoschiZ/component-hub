@@ -1,9 +1,11 @@
 using ComponentHub.DB.Configuration.Converters;
+using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComponentHub.DB;
 
@@ -29,6 +31,8 @@ public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, Iden
         configurationBuilder.Properties<Version>().HaveConversion<VersionConverter>();
         configurationBuilder.Properties<ComponentSource>().HaveConversion<ComponentSourceConverter>();
         configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetConverter>();
+        configurationBuilder.Properties<IEnumerable<ComponentTag>>()
+            .HaveConversion<EnumListStringConverter<ComponentTag>>();
         
         base.ConfigureConventions(configurationBuilder);
     }

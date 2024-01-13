@@ -1,7 +1,9 @@
+using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Features.Components;
 using ComponentHub.Domain.Features.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComponentHub.DB.Configuration;
 
@@ -16,13 +18,13 @@ internal sealed class ComponentPageConfiguration: IEntityTypeConfiguration<Compo
         
 
         builder
-            .HasMany<ArchivedComponent>(entry => entry.ComponentHistory)
+            .HasMany(entry => entry.ComponentHistory)
             .WithOne(component => component.ComponentPage)
             .HasForeignKey(component => component.ComponentPageId)
             .IsRequired();
 
         builder
-            .HasMany<Comment>(entry => entry.Comments)
+            .HasMany(entry => entry.Comments)
             .WithOne(comment => comment.ComponentPage)
             .HasForeignKey(comment => comment.ComponentPageId);
 
@@ -37,6 +39,8 @@ internal sealed class ComponentPageConfiguration: IEntityTypeConfiguration<Compo
             .WithOne(component => component.ComponentPage)
             .HasForeignKey<Component>(component => component.ComponentPageId)
             .IsRequired();
+
+        builder.Property(page => page.Tags);
 
         builder.Navigation(page => page.Component).AutoInclude();
 

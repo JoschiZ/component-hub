@@ -1,5 +1,7 @@
+using System.Collections.Immutable;
 using ComponentHub.Domain.Core;
 using ComponentHub.Domain.Core.Interfaces;
+using ComponentHub.Domain.Core.Primitives;
 using ComponentHub.Domain.Core.Primitives.Results;
 using ComponentHub.Domain.Core.Validation;
 using ComponentHub.Domain.Features.Users;
@@ -14,25 +16,31 @@ namespace ComponentHub.Domain.Features.Components;
 /// </summary>
 public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
 {
-    
     private ComponentPage() : base(){}
-
     private ComponentPage(ComponentPageId id) : base(id){}
-
-
     public required string Name { get; init; }
     public required string Description { get; init; }
     public DateTimeOffset CreatedAt { get; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; private set; } = DateTimeOffset.UtcNow;
-    
     public required UserId OwnerId { get; init; }
     public ApplicationUser? Owner { get; init; }
-
-
     public Component GetCurrentComponent() => Component;
-    public List<ArchivedComponent> ComponentHistory { get; } = [];
+
+    
+    
+    private readonly List<ArchivedComponent> _componentHistory = [];
+    public IEnumerable<ArchivedComponent> ComponentHistory => _componentHistory.AsReadOnly();
+    
+    
     public Component Component { get; private set; } = default!;
-    public List<Comment> Comments { get; } = [];
+    
+
+    private readonly List<Comment> _comments = [];
+    public IEnumerable<Comment> Comments => _comments.AsReadOnly();
+    
+
+    private readonly HashSet<ComponentTag> _tags = [];
+    public IEnumerable<ComponentTag> Tags => _tags.AsEnumerable(); 
 
     public static ResultValidation<ComponentPage> TryCreate(ComponentPageId id, string name, string description, Component component, ApplicationUser owner)
     {
@@ -68,16 +76,37 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
         }
         
         Updated();
-        ComponentHistory.Add(ArchivedComponent.Create(Component));
+        _componentHistory.Add(ArchivedComponent.Create(Component));
         Component = newComponent;
         return this;
     }
+    
 
     private void Updated()
     {
         UpdatedAt = DateTimeOffset.UtcNow;
     }
-    
+
+    public bool AddTag(ComponentTag tag)
+    {
+        var add = _tags.Add(tag);
+        if (add)
+        {
+            Updated();
+        }
+
+        return add;
+    }
+
+    public bool RemoveTag(ComponentTag tag)
+    {
+        var removal = _tags.Remove(tag);
+        if (removal)
+        {
+            Updated();
+        }
+        return removal;
+    }
     
     
     public class Validator : MudCompatibleAbstractValidator<ComponentPage>

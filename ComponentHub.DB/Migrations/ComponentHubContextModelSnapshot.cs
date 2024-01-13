@@ -57,7 +57,7 @@ namespace ComponentHub.DB.Migrations
 
                     b.HasIndex("ComponentPageId");
 
-                    b.ToTable("ArchivedComponent");
+                    b.ToTable("ArchivedComponent", (string)null);
                 });
 
             modelBuilder.Entity("ComponentHub.Domain.Features.Components.Comment", b =>
@@ -75,7 +75,7 @@ namespace ComponentHub.DB.Migrations
 
                     b.HasIndex("ComponentPageId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comment", (string)null);
                 });
 
             modelBuilder.Entity("ComponentHub.Domain.Features.Components.Component", b =>
@@ -99,7 +99,7 @@ namespace ComponentHub.DB.Migrations
                     b.HasIndex("ComponentPageId")
                         .IsUnique();
 
-                    b.ToTable("Component");
+                    b.ToTable("Component", (string)null);
                 });
 
             modelBuilder.Entity("ComponentHub.Domain.Features.Components.ComponentPage", b =>
@@ -126,7 +126,7 @@ namespace ComponentHub.DB.Migrations
                     b.HasIndex("OwnerId", "Name")
                         .IsUnique();
 
-                    b.ToTable("Components");
+                    b.ToTable("Components", (string)null);
                 });
 
             modelBuilder.Entity("ComponentHub.Domain.Features.Users.ApplicationUser", b =>
