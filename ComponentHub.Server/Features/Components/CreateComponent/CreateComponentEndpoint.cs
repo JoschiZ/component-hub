@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using ComponentHub.DB;
 using ComponentHub.Domain.Constants;
 using ComponentHub.Domain.Features.Components;
@@ -65,7 +66,16 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
             return new ProblemDetails(ValidationFailures);
         }
 
+        var componentPage = componentEntry.ResultObject;
 
+        
+        var tags = req.Tags
+            .Cast<ComponentTagId>()
+            .Select(id => new ComponentTag(id))
+            .ToImmutableArray();
+        context.AttachRange(tags);
+        componentPage.AddTagRange(tags);
+        
         try
         {
             context.Attach(user);
@@ -78,7 +88,7 @@ internal sealed class CreateComponentEndpoint: Endpoint<CreateComponentRequest, 
         }
         catch (DbUpdateException e)
         {
-            return TypedResults.Conflict("A component with this name already exists");
+            return TypedResults.Conflict($"An Error occoured {e.Message}");
         }
     }
 }

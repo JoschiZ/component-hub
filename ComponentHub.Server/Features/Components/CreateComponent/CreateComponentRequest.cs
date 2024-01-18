@@ -11,4 +11,5 @@ public class CreateComponentRequest
     public short Width { get; set; } = 2;
     public short Height { get; set; } = 2;
     public string Description { get; set; } = "";
+    public IEnumerable<int> Tags { get; set; } = [];
 }

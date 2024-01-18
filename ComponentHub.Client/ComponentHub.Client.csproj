@@ -46,6 +46,8 @@
       <_ContentIncludedByDefault Remove="Features\Auth\Components\LogoutButton.razor" />
       <_ContentIncludedByDefault Remove="Features\Auth\Pages\Register.razor" />
       <_ContentIncludedByDefault Remove="Components\Features\WclComponents\UploadComponentTest.razor" />
+      <_ContentIncludedByDefault Remove="ApiClients\CSharp\kiota-lock.json" />
+      <_ContentIncludedByDefault Remove="ApiClients\CSharp\v1.json" />
     </ItemGroup>
 
     <ItemGroup>

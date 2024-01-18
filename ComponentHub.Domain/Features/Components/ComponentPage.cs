@@ -37,8 +37,8 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
 
     private readonly List<Comment> _comments = [];
     public IEnumerable<Comment> Comments => _comments.AsReadOnly();
-    
 
+    
     private readonly HashSet<ComponentTag> _tags = [];
     public IEnumerable<ComponentTag> Tags => _tags.AsEnumerable(); 
 
@@ -87,6 +87,14 @@ public class ComponentPage: AggregateRoot<ComponentPageId>, IHasOwner
         UpdatedAt = DateTimeOffset.UtcNow;
     }
 
+
+    /// <summary>
+    /// Adds a range of tags and returns the number of tags actually added
+    /// </summary>
+    /// <param name="tags"></param>
+    /// <returns></returns>
+    public int AddTagRange(IEnumerable<ComponentTag> tags) => tags.Count(AddTag);
+    
     public bool AddTag(ComponentTag tag)
     {
         var add = _tags.Add(tag);

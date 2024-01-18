@@ -442,7 +442,6 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "default": "",
               "nullable": true
             }
           },
@@ -451,7 +450,6 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "default": "",
               "nullable": true
             }
           },
@@ -914,6 +912,12 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -964,6 +968,9 @@
             "items": {
               "$ref": "#/components/schemas/ComponentPageDto"
             }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/ResponsePagination"
           }
         }
       },
@@ -1104,6 +1111,13 @@
           },
           "description": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         }
       },

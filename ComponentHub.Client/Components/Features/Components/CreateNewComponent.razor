@@ -3,6 +3,7 @@
 @using ComponentHub.Client.Core
 @using ComponentHub.Domain.Features.Components
 @using Microsoft.AspNetCore.Authorization
+
 @inject ComponentService Service
 @inject ISnackbar Snackbar
 @inject RedirectHelper RedirectHelper
@@ -49,6 +50,30 @@
                     <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.HelpOutline"/>
                 </MudTooltip>
             </MudStack>
+            <!--We need to use Nullable here because the shorthand notation doesn't work in Razor Type args-->
+
+            <MudAutocomplete
+                T="@ComponentTagId"
+                Label="Tags"
+                CoerceText
+                ResetValueOnEmptyText
+                AdornmentIcon="@Icons.Material.Filled.Search"
+                AdornmentColor="Color.Primary"
+                SearchFunc="@SearchTag"
+                Value="@_componentTagSelected"
+                OnAdornmentClick="@AddToTags"
+                ToStringFunc="@ToStringFunc"
+                ValueChanged="@OnTagSelectionChanged">
+                <ItemTemplate>
+                    @context.ToStringFast()
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudChipSet AllClosable OnClose="@((chip) => _tags.Remove((ComponentTagId)chip.Value))">
+                @foreach (var tag in _tags)
+                {
+                    <MudChip Value="@tag">@tag.ToStringFast()</MudChip>
+                }
+            </MudChipSet>
         </MudForm>    
     </MudCardContent>
     <MudCardActions>
@@ -89,6 +114,9 @@
     private readonly DialogOptions _dialogOptions = new(){CloseOnEscapeKey = true, CloseButton = true};
     private void ShowDialog() => _isDialogOpen = true;
     private bool _dialogInputError;
+
+    private ComponentTagId _componentTagSelected = ComponentTagId.Warcraft;
+    private readonly HashSet<ComponentTagId> _tags = [];
     
     
     private MudForm? _form;
@@ -101,6 +129,14 @@
             // Show validation Errors here later on or some kind of feedback
             return;
         }
+
+        if (_tags.Count == 0)
+        {
+            Snackbar.Add("Please select at least one Tag!", Severity.Error);
+            return;
+        }
+        
+        _requestModel.Tags = _tags.Cast<int?>().ToList();
         
         var response = await Service.CreateComponent(_requestModel);
 
@@ -139,6 +175,48 @@
         
         return Task.CompletedTask;
     }
+
+
+    private static Task<IEnumerable<ComponentTagId>> SearchTag(string tagString)
+    {
+        if (tagString.Length < 3)
+        {
+            return Task.FromResult<IEnumerable<ComponentTagId>>([]);
+        }
+        
+        // Hot path if we entered the exact name
+        if (ComponentTagIdExtensions.TryParse(tagString, out var componentTagId))
+        {
+            return Task.FromResult<IEnumerable<ComponentTagId>>([componentTagId]);
+        }
+
+        var found = ComponentTagIdExtensions
+            .GetValues()
+            .Where(tagId => tagId.ToStringFast().Contains(tagString))
+            .Take(5);
+
+        return Task.FromResult(found);
+    }
+
+
+
+    private static string ToStringFunc(ComponentTagId componentTagId)
+    {
+        return componentTagId.ToStringFast();
+    }
+
+    private Task OnTagSelectionChanged(ComponentTagId tagId)
+    {
+
+        _componentTagSelected = tagId;
+        AddToTags();
+        return Task.CompletedTask;
+    }
     
-    
+    private Task AddToTags()
+    {
+        _tags.Add(_componentTagSelected);
+        return Task.CompletedTask;
+    }
+
 }

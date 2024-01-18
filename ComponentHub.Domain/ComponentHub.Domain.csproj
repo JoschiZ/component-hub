@@ -12,6 +12,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="6.0.0-preview.4.21253.5" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.0" />
+      <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta08" />
       <PackageReference Include="OneOf" Version="3.0.263" />
       <PackageReference Include="Riok.Mapperly" Version="3.3.1-next.1" />
       <PackageReference Include="StronglyTypedId" Version="1.0.0-beta06" />

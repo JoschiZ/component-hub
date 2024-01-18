@@ -34,6 +34,14 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public string SourceCode { get; set; }
 #endif
+        /// <summary>The tags property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<int?>? Tags { get; set; }
+#nullable restore
+#else
+        public List<int?> Tags { get; set; }
+#endif
         /// <summary>The wclComponentId property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -62,6 +70,7 @@ namespace ComponentHub.ApiClients.Models {
                 {"language", n => { Language = n.GetEnumValue<Language>(); } },
                 {"name", n => { Name = n.GetStringValue(); } },
                 {"sourceCode", n => { SourceCode = n.GetStringValue(); } },
+                {"tags", n => { Tags = n.GetCollectionOfPrimitiveValues<int?>()?.ToList(); } },
                 {"wclComponentId", n => { WclComponentId = n.GetStringValue(); } },
                 {"width", n => { Width = n.GetIntValue(); } },
             };
@@ -77,6 +86,7 @@ namespace ComponentHub.ApiClients.Models {
             writer.WriteEnumValue<Language>("language", Language);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("sourceCode", SourceCode);
+            writer.WriteCollectionOfPrimitiveValues<int?>("tags", Tags);
             writer.WriteStringValue("wclComponentId", WclComponentId);
             writer.WriteIntValue("width", Width);
         }

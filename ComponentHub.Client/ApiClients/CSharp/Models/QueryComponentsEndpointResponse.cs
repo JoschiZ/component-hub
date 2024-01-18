@@ -14,6 +14,14 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public List<ComponentPageDto> Components { get; set; }
 #endif
+        /// <summary>The pagination property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public ResponsePagination? Pagination { get; set; }
+#nullable restore
+#else
+        public ResponsePagination Pagination { get; set; }
+#endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
@@ -28,6 +36,7 @@ namespace ComponentHub.ApiClients.Models {
         public virtual IDictionary<string, Action<IParseNode>> GetFieldDeserializers() {
             return new Dictionary<string, Action<IParseNode>> {
                 {"components", n => { Components = n.GetCollectionOfObjectValues<ComponentPageDto>(ComponentPageDto.CreateFromDiscriminatorValue)?.ToList(); } },
+                {"pagination", n => { Pagination = n.GetObjectValue<ResponsePagination>(ResponsePagination.CreateFromDiscriminatorValue); } },
             };
         }
         /// <summary>
@@ -37,6 +46,7 @@ namespace ComponentHub.ApiClients.Models {
         public virtual void Serialize(ISerializationWriter writer) {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteCollectionOfObjectValues<ComponentPageDto>("components", Components);
+            writer.WriteObjectValue<ResponsePagination>("pagination", Pagination);
         }
     }
 }

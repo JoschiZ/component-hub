@@ -20,6 +20,15 @@
                     <MudTextM3>Created: <DateDisplay DateTime="_getResponse.ComponentPage.CreatedAt"/></MudTextM3>
                     <MudTextM3>Updated: <DateDisplay DateTime="_getResponse.ComponentPage.UpdatedAt"/></MudTextM3>
                 </MudStack>
+                <MudChipSet>
+                    @if (_getResponse.ComponentPage.Tags is not null)
+                    {
+                        @foreach (var tagDescription in _getResponse.ComponentPage.Tags)
+                        { 
+                            <MudChip>@tagDescription</MudChip>
+                        }
+                    }
+                </MudChipSet>
             </MudStack>
             <MudSpacer/>
         </MudCardHeader>
@@ -97,23 +106,23 @@ else
 
 
 @code {
-    [Parameter]
-    public string? ComponentName { get; set; }
-    
-    [Parameter]
-    public string? UserName { get; set; }
-    
-    [SupplyParameterFromQuery]
-    public string? ShareId { get; set; }
+    [Parameter] public string? ComponentName { get; set; }
+
+    [Parameter] public string? UserName { get; set; }
+
+    [SupplyParameterFromQuery] public string? ShareId { get; set; }
 
     private bool _isExportDialogVisible;
-    private void ShowExportOverlay(){
+
+    private void ShowExportOverlay()
+    {
         _isExportDialogVisible = true;
         _exportStringRef?.SelectAsync();
     }
+
     private MudTextField<string>? _exportStringRef;
     private readonly DialogOptions _exportDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true };
-    
+
     private GetComponentResponse? _getResponse;
     private ComponentSource? _componentSource;
 
@@ -122,10 +131,10 @@ else
         if (ShareId is not null)
         {
             var shared = Share.GetItem(ShareId);
-            
+
             _getResponse = new GetComponentResponse()
             {
-                ComponentPage = shared?.Page, 
+                ComponentPage = shared?.Page,
                 CurrentComponent = shared?.Component
             };
         }
@@ -134,13 +143,13 @@ else
         {
             _getResponse = await ComponentService.GetComponent(UserName, ComponentName);
         }
-        
+
         if (_getResponse is null)
         {
             NavManager.NavigateTo(Routes.General.NotFound);
             return;
         }
-        
+
         var encodedSource = _getResponse?.CurrentComponent?.ComponentSource ?? "";
         _componentSource = ComponentSource.DecodeExportString(encodedSource).ResultObject;
     }
@@ -151,12 +160,11 @@ else
         {
             return;
         }
-        
+
         await ClipBoardService.CopyToClipboardAsync(_exportStringRef.Text);
         await _exportStringRef.SelectAsync();
         await _exportStringRef.FocusAsync();
 
         SnackBar.Add("Copied to Clipboard", Severity.Success);
     }
-
 }

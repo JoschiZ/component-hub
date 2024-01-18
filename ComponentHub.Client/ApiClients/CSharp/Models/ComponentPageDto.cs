@@ -40,6 +40,14 @@ namespace ComponentHub.ApiClients.Models {
 #else
         public string OwnerName { get; set; }
 #endif
+        /// <summary>The tags property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<string>? Tags { get; set; }
+#nullable restore
+#else
+        public List<string> Tags { get; set; }
+#endif
         /// <summary>The updatedAt property</summary>
         public DateTimeOffset? UpdatedAt { get; set; }
         /// <summary>
@@ -60,6 +68,7 @@ namespace ComponentHub.ApiClients.Models {
                 {"id", n => { Id = n.GetStringValue(); } },
                 {"name", n => { Name = n.GetStringValue(); } },
                 {"ownerName", n => { OwnerName = n.GetStringValue(); } },
+                {"tags", n => { Tags = n.GetCollectionOfPrimitiveValues<string>()?.ToList(); } },
                 {"updatedAt", n => { UpdatedAt = n.GetDateTimeOffsetValue(); } },
             };
         }
@@ -74,6 +83,7 @@ namespace ComponentHub.ApiClients.Models {
             writer.WriteStringValue("id", Id);
             writer.WriteStringValue("name", Name);
             writer.WriteStringValue("ownerName", OwnerName);
+            writer.WriteCollectionOfPrimitiveValues<string>("tags", Tags);
             writer.WriteDateTimeOffsetValue("updatedAt", UpdatedAt);
         }
     }

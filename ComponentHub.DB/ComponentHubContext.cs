@@ -31,8 +31,6 @@ public sealed class ComponentHubContext: IdentityDbContext<ApplicationUser, Iden
         configurationBuilder.Properties<Version>().HaveConversion<VersionConverter>();
         configurationBuilder.Properties<ComponentSource>().HaveConversion<ComponentSourceConverter>();
         configurationBuilder.Properties<DateTimeOffset>().HaveConversion<DateTimeOffsetConverter>();
-        configurationBuilder.Properties<IEnumerable<ComponentTag>>()
-            .HaveConversion<EnumListStringConverter<ComponentTag>>();
         
         base.ConfigureConventions(configurationBuilder);
     }

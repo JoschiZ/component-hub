@@ -11,8 +11,8 @@ internal record ComponentPageDto(
     string Description,
     string OwnerName,
     DateTimeOffset CreatedAt,
-    DateTimeOffset UpdatedAt
-);
+    DateTimeOffset UpdatedAt,
+    List<string> Tags);
 
 
 
@@ -24,5 +24,7 @@ internal static partial class ComponentEntryMapper
     public static partial ComponentPageDto ToDto(this ComponentPage page);
     
     public static partial IQueryable<ComponentPageDto> ProjectToDto(this IQueryable<ComponentPage> entry);
+
+    public static string ComponentTagToString(ComponentTag tag) => tag.Description;
 }
 
