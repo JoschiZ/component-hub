@@ -27,6 +27,7 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
         await using var context = await _contextFactory.CreateDbContextAsync(ct);
         var entry = await context
             .Components
+            .AsNoTracking()
             .Include(entry => entry.ComponentHistory)
             .Include(entry => entry.Owner)
             .Include(entry => entry.Tags)

@@ -1,0 +1,10 @@
+<MudChip Value="Value" Variant="Variant.Outlined" Color="@Color.Info">@ChildContent</MudChip>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter]
+    public object? Value { get; set; }
+}

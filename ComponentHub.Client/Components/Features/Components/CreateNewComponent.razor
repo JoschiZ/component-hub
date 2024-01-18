@@ -57,12 +57,12 @@
                 Label="Tags"
                 CoerceText
                 ResetValueOnEmptyText
-                AdornmentIcon="@Icons.Material.Filled.Search"
+                AdornmentIcon="@Icons.Material.Filled.AddCircleOutline"
                 AdornmentColor="Color.Primary"
                 SearchFunc="@SearchTag"
                 Value="@_componentTagSelected"
                 OnAdornmentClick="@AddToTags"
-                ToStringFunc="@ToStringFunc"
+                ToStringFunc="@TagIdToString"
                 ValueChanged="@OnTagSelectionChanged">
                 <ItemTemplate>
                     @context.ToStringFast()
@@ -71,7 +71,7 @@
             <MudChipSet AllClosable OnClose="@((chip) => _tags.Remove((ComponentTagId)chip.Value))">
                 @foreach (var tag in _tags)
                 {
-                    <MudChip Value="@tag">@tag.ToStringFast()</MudChip>
+                    <TagChip Value="@tag">@tag.ToStringFast()</TagChip>
                 }
             </MudChipSet>
         </MudForm>    
@@ -179,7 +179,7 @@
 
     private static Task<IEnumerable<ComponentTagId>> SearchTag(string tagString)
     {
-        if (tagString.Length < 3)
+        if (tagString.Length < 1)
         {
             return Task.FromResult<IEnumerable<ComponentTagId>>([]);
         }
@@ -200,14 +200,22 @@
 
 
 
-    private static string ToStringFunc(ComponentTagId componentTagId)
+    private static string TagIdToString(ComponentTagId componentTagId)
     {
+        if ((int)componentTagId == 0)
+        {
+            return "Please select a tag";
+        }
+        
         return componentTagId.ToStringFast();
     }
 
     private Task OnTagSelectionChanged(ComponentTagId tagId)
     {
-
+        if (tagId == 0)
+        {
+            return Task.CompletedTask;
+        }
         _componentTagSelected = tagId;
         AddToTags();
         return Task.CompletedTask;
