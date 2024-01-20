@@ -64,8 +64,7 @@
             <MudDataGrid 
                 T="ComponentPageDto"
                 @bind-ref="@_tableRef"
-                ServerData="@UpdateGridData"
-                QuickFilter="@(arg => !(arg.Id is null || _isDeleted.Contains(arg.Id)))">
+                ServerData="@UpdateGridData">
                 <Columns>
                     <HierarchyColumn ButtonDisabledFunc="dto => dto.Description is null"/>
                     <TemplateColumn>
@@ -164,6 +163,9 @@
         await ComponentService.Delete(componentEntryDto.Id).ConfigureAwait(false);
         _isDeleted.Add(componentEntryDto.Id);
         Snackbar.Add("Component Deleted Successfully", Severity.Success);
+        
+        // Sadly MudBlazor disabled QuickFilter of DataGrids if used with ServerData..... now we need to reload the whole table.
+        if (_tableRef != null) await _tableRef.ReloadServerData();
     }
 
     private async Task DeleteAccount()
