@@ -6,7 +6,7 @@ namespace ComponentHub.DB.Configuration.Converters;
 internal sealed class ComponentSourceConverter: ValueConverter<ComponentSource, string>
 {
     public ComponentSourceConverter() : this(null) { }
-    public ComponentSourceConverter(ConverterMappingHints mappingHints = null)
+    public ComponentSourceConverter(ConverterMappingHints? mappingHints = default)
         : base(
             source =>  ComponentSource.EncodeExportString(source),
             sourceString => ComponentSource.DecodeExportString(sourceString).ResultObject!,

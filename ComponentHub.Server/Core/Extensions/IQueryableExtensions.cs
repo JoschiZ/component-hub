@@ -49,7 +49,7 @@ internal static class QueryableExtensions
 
         var userId = new UserId(new Guid(id));
 
-        return query.Where(owner => owner.Owner.Id == userId);
+        return query.Where(owner => owner.Owner != null && owner.Owner.Id == userId);
     }
     
     

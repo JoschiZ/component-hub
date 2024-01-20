@@ -5,7 +5,7 @@ using MudBlazor;
 
 namespace ComponentHub.Client.Components.Features.Auth;
 
-internal sealed class AuthApiClient(ComponentHubClient client, ISnackbar snackbar)
+internal sealed class AuthApiClient(ComponentHubClient client)
 {
     public static UserInfo Empty => new UserInfo(){Id = Guid.Empty.ToString()};
     

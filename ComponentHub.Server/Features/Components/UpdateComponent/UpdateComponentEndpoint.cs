@@ -76,7 +76,7 @@ internal sealed class
         CancellationToken ct)
     {
         var root = await context.Components
-            .Where(entry => entry.Owner.Id == userId)
+            .Where(entry => entry.Owner!.Id == userId)
             .FirstOrDefaultAsync(entry => entry.Id == reqPageId, cancellationToken: ct);
 
         if (root is null)

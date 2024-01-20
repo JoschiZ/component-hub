@@ -32,7 +32,7 @@ internal sealed class ComponentService
         {
             return await _client.Components.GetPath[userName][componentName].GetAsync();
         }
-        catch (Error404 e)
+        catch (Error404)
         {
             _navigationManager.NavigateTo(Routes.General.NotFound, replace: true);
         }

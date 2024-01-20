@@ -21,18 +21,18 @@ internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Ok<UserInfo>>
         AllowAnonymous();
     }
 
-    public async override Task<Ok<UserInfo>> ExecuteAsync(CancellationToken ct)
+    public override Task<Ok<UserInfo>> ExecuteAsync(CancellationToken ct)
     {
         if (User.Identity?.Name is null)
         {
-            return TypedResults.Ok(UserInfo.Empty);
+            return Task.FromResult(TypedResults.Ok(UserInfo.Empty));
         }
 
         var userId = _userManager.GetUserId(User);
 
         if (userId is null)
         {
-            return TypedResults.Ok(UserInfo.Empty);
+            return Task.FromResult(TypedResults.Ok(UserInfo.Empty));
         }
         var userInfo = new UserInfo()
         {
@@ -43,6 +43,6 @@ internal sealed class GetUserInfoEndpoint: EndpointWithoutRequest<Ok<UserInfo>>
             Id = userId
         };
 
-        return TypedResults.Ok(userInfo);
+        return Task.FromResult(TypedResults.Ok(userInfo));
     }
 }

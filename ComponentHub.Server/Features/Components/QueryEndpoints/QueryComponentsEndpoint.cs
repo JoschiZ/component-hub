@@ -86,7 +86,7 @@ internal sealed record ComponentsSortAction(SortDirection SortDirection, Sorting
         return Method switch
         {
             SortingMethod.ByUserName => query =>
-                query.OrderByWithDirection(SortDirection, entry => entry.Owner.UserName),
+                query.OrderByWithDirection(SortDirection, entry => entry.Owner!.UserName),
             SortingMethod.ByName => query => query.OrderByWithDirection(SortDirection, entry => entry.Name),
             SortingMethod.ByCreationDate => query =>
                 query.OrderByWithDirection(SortDirection, entry => entry.CreatedAt),

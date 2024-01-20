@@ -75,9 +75,10 @@
         await AddToTags();
     }
     
-    private async Task AddToTags()
+    private Task AddToTags()
     {
         Tags.Add(SelectedTag);
+        return Task.CompletedTask;
     }
 
 }

@@ -16,7 +16,7 @@ public class SnackbarHelperService
         OnChange?.Invoke();
     }
 
-    public bool GetMessage([NotNullWhen(false)] out SnackbarMessage message)
+    public bool GetMessage([NotNullWhen(true)] out SnackbarMessage? message)
     {
         return Messages.TryDequeue(out message);
     }

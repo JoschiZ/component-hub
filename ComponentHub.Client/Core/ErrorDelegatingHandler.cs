@@ -31,7 +31,7 @@ internal class ErrorDelegatingHandler: DelegatingHandler
             var deserializedError = await response.Content.ReadFromJsonAsync<BaseError>(cancellationToken: cancellationToken);
             _snackbarHelperService.AddMessage(new SnackbarMessage(deserializedError?.Message ?? "Unknown Error", Severity.Error));
         }
-        catch (Exception e)
+        catch (Exception)
         {
             _snackbarHelperService.AddMessage(new SnackbarMessage(await response.Content.ReadAsStringAsync(cancellationToken), Severity.Error));
         }

@@ -34,6 +34,7 @@ internal class GetComponentEndpoint: Endpoint<GetComponentRequest, Results<Ok<Ge
             .FirstOrDefaultAsync(
                 component => 
                     component.Name == req.ComponentName &&
+                    component.Owner != null &&
                     component.Owner.UserName == req.UserName, ct);
 
 

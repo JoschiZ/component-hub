@@ -34,7 +34,7 @@ internal sealed class IdentityAuthenticationStateProvider(
         var claims = new[]
         {
             new Claim(ClaimTypes.Name, CurrentUser.Name)
-        }.Concat(CurrentUser.ExposedClaims.AdditionalData.Select(claim => new Claim(claim.Key, claim.Value.ToString())));
+        }.Concat(CurrentUser.ExposedClaims.AdditionalData.Select(claim => new Claim(claim.Key, claim.Value?.ToString() ?? string.Empty)));
         identity = new ClaimsIdentity(claims, "Server Authentication");
 
         return new AuthenticationState(new ClaimsPrincipal(identity));

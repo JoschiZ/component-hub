@@ -29,7 +29,7 @@ internal sealed class
 
         var query = context.Components
             .AsNoTracking()
-            .Where(entry => entry.Owner.UserName == req.UserName)
+            .Where(entry => entry.Owner!.UserName == req.UserName)
             .OrderBy(entry => entry.Name);
 
 
