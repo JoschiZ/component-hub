@@ -65,7 +65,9 @@ internal sealed record QueryComponentsEndpointRequest(
     int Page = 0,
     int PageSize = 10): IPaginatedRequest;
 
-internal sealed record QueryComponentsEndpointResponse(ComponentPageDto[] Components, ResponsePagination Pagination)
+internal sealed record QueryComponentsEndpointResponse(
+    ComponentPageDto[] Components, 
+    ResponsePagination Pagination)
     : IPaginatedResponse;
 
 internal sealed class QueryComponentsEndpointRequestValidator: Validator<QueryComponentsEndpointRequest>

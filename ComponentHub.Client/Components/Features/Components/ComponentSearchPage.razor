@@ -1,0 +1,130 @@
+@using ComponentHub.Domain.Features.Components
+@using ComponentHub.ApiClients.Models
+@attribute [Route(Routes.Components.SearchPage)]
+
+@inject ComponentService ComponentService
+
+<MudCard Style="margin-bottom: 4rem">
+    <MudCardContent>
+        <MudForm Model="@_query">
+            <MudTextField @bind-Value="@_query.ComponentName" Label="Component Name"/>
+            <MudTextField @bind-Value="@_query.UserName" Label="User Name"/>
+            <TagSelect Tags="@_query.Tags"/>
+        </MudForm>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton OnClick="@(() => _componentGrid?.ReloadServerData() ?? Task.CompletedTask)">Search</MudButton>
+    </MudCardActions>
+</MudCard>
+
+<MudCard>
+    <MudCardContent>
+        <MudDataGrid
+            T="@ComponentPageDto"
+            ServerData="@UpdateGridData"
+            @ref="@_componentGrid"
+            CurrentPage="@(Page ?? 0)"
+            RowsPerPage="@(PageSize ?? 10)">
+            <Columns>
+                <HierarchyColumn ButtonDisabledFunc="@(dto => dto.Description is null)"/>
+                <PropertyColumn Property="arg => arg.Name" Title="Name"/>
+                <TemplateColumn>
+                    <CellTemplate>
+                        @if (context.Item is {OwnerName: not null, Name: not null})
+                        {
+                            <MudLink Href="@Routes.Components.GetComponentPage(context.Item.OwnerName, context.Item.Name)"/>
+                        }
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Created">
+                    <CellTemplate>
+                        <DateDisplay DateTime="context.Item.CreatedAt"/>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Updated">
+                    <CellTemplate>
+                        <DateDisplay DateTime="context.Item.UpdatedAt"/>
+                    </CellTemplate>
+                </TemplateColumn>
+                <PropertyColumn Property="@(arg => arg.OwnerName)" Title="Owner"/>
+            </Columns>
+                <ChildRowContent>
+                    @context.Item.Description
+                </ChildRowContent>
+            <PagerContent>
+                <MudDataGridPager/>
+            </PagerContent>
+        </MudDataGrid>
+    </MudCardContent>
+</MudCard>
+
+
+
+
+
+
+
+@code {
+    private readonly ComponentService.QueryComponentModel _query = new();
+    private MudDataGrid<ComponentPageDto>? _componentGrid;
+
+    [SupplyParameterFromQuery(Name = nameof(ComponentService.QueryComponentModel.ComponentName))]
+    public string? ComponentName { get; set; }
+    
+    [SupplyParameterFromQuery(Name = nameof(ComponentService.QueryComponentModel.UserName))]
+    public string? UserName { get; set; }
+    
+    /// <summary>
+    /// Comma seperated string of tag ints
+    /// </summary>
+    /// <example>
+    /// 1,2,3,4
+    /// </example>
+    [SupplyParameterFromQuery(Name = nameof(ComponentService.QueryComponentModel.Page))]
+    public string? TagsString { get; set; }
+
+    [SupplyParameterFromQuery(Name = nameof(ComponentService.QueryComponentModel.Page))]
+    public int? Page { get; set; }
+    
+    [SupplyParameterFromQuery(Name = nameof(ComponentService.QueryComponentModel.PageSize))]
+
+    public int? PageSize { get; set; }
+    
+    protected override void OnParametersSet()
+    {
+        _query.UserName = UserName;
+        _query.ComponentName = ComponentName;
+
+        HashSet<ComponentTagId> tags = [];
+
+        var splitTags = TagsString?.Split(",") ?? [];
+        foreach (var splitTag in splitTags)
+        {
+            if (int.TryParse(splitTag, out var tagString))
+            {
+                tags.Add((ComponentTagId)tagString);
+            }
+        }
+
+        _query.Tags = tags;
+        _query.Page = Page;
+        _query.PageSize = PageSize;
+        base.OnParametersSet();
+    }
+
+    private async Task<GridData<ComponentPageDto>> UpdateGridData(GridState<ComponentPageDto> gridState)
+    {
+        _query.PageSize = gridState.PageSize;
+        _query.Page = gridState.Page;
+        PageSize = gridState.PageSize;
+        Page = gridState.Page;
+        
+        var components = await ComponentService.QueryComponents(_query);
+        return new GridData<ComponentPageDto>()
+        {
+            Items = components.Components ?? [],
+            TotalItems = components.Pagination?.TotalItems ?? 0,
+        };
+    }
+}
+

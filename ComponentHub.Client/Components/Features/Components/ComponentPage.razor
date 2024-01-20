@@ -4,7 +4,7 @@
 @using ComponentHub.Domain.Features.Components
 @using MudExtensions.Enums
 @inject ComponentService ComponentService
-@inject SharingService<CreateComponentResponse> Share
+@inject SharingService<(ComponentPageDto pageDto, ComponentDto componentDto)> Share
 @inject NavigationManager NavManager
 @inject IJsApiService ClipBoardService
 @inject ISnackbar SnackBar
@@ -134,8 +134,8 @@ else
 
             _getResponse = new GetComponentResponse()
             {
-                ComponentPage = shared?.Page,
-                CurrentComponent = shared?.Component
+                ComponentPage = shared.pageDto,
+                CurrentComponent = shared.componentDto
             };
         }
 

@@ -33,6 +33,9 @@
                 <MudTextM3 Color="Color.Error">No component found</MudTextM3>
             </NoItemsTemplate>
         </MudAutocomplete>
+        <MudTooltip Text="Detailed search">
+            <MudIconButton Icon="@Icons.Material.Filled.ManageSearch" Href="@Routes.Components.SearchPage"/>
+        </MudTooltip>
         <MudSpacer/>
         <MudStack Row Spacing="2">
             <AuthorizeView>
@@ -93,7 +96,7 @@
         }
         
         var components = await ComponentService.QueryComponents(componentName, pageSize: 10, ct: ct);
-        return components;
+        return components?.Components ?? [];
     }
 
     private void OnSearchValueChanged(ComponentPageDto? componentPageDto)

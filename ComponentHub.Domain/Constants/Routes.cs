@@ -28,6 +28,8 @@ public static class Routes
         public const string Upload = "/CreateNewComponent";
         
         public const string ComponentPage = "/{userName}/{componentName}";
+
+        public const string SearchPage = "/components/search";
         
         [Pure]
         public static string GetComponentPage(string userName, string componentName)

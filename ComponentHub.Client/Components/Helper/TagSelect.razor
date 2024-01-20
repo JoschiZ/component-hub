@@ -1,0 +1,83 @@
+@using ComponentHub.Domain.Features.Components
+
+<MudAutocomplete
+    T="@ComponentTagId"
+    Label="Tags"
+    CoerceText
+    ResetValueOnEmptyText
+    AdornmentIcon="@Icons.Material.Filled.AddCircleOutline"
+    AdornmentColor="Color.Primary"
+    SearchFunc="@SearchTag"
+    Value="@SelectedTag"
+    OnAdornmentClick="@AddToTags"
+    ToStringFunc="@TagIdToString"
+    ValueChanged="@OnTagSelectionChanged">
+    <ItemTemplate>
+        @context.ToStringFast()
+    </ItemTemplate>
+</MudAutocomplete>
+<MudChipSet AllClosable OnClose="@((chip) => Tags.Remove((ComponentTagId)chip.Value))">
+    @foreach (var tag in Tags)
+    {
+        <TagChip Value="@tag">@tag.ToStringFast()</TagChip>
+    }
+</MudChipSet>
+
+@code {
+    [Parameter]
+    public HashSet<ComponentTagId> Tags { get; set; } = [];
+
+    [Parameter] public ComponentTagId SelectedTag { get; set; }
+
+    [Parameter]
+    public EventCallback<ComponentTagId> SelectedTagChanged { get; set; }
+    
+    private static Task<IEnumerable<ComponentTagId>> SearchTag(string tagString)
+    {
+        if (tagString.Length < 1)
+        {
+            return Task.FromResult<IEnumerable<ComponentTagId>>([]);
+        }
+        
+        // Hot path if we entered the exact name
+        if (ComponentTagIdExtensions.TryParse(tagString, out var componentTagId))
+        {
+            return Task.FromResult<IEnumerable<ComponentTagId>>([componentTagId]);
+        }
+
+        var found = ComponentTagIdExtensions
+            .GetValues()
+            .Where(tagId => tagId.ToStringFast().Contains(tagString))
+            .Take(5);
+
+        return Task.FromResult(found);
+    }
+    
+    private static string TagIdToString(ComponentTagId componentTagId)
+    {
+        if ((int)componentTagId == 0)
+        {
+            return "Please select a tag";
+        }
+        
+        return componentTagId.ToStringFast();
+    }
+    
+    private async Task OnTagSelectionChanged(ComponentTagId tagId)
+    {
+        if (tagId == 0)
+        {
+            return;
+        }
+
+        await SelectedTagChanged.InvokeAsync(tagId);
+        SelectedTag = tagId;
+        await AddToTags();
+    }
+    
+    private async Task AddToTags()
+    {
+        Tags.Add(SelectedTag);
+    }
+
+}

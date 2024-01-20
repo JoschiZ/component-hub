@@ -7,7 +7,7 @@
 @inject ComponentService Service
 @inject ISnackbar Snackbar
 @inject RedirectHelper RedirectHelper
-@inject SharingService<CreateComponentResponse> Share
+@inject SharingService<(ComponentPageDto pageDto, ComponentDto componentDto)> Share
 @attribute [Authorize]
 
 <MudCard>
@@ -52,28 +52,12 @@
             </MudStack>
             <!--We need to use Nullable here because the shorthand notation doesn't work in Razor Type args-->
 
-            <MudAutocomplete
-                T="@ComponentTagId"
-                Label="Tags"
-                CoerceText
-                ResetValueOnEmptyText
-                AdornmentIcon="@Icons.Material.Filled.AddCircleOutline"
-                AdornmentColor="Color.Primary"
-                SearchFunc="@SearchTag"
-                Value="@_componentTagSelected"
-                OnAdornmentClick="@AddToTags"
-                ToStringFunc="@TagIdToString"
-                ValueChanged="@OnTagSelectionChanged">
-                <ItemTemplate>
-                    @context.ToStringFast()
-                </ItemTemplate>
-            </MudAutocomplete>
-            <MudChipSet AllClosable OnClose="@((chip) => _tags.Remove((ComponentTagId)chip.Value))">
-                @foreach (var tag in _tags)
-                {
-                    <TagChip Value="@tag">@tag.ToStringFast()</TagChip>
-                }
-            </MudChipSet>
+
+            
+            <TagSelect
+                Tags="_tags"
+                SelectedTag="ComponentTagId.Warcraft"/>
+
         </MudForm>    
     </MudCardContent>
     <MudCardActions>
@@ -114,8 +98,7 @@
     private readonly DialogOptions _dialogOptions = new(){CloseOnEscapeKey = true, CloseButton = true};
     private void ShowDialog() => _isDialogOpen = true;
     private bool _dialogInputError;
-
-    private ComponentTagId _componentTagSelected = ComponentTagId.Warcraft;
+    
     private readonly HashSet<ComponentTagId> _tags = [];
     
     
@@ -143,7 +126,7 @@
         if (response is not null)
         {
             Snackbar.Add("Component Created", Severity.Success);
-            var shareId = Share.AddItemToStorage(response);
+            var shareId = Share.AddItemToStorage((response.Page, response.Component));
             var redirectRoute = Routes.Components.GetComponentPage(response.Page?.OwnerName ?? "", response.Page?.Name ?? "");
             RedirectHelper.Redirect(redirectRoute, new Dictionary<string, string?>(){{"shareId", shareId}});
             return;
@@ -176,55 +159,5 @@
         return Task.CompletedTask;
     }
 
-
-    private static Task<IEnumerable<ComponentTagId>> SearchTag(string tagString)
-    {
-        if (tagString.Length < 1)
-        {
-            return Task.FromResult<IEnumerable<ComponentTagId>>([]);
-        }
-        
-        // Hot path if we entered the exact name
-        if (ComponentTagIdExtensions.TryParse(tagString, out var componentTagId))
-        {
-            return Task.FromResult<IEnumerable<ComponentTagId>>([componentTagId]);
-        }
-
-        var found = ComponentTagIdExtensions
-            .GetValues()
-            .Where(tagId => tagId.ToStringFast().Contains(tagString))
-            .Take(5);
-
-        return Task.FromResult(found);
-    }
-
-
-
-    private static string TagIdToString(ComponentTagId componentTagId)
-    {
-        if ((int)componentTagId == 0)
-        {
-            return "Please select a tag";
-        }
-        
-        return componentTagId.ToStringFast();
-    }
-
-    private Task OnTagSelectionChanged(ComponentTagId tagId)
-    {
-        if (tagId == 0)
-        {
-            return Task.CompletedTask;
-        }
-        _componentTagSelected = tagId;
-        AddToTags();
-        return Task.CompletedTask;
-    }
-    
-    private Task AddToTags()
-    {
-        _tags.Add(_componentTagSelected);
-        return Task.CompletedTask;
-    }
 
 }

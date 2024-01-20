@@ -3,7 +3,7 @@
 
 @if (DateTime.HasValue)
 {
-    @DateTime.Value.LocalDateTime.ToIsoDateString()
+    @DateTime.Value.LocalDateTime.ToString(CultureInfo.CurrentCulture)
 }
 
 
