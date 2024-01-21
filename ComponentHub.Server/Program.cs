@@ -12,8 +12,11 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 // This loads configs that may be needed for later registrations so it needs to be first!
+// TODO: Migrate to better secrets instead of .env in Docker https://medium.com/@nikjos/use-docker-swarm-secrets-in-asp-net-core-96b691bf8fba
 builder.AddEnvToConfig();
 
+
+builder.WebHost.UseStaticWebAssets();
 builder.AddAuthentication();
 builder.Services.AddAntiforgery();
 builder.Services.AddEfCore(builder.Configuration, optionsBuilder =>
@@ -43,11 +46,10 @@ builder.Services.AddFastEndpoints(options =>
     })
     .AddOutputCache();
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Debug()
-    .WriteTo.Console()
-    .CreateLogger();
-builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
 
 // Gets all AbstractValidator<T> implementations and registers them from this and the shared assembly
 builder.Services.AddValidatorsFromAssemblies(new[]
@@ -72,7 +74,7 @@ else
 }
 
 app.UseHttpsRedirection();
-
+app.UseSerilogRequestLogging();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 app.UseRouting();
