@@ -66,7 +66,7 @@ internal sealed class ComponentService
             return new QueryComponentsEndpointResponse();
         }
 
-        if (componentName is null && userName is null && tags?.Count == 0)
+        if (componentName is null && userName is null && tags is null or {Count: 0})
         {
             return new QueryComponentsEndpointResponse();
         }
@@ -76,6 +76,7 @@ internal sealed class ComponentService
             config.QueryParameters.UserName = userName;
             config.QueryParameters.SortDirectionAsSortDirection = SortDirection.Ascending;
             config.QueryParameters.ComponentName = componentName;
+            config.QueryParameters.Tags = tags?.Cast<int?>().ToArray();
             config.QueryParameters.Page = page;
             config.QueryParameters.PageSize = pageSize;
         }, ct);

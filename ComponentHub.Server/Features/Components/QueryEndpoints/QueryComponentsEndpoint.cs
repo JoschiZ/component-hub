@@ -33,16 +33,36 @@ internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpoint
 
         if (req.UserName is not null)
         {
-            componentsQuery = componentsQuery.Where(page =>
-                page.Owner != null && page.Owner.UserName!.Contains(req.UserName));
+            componentsQuery = componentsQuery.Where(page => 
+                page.Owner != null && 
+                page.Owner.UserName != null && 
+                EF.Functions.ILike(page.Owner.UserName!, $"%{req.UserName}%"));
         }
 
         if (req.ComponentName is not null)
         {
-            componentsQuery = componentsQuery.Where(page => page.Name.Contains(req.ComponentName));
+            componentsQuery = componentsQuery.Where(page => EF.Functions.ILike(page.Name, $"%{req.ComponentName}%"));
+        }
+
+        if (req.Tags is not null)
+        {
+            var tags = req.Tags
+                .Cast<ComponentTagId>();
+            
+            componentsQuery = componentsQuery.Where(page => 
+                tags.All(id =>
+                    page.Tags
+                        .Select(t => t.Id)
+                        .Contains(id)));
         }
 
         var totalItemCount = await componentsQuery.CountAsync(ct);
+
+        if (totalItemCount == 0)
+        {
+            return TypedResults.Ok(new QueryComponentsEndpointResponse([],
+                ResponsePagination.CreateFromRequest(req, totalItemCount)));
+        }
 
         var orderAction = new ComponentsSortAction(req.SortDirection, req.SortingMethod)
             .GetOrderMethod();
@@ -60,6 +80,7 @@ internal sealed class QueryComponentsEndpoint : Endpoint<QueryComponentsEndpoint
 internal sealed record QueryComponentsEndpointRequest(
     string? UserName,
     string? ComponentName,
+    HashSet<int>? Tags,
     SortDirection SortDirection = SortDirection.Ascending,
     SortingMethod SortingMethod = SortingMethod.ByName,
     int Page = 0,

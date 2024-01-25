@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 using System;
 namespace ComponentHub.ApiClients.Api.Components.Get.Item {
     /// <summary>
-    /// Builds and executes requests for operations under \api\components\get\{UserName}
+    /// Builds and executes requests for operations under \api\components\get\{userName}
     /// </summary>
     public class WithUserNameItemRequestBuilder : BaseRequestBuilder {
         /// <summary>Gets an item from the ComponentHub.ApiClients.api.components.get.item.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>
         public WithComponentNameItemRequestBuilder this[string position] { get {
             var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("ComponentName", position);
+            urlTplParams.Add("componentName", position);
             return new WithComponentNameItemRequestBuilder(urlTplParams, RequestAdapter);
         } }
         /// <summary>
@@ -23,14 +23,14 @@ namespace ComponentHub.ApiClients.Api.Components.Get.Item {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithUserNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{UserName}", pathParameters) {
+        public WithUserNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{userName}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new WithUserNameItemRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithUserNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{UserName}", rawUrl) {
+        public WithUserNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{userName}", rawUrl) {
         }
     }
 }

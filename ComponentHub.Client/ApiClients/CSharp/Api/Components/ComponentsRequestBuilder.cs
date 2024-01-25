@@ -38,7 +38,7 @@ namespace ComponentHub.ApiClients.Api.Components {
         /// <param name="position">Unique identifier of the item</param>
         public WithUserNameItemRequestBuilder this[string position] { get {
             var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("UserName", position);
+            urlTplParams.Add("userName", position);
             return new WithUserNameItemRequestBuilder(urlTplParams, RequestAdapter);
         } }
         /// <summary>
@@ -46,14 +46,14 @@ namespace ComponentHub.ApiClients.Api.Components {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,sortDirection*,sortingMethod*,page*,pageSize*}", pathParameters) {
+        public ComponentsRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,tags*,sortDirection*,sortingMethod*,page*,pageSize*}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new ComponentsRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,sortDirection*,sortingMethod*,page*,pageSize*}", rawUrl) {
+        public ComponentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components{?userName*,componentName*,tags*,sortDirection*,sortingMethod*,page*,pageSize*}", rawUrl) {
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -125,6 +125,15 @@ namespace ComponentHub.ApiClients.Api.Components {
 #endif
             [QueryParameter("sortingMethod")]
             public ComponentHub.ApiClients.Models.SortingMethod? SortingMethodAsSortingMethod { get; set; }
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+            [QueryParameter("tags")]
+            public int?[]? Tags { get; set; }
+#nullable restore
+#else
+            [QueryParameter("tags")]
+            public int?[] Tags { get; set; }
+#endif
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
             [QueryParameter("userName")]

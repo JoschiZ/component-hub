@@ -15,7 +15,7 @@ namespace ComponentHub.ApiClients.Api.Components.Get {
         /// <param name="position">Unique identifier of the item</param>
         public WithUserNameItemRequestBuilder this[string position] { get {
             var urlTplParams = new Dictionary<string, object>(PathParameters);
-            urlTplParams.Add("UserName", position);
+            urlTplParams.Add("userName", position);
             return new WithUserNameItemRequestBuilder(urlTplParams, RequestAdapter);
         } }
         /// <summary>

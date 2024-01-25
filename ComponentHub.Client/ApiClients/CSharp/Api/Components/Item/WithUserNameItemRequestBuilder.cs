@@ -10,7 +10,7 @@ using System.Threading;
 using System;
 namespace ComponentHub.ApiClients.Api.Components.Item {
     /// <summary>
-    /// Builds and executes requests for operations under \api\components\{UserName}
+    /// Builds and executes requests for operations under \api\components\{userName}
     /// </summary>
     public class WithUserNameItemRequestBuilder : BaseRequestBuilder {
         /// <summary>
@@ -18,14 +18,14 @@ namespace ComponentHub.ApiClients.Api.Components.Item {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithUserNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/{UserName}{?page*,pageSize*}", pathParameters) {
+        public WithUserNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/{userName}{?page*,pageSize*}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new WithUserNameItemRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithUserNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/{UserName}{?page*,pageSize*}", rawUrl) {
+        public WithUserNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/{userName}{?page*,pageSize*}", rawUrl) {
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>

@@ -331,7 +331,7 @@
         ]
       }
     },
-    "/api/components/get/{UserName}/{ComponentName}": {
+    "/api/components/get/{userName}/{componentName}": {
       "get": {
         "tags": [
           "Api"
@@ -381,7 +381,7 @@
         }
       }
     },
-    "/api/components/{UserName}": {
+    "/api/components/{userName}": {
       "get": {
         "tags": [
           "Api"
@@ -451,6 +451,20 @@
             "schema": {
               "type": "string",
               "nullable": true
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "type": "integer",
+                "format": "int32"
+              }
             }
           },
           {

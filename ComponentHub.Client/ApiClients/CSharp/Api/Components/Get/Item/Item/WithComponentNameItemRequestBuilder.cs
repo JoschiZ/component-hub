@@ -10,7 +10,7 @@ using System.Threading;
 using System;
 namespace ComponentHub.ApiClients.Api.Components.Get.Item.Item {
     /// <summary>
-    /// Builds and executes requests for operations under \api\components\get\{UserName}\{ComponentName}
+    /// Builds and executes requests for operations under \api\components\get\{userName}\{componentName}
     /// </summary>
     public class WithComponentNameItemRequestBuilder : BaseRequestBuilder {
         /// <summary>
@@ -18,14 +18,14 @@ namespace ComponentHub.ApiClients.Api.Components.Get.Item.Item {
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithComponentNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{UserName}/{ComponentName}", pathParameters) {
+        public WithComponentNameItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{userName}/{componentName}", pathParameters) {
         }
         /// <summary>
         /// Instantiates a new WithComponentNameItemRequestBuilder and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public WithComponentNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{UserName}/{ComponentName}", rawUrl) {
+        public WithComponentNameItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/components/get/{userName}/{componentName}", rawUrl) {
         }
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
