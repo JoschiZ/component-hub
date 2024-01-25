@@ -13,12 +13,15 @@
 <MudTypographyProvider/>
 
 <MudLayout>
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="1" Dense>
         <a href="@Routes.General.Home">
             <MudTextM3 Typo="TypoM3.Display" Size="Size.Medium" Class="ml-3">ComponentHub</MudTextM3>
         </a>
         <MudSpacer/>
         <MudAutocomplete
+            Label="Search Component"
+            Dense
+            Margin="Margin.Dense"
             T="@ComponentPageDto"
             SearchFuncWithCancel="@SearchComponent"
             ResetValueOnEmptyText
