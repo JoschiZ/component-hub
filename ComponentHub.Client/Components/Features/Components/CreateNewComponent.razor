@@ -32,17 +32,10 @@
                 MaxLength="Domain.Features.Components.ComponentPage.Validator.MaxDescriptionLength"
                 Counter="Domain.Features.Components.ComponentPage.Validator.MaxDescriptionLength"
                 Immediate/>
-            <MudTextField 
-                Variant="Variant.Outlined"
-                AutoGrow 
-                Lines="3"
-                MaxLines="40"
-                Label="Source Code" 
-                Required="true"
-                @bind-Value="_requestModel.SourceCode"
-                MaxLength="ComponentSource.Validator.MaxSourceLength"
-                Counter="ComponentSource.Validator.MaxSourceLength"
-                Immediate/>
+
+            <CodeDisplay
+                @ref="@_codeEditor"
+                MaxCharacterCount="@ComponentSource.Validator.MaxSourceLength"/>
             <MudStack Row AlignItems="AlignItems.Baseline">
                 <MudNumericField Min="1" Max="10" Label="Height" @bind-Value="@_requestModel.Height"/>
                 <MudNumericField Min="1" Max="10" Label="Width" @bind-Value="@_requestModel.Width"/>
@@ -104,6 +97,7 @@
     
     private MudForm? _form;
     private string _importString = "";
+    private CodeDisplay? _codeEditor;
 
     private async Task SubmitComponent()
     {
@@ -113,11 +107,18 @@
             return;
         }
 
+        if (_codeEditor is not {IsValid:true})
+        {
+            return;
+        }
+
         if (_tags.Count == 0)
         {
             Snackbar.Add("Please select at least one Tag!", Severity.Error);
             return;
         }
+
+        _requestModel.SourceCode = await _codeEditor.GetCodeAsync();
         
         _requestModel.Tags = _tags.Cast<int?>().ToList();
         

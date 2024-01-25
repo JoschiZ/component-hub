@@ -60,15 +60,7 @@
                                     <MudSpacer/>
                                     <MudTextM3 Align="Align.Right" Typo="TypoM3.Label" Color="Color.Surface" Style="opacity: 0.3">ID: @_componentSource.WclComponentId</MudTextM3>
                                 </MudStack>
-                                <MudTextField
-                                    Variant="Variant.Filled"
-                                    ReadOnly
-                                    Text="@_componentSource.Source.Script"
-                                    Lines="5"
-                                    MaxLines="30"
-                                    AutoGrow
-                                    T="string"
-                                    DisableUnderLine/>
+                                <CodeDisplay ReadOnly Code="@_componentSource.Source.Script"/>
                             </ChildContent>
                         </MudExpansionPanel>
                     </MudExpansionPanels>

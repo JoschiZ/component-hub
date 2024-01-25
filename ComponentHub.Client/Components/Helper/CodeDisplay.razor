@@ -1,0 +1,89 @@
+@using MudExtensions.Enums
+@inject IJSRuntime Js
+@inject ISnackbar SnackBar
+
+<MudPaper Square Class="container">
+    <div class="code-container resizable">
+        <StandaloneCodeEditor 
+            @ref="@_editor"
+            ConstructionOptions="@GetConstructionOptions"
+            OnDidChangeModelContent="@Validate"/>
+        @if (!IsValid)
+        {
+            <MudTextM3 Typo="TypoM3.Body" Color="Color.Warning">Too many characters (@_characterCount / @MaxCharacterCount)</MudTextM3>
+        }
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public EventCallback<string> CodeCallback { get; set; }
+
+    [Parameter] public string Code { get; set; } = "";
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    [Parameter] public int MaxCharacterCount { get; set; } = int.MaxValue;
+
+    [Parameter] public bool IsValid { get; set; } = true;
+
+    private StandaloneEditorConstructionOptions? _constructionOptions;
+    
+    private StandaloneCodeEditor? _editor;
+
+    private int _characterCount;
+
+    private StandaloneEditorConstructionOptions GetConstructionOptions(StandaloneCodeEditor codeEditor)
+    {
+        return new()
+        {
+            AutomaticLayout = true,
+            Language = "javascript",
+            ReadOnly = ReadOnly,
+            Value = Code,
+            Theme = "vs-dark",
+            GlyphMargin = true
+        };
+    }
+
+    public Task<string> GetCodeAsync() => _editor?.GetValue() ?? Task.FromResult("");
+    public Task SetCodeAsync(string code) => _editor?.SetValue(code) ?? Task.CompletedTask;
+
+
+    private async Task Validate(ModelContentChangedEvent arg)
+    {
+        if (_editor is null)
+        {
+            return;
+        }
+        
+        var content = await GetCodeAsync();
+        _characterCount = content.Length;
+        IsValid = content.Length <= MaxCharacterCount;
+    }
+
+}
+
+<style>
+    .container{
+        padding: 0.5rem;
+    }
+    
+    .code-container{
+        min-height: 200px;
+        padding: 0.5rem;
+        position: relative;
+    }
+    
+    .resizable{
+      resize: vertical;
+      overflow: auto;
+    }
+  
+    
+    .monaco-editor-container{
+        min-height: inherit;
+        height: 100%;
+    }
+
+</style>
