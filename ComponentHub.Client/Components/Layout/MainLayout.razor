@@ -62,7 +62,7 @@
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider = default!;
 
-    private MudTheme _theme = new MudTheme()
+    private readonly MudTheme _theme = new MudTheme()
     {
         Typography = new Typography()
         {
@@ -73,7 +73,8 @@
         }
     };
     
-    
+    private ComponentPageDto? _currentSelectedValue;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -91,15 +92,20 @@
         return Task.CompletedTask;
     }
 
-    private async Task<IEnumerable<ComponentPageDto>> SearchComponent(string componentName, CancellationToken ct)
+    private async Task<IEnumerable<ComponentPageDto>> SearchComponent(string searchComponentName, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(componentName) || componentName.Length < 3)
+        if (string.IsNullOrWhiteSpace(searchComponentName) || searchComponentName.Length < 3)
         {
             return Enumerable.Empty<ComponentPageDto>();
         }
         
-        var components = await ComponentService.QueryComponents(componentName, pageSize: 10, ct: ct);
-        return components?.Components ?? [];
+        if (_currentSelectedValue?.Name == searchComponentName)
+        {
+            return [_currentSelectedValue];
+        }
+        
+        var components = await ComponentService.QueryComponents(searchComponentName, pageSize: 10, ct: ct);
+        return components.Components ?? [];
     }
 
     private void OnSearchValueChanged(ComponentPageDto? componentPageDto)
@@ -108,7 +114,8 @@
         {
             return;
         }
-        
+
+        _currentSelectedValue = componentPageDto;
         NavigationManager.NavigateTo(Routes.Components.GetComponentPage(componentPageDto.OwnerName, componentPageDto.Name));
     }
     
